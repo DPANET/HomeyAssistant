@@ -1,0 +1,5 @@
+.env
+config/default.json
+config/development.json
+config/production.json
+config/custom-enviroment-variables.json
