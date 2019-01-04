@@ -1,8 +1,10 @@
 {
-  "name": "homey-assistant",
+  "name": "prayers-lib",
   "version": "0.0.0",
   "private": true,
-  "description": "Assistant app for Homey Devices",
+  "main": "lib/app",
+  "types": "lib/app",
+  "description": "prayers library",
   "author": {
     "name": ""
   },
@@ -16,7 +18,17 @@
     "express": "^4.14.0",
     "joi": "^14.3.1",
     "morgan": "^1.7.0",
-    "pug": "^2.0.0-beta6",
-    "serve-favicon": "^2.3.0"
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "serve-favicon": "^2.3.0",
+    "ts-node": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/debug": "0.0.31",
+    "@types/dotenv": "^6.1.0",
+    "@types/joi": "^14.0.1",
+    "@types/request": "^2.48.1",
+    "@types/request-promise-native": "^1.0.15",
+    "typescript": "^3.2.2"
   }
 }
