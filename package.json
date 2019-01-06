@@ -9,7 +9,9 @@
     "name": ""
   },
   "dependencies": {
+    "@google/maps": "^0.5.5",
     "athom-api": "^2.1.147",
+    "await-to-js": "^2.1.1",
     "body-parser": "^1.15.0",
     "config": "^3.0.1",
     "cookie-parser": "^1.4.0",
@@ -26,6 +28,7 @@
   "devDependencies": {
     "@types/debug": "0.0.31",
     "@types/dotenv": "^6.1.0",
+    "@types/googlemaps": "^3.30.16",
     "@types/joi": "^14.0.1",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
