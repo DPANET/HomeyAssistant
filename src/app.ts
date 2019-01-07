@@ -4,15 +4,16 @@ const Debug =require('debug');
 const debug = Debug("app:startup"); 
 const request = require ('request-promise-native');
 import to from 'await-to-js';
-import googlelocation = require("./location"); 
+const {googleMapsClient} = require("./location"); 
 import entity = require("./entities");
+const util = require('util')
 
 
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
 var queryString=
 {
-    url :'http://api.aladhan.com/v1/timingsByCity'+  '01-01-2019',
+    url :'http://api.aladhan.com/v1/timingsByCity/'+  '01-01-2019',
     qs: 
     {
         city: "Abu Dhabi",
@@ -21,34 +22,35 @@ var queryString=
     }
 
 }
+googleMap();
 
-function googleMap() {
-    googlelocation. // Geocode an address.
-        googleMapsClient.geocode({
-            address: '1600 Amphitheatre Parkway, Mountain View, CA'
-        }, function (err, response) {
-            if (!err) {
-                let x = response.json.results;
-                console.log('hi');
-            }
-            else {
-                console.log(err);
-            }
-        });
-}
 
-constructPrayerTimeObject (queryString)
-.then((result)=>{
-    console.log('SUCEEED');
-    console.log(result);
-})
-.catch((err)=>
-{
-    console.log('FAILED');
-    console.log(err.message);
+async function googleMap() {
+    let err, result, locationObject;
+    try {
+        [err, result] = await to(googleMapsClient.geocode({ address:"marina square", language:"en",  components: {country:"AE"}}).asPromise());
+        if(!err &&  typeof result.json.results !== "undefined" && result.json.results.length > 0)
+        console.log(util.inspect(result.json.results[0].geometry.location, {showHidden: false, depth: null}));
+        else
+        console.log('error');
+    }
+    catch (err) {
+        console.log(err.message);
+        }
+    }
 
-}   
-);
+// constructPrayerTimeObject (queryString)
+// .then((result)=>{
+//     console.log('SUCEEED');
+//     console.log(result);
+// })
+// .catch((err)=>
+// {
+//     console.log('FAILED');
+//     console.log(err.message);
+
+// }   
+// );
 async function constructPrayerTimeObject(query,callback?) {
     let err, result, prayerObject, notification;
 

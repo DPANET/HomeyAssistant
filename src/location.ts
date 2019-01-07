@@ -1,27 +1,23 @@
-import { string, number } from "joi";
-import { error } from "util";
-
 const dotenv = require('dotenv');
 dotenv.config();
-
+const Joi = require("joi"); 
 export var googleMapsClient = require('@google/maps').createClient({
-  key: process.env.GOOGLE_API_KEY
+  key: process.env.GOOGLE_API_KEY,
+  Promise: Promise
 });
 
 export interface ILocation {
-  latitude: number,
-  longitude: number,
+  latitude ?: number,
+  longitude?: number,
   city?: string,
   countryCode?: string
+  address?:string
 }
 export class Location {
   private _location: ILocation
   // private _locationValidator: LocationValidator
-  constructor(latitude: number, longitude: number, city?: string, countryCode?: string) {
-    this._location.latitude = latitude;
-    this._location.longitude = longitude;
-    this._location.city = city;
-    this._location.countryCode = countryCode;
+  constructor(location:ILocation) {
+    this._location= location;
     // this._locationValidator.isValid(this,)
 
   }
@@ -30,18 +26,18 @@ export class Location {
   }
   public async setLocation(location: ILocation): Promise<boolean> {
     if (await LocationValidator.validateCoordinates(location)) {
-      this._location = location;
+      
       return Promise.resolve(true);
 
     }
     else
-      return Promise.reject(error);
+      return Promise.reject('err');
   }
 
 }
 class LocationValidator {
   static async validateCoordinates(location: ILocation): Promise<boolean> {
-
+    googleMapsClient
     return Promise.resolve(true);
   }
 }
@@ -52,7 +48,9 @@ export class LocationFactory
     let locationObject :Location;
     if(location !== null)
      {
-        locationObject  = new Location(location.latitude,location.longitude);
+       LocationValidator.validateCoordinates(location);
+        locationObject  = new Location(location);
+        
         
      }
     return Promise.resolve(locationObject);// return Promise.resolve(new lo);
