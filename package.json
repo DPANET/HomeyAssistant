@@ -8,6 +8,9 @@
   "author": {
     "name": ""
   },
+  "unmockedModulePathPatterns": [
+    "jasmine-expect"
+  ],
   "dependencies": {
     "@google/maps": "^0.5.5",
     "athom-api": "^2.1.147",
@@ -19,8 +22,10 @@
     "dotenv": "^6.2.0",
     "express": "^4.14.0",
     "jasmine": "^3.3.1",
+    "jasmine-expect": "^4.0.0",
     "joi": "^14.3.1",
     "morgan": "^1.7.0",
+    "ramda": "^0.26.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "serve-favicon": "^2.3.0",
@@ -31,7 +36,10 @@
     "@types/dotenv": "^6.1.0",
     "@types/googlemaps": "^3.30.16",
     "@types/jasmine": "^3.3.5",
+    "@types/jasmine-expect": "^3.8.1",
     "@types/joi": "^14.0.1",
+    "@types/node": "^10.12.18",
+    "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
     "typescript": "^3.2.2"

@@ -1,67 +1,81 @@
-const dotenv = require('dotenv');
+import dotenv = require('dotenv');
 dotenv.config();
-const Debug =require('debug');
-const debug = Debug("app:startup"); 
-const request = require ('request-promise-native');
-import to from 'await-to-js';
-const {googleMapsClient} = require("./location"); 
-import entity = require("./entities");
-const util = require('util')
+import Debug = require('debug');
+const debug = Debug("app:startup");
+import request = require('request-promise-native');
+const to =require( 'await-to-js').default;
+const { googleMapsClient } = require("./location");
+import prayerEntity = require("./prayers");
+import locationEntity = require('./location');
+import util = require('util');
+import JasmineExpect = require('jasmine-expect');
 
 
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
-var queryString=
+var queryString: object =[
 {
-    url :'http://api.aladhan.com/v1/timingsByCity/'+  '01-01-2019',
-    qs: 
+    url: 'http://api.aladhan.com/v1/timingsByCity/' + '01-01-2019',
+    qs:
     {
         city: "Abu Dhabi",
         country: "AE",
-        method: "04",
-    }
+        method: "04"
+    },
+    method: 'GET',
+    json: true,
+    resolveWithFullResponse: false
+
+}];
+createLocationEntity()
+.then((result) => {
+    console.log(result.getLocation());
+})
+.catch((err)=>{
+    console.log(err.message);
+})
+
+
+
+
+async function createLocationEntity() :Promise<locationEntity.Location> {
+
+let location: locationEntity.ILocation;
+
+location = {
+    address: "ruwais camp",
+   countryCode: "AEee",
+    longtitude:45.4479073,
+    latitude:25.6868961
+}
+
+return await locationEntity.LocationFactory.createLocationFactory(location);
+
 
 }
-googleMap();
 
-
-async function googleMap() {
-    let err, result, locationObject;
-    try {
-        [err, result] = await to(googleMapsClient.geocode({ address:"marina square", language:"en",  components: {country:"AE"}}).asPromise());
-        if(!err &&  typeof result.json.results !== "undefined" && result.json.results.length > 0)
-        console.log(util.inspect(result.json.results[0].geometry.location, {showHidden: false, depth: null}));
-        else
-        console.log('error');
-    }
-    catch (err) {
+constructPrayerTimeObject(queryString)
+    .then((result) => {
+        console.log('SUCEEED');
+        console.log(result);
+    })
+    .catch((err) => {
+        console.log('FAILED');
         console.log(err.message);
-        }
+
     }
+    );
+async function constructPrayerTimeObject(query, callback?) {
+    let err, body, result, prayerObject, notification;
 
-// constructPrayerTimeObject (queryString)
-// .then((result)=>{
-//     console.log('SUCEEED');
-//     console.log(result);
-// })
-// .catch((err)=>
-// {
-//     console.log('FAILED');
-//     console.log(err.message);
+        [err,result] = await  to(request.get(query));
+        if(!err)
+        return result;
+        else
+        throw new Error('why');
+        
 
-// }   
-// );
-async function constructPrayerTimeObject(query,callback?) {
-    let err, result, prayerObject, notification;
-
-     [err,result] = await to(request.get(query));
-     if(!err)
-     [err,prayerObject] = await to(JSON.parse(result));
-     else return Promise.reject(err);
-
-
-
-    console.log('finished');
+        //return await(request.get(query));
     // let PrayersTimings: Array<entity.IPrayerTime> = new Array();
     // PrayersTimings.push({ prayerName: entity.Prayers.ASR, time: Date.now(), adjustment: 2 });
     // debug(PrayersTimings + 'hi');
