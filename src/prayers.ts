@@ -2,10 +2,12 @@
 //const config = require('config');
 //const app = express();
 const joi = require('joi');
+import locationEntity = require('./location');
+
 export interface IPrayerTime {
     prayerName: string;
     time: number;
-    adjustment: number
+//    adjustment: number
 }
 
 export const Prayers = {
@@ -20,14 +22,14 @@ export const Prayers = {
 };
 export class PrayersTime
 {
-    private _prayersTimings: Array<IPrayerTime> ;
+    private _prayers: Array<IPrayerTime> ;
     private _prayersDate : Date;
-    
     //prayer constructors, with timing, with timing & adjustments,
     PrayersTime(prayersDate: Date)
     {
         this._prayersDate = prayersDate;
        // this._prayersTimings = new Array();
     }
+    
 }
 
