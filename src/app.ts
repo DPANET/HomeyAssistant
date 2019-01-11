@@ -4,9 +4,9 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 import request = require('request-promise-native');
 const to =require( 'await-to-js').default;
-const { googleMapsClient } = require("./location");
+//const { googleMapsClient } = require("./location");
 import prayerEntity = require("./prayers");
-import locationEntity = require('./location');
+import {ILocation,Location,LocationFactory} from './location';
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
 
@@ -27,31 +27,26 @@ var queryString: object =[
     resolveWithFullResponse: false
 
 }];
-createLocationEntity()
+let locationInput: ILocation;
+let LocationEnity:Location;
+locationInput = {
+    address: "Watford",
+   countryCode: "GB",
+    longtitude:-0.1277583,
+    latitude:51.5073509
+}
+createLocationEntity(locationInput)
 .then((result) => {
+    LocationEnity=  result;
     console.log(result.getLocation());
+    console.log(result.getTimeZone());
 })
 .catch((err)=>{
     console.log(err.message);
 })
 
-
-
-
-async function createLocationEntity() :Promise<locationEntity.Location> {
-
-let location: locationEntity.ILocation;
-
-location = {
-    address: "ruwais camp",
-   countryCode: "AEee",
-    longtitude:45.4479073,
-    latitude:25.6868961
-}
-
-return await locationEntity.LocationFactory.createLocationFactory(location);
-
-
+async function createLocationEntity(location: ILocation) :Promise<Location> {
+return await LocationFactory.createLocationFactory(location);
 }
 
 constructPrayerTimeObject(queryString)
@@ -62,7 +57,6 @@ constructPrayerTimeObject(queryString)
     .catch((err) => {
         console.log('FAILED');
         console.log(err.message);
-
     }
     );
 async function constructPrayerTimeObject(query, callback?) {
@@ -73,9 +67,7 @@ async function constructPrayerTimeObject(query, callback?) {
         return result;
         else
         throw new Error('why');
-        
-
-        //return await(request.get(query));
+             //return await(request.get(query));
     // let PrayersTimings: Array<entity.IPrayerTime> = new Array();
     // PrayersTimings.push({ prayerName: entity.Prayers.ASR, time: Date.now(), adjustment: 2 });
     // debug(PrayersTimings + 'hi');
