@@ -8,7 +8,7 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import {ILocation,Location,LocationFactory} from './location';
+import {ILocation} from './location';
 import { number } from 'joi';
 
 
