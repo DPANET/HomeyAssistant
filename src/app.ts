@@ -9,7 +9,7 @@ import prayerEntity = require("./prayers");
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
 import {Settings} from './settings';
-import {LocationProviderFactory, LocationProviderName,LocationProvider,ILocation} from './location';
+import {LocationProviderFactory, LocationProviderName,LocationProvider,ILocation,ITimeZone,Location} from './location';
 
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
@@ -28,26 +28,39 @@ var queryString: object =[
 
 }];
 let locationInput: ILocation;
-//let locationResult: ILocation;
+
 let LocationEnity:Location;
 locationInput = {
-    address: "Dubai Mall",
-   countryCode: "AE",
-   longtitude:-0.1277583,
-    latitude:51.5073509
+    address: "Westminster",
+    countryCode: "GB",
+    latitude:51.5073509,
+    longtitude:-0.1277583
+}
+let locationUpdated = 
+{
+    address: 'Dubai',
+    countryCode: 'AE',
+    latitude: 25.1972858,
+    longtitude: 55.2792565
 }
 
 let locationProvider: LocationProvider = LocationProviderFactory.createLocationProviderFactory(LocationProviderName.GOOGLE);
-
+buildLocationObject(locationProvider);
 console.log(locationProvider.getProviderName());
-locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude)
-.then((locationResult)=> console.log(locationResult))
-.catch((err)=> console.log(err.message));
+async function buildLocationObject(locationProvider:LocationProvider)
+{
+    let locationResult: ILocation;
+    let timeZoneResult: ITimeZone;
+    let location:Location;
+    locationResult = await locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude);
+    timeZoneResult = await locationProvider.getTimeZoneByCoordinates(locationInput.latitude,locationInput.longtitude);
+    location = new Location(locationResult,timeZoneResult);
+    console.log(location.getTimeZone());
+    console.log(location.getLocation());
 
 
-locationProvider.getLocationByAddress(locationInput.address,locationInput.countryCode)
-.then((locationResult)=> console.log(locationResult))
-.catch((err)=> console.log(err.message));
+}
+
 
 // createLocationEntity(locationInput)
 // .then((result) => {
