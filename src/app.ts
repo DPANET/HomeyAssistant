@@ -9,7 +9,8 @@ import prayerEntity = require("./prayers");
 import {ILocation,Location,LocationFactory} from './location';
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
-
+import {Settings} from './settings';
+import {LocationProviderFactory, LocationProviderName,LocationProvider} from './providers';
 
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
@@ -28,49 +29,73 @@ var queryString: object =[
 
 }];
 let locationInput: ILocation;
+//let locationResult: ILocation;
 let LocationEnity:Location;
 locationInput = {
-    address: "Watford",
-   countryCode: "GB",
-    longtitude:-0.1277583,
+    address: "Dubai Mall",
+   countryCode: "AE",
+   longtitude:-0.1277583,
     latitude:51.5073509
 }
-createLocationEntity(locationInput)
-.then((result) => {
-    LocationEnity=  result;
-    console.log(result.getLocation());
-    console.log(result.getTimeZone());
-})
-.catch((err)=>{
-    console.log(err.message);
-})
 
-async function createLocationEntity(location: ILocation) :Promise<Location> {
-return await LocationFactory.createLocationFactory(location);
-}
 
-constructPrayerTimeObject(queryString)
-    .then((result) => {
-        console.log('SUCEEED');
-        console.log(result);
-    })
-    .catch((err) => {
-        console.log('FAILED');
-        console.log(err.message);
-    }
-    );
-async function constructPrayerTimeObject(query, callback?) {
-    let err, body, result, prayerObject, notification;
 
-        [err,result] = await  to(request.get(query));
-        if(!err)
-        return result;
-        else
-        throw new Error('why');
-             //return await(request.get(query));
-    // let PrayersTimings: Array<entity.IPrayerTime> = new Array();
-    // PrayersTimings.push({ prayerName: entity.Prayers.ASR, time: Date.now(), adjustment: 2 });
-    // debug(PrayersTimings + 'hi');
-}
+let locationProvider: LocationProvider = LocationProviderFactory.createLocationProviderFactory(LocationProviderName.GOOGLE);
+
+console.log(locationProvider.getProviderName());
+locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude)
+.then((locationResult)=> console.log(locationResult))
+.catch((err)=> console.log(err.message));
+
+
+
+locationProvider.getLocationByAddress(locationInput.address,locationInput.countryCode)
+.then((locationResult)=> console.log(locationResult))
+.catch((err)=> console.log(err.message));
+
+// createLocationEntity(locationInput)
+// .then((result) => {
+//     LocationEnity=  result;
+//     console.log(result.getLocation());
+//     console.log(result.getTimeZone());
+// })
+// .catch((err)=>{
+//     console.log(err.message);
+// })
+
+// Settings.getPrayersSettings().then((results)=>
+// {
+// console.log(results);
+
+// })
+// .catch((err)=> console.log(err.message));
+
+// async function createLocationEntity(location: ILocation) :Promise<Location> {
+// return await LocationFactory.createLocationFactory(location);
+// }
+
+// constructPrayerTimeObject(queryString)
+//     .then((result) => {
+//         console.log('SUCEEED');
+//         console.log(result);
+//     })
+//     .catch((err) => {
+//         console.log('FAILED');
+//         console.log(err.message);
+//     }
+//     );
+// async function constructPrayerTimeObject(query, callback?) {
+//     let err, body, result, prayerObject, notification;
+
+//         [err,result] = await  to(request.get(query));
+//         if(!err)
+//         return result;
+//         else
+//         throw new Error('why');
+//              //return await(request.get(query));
+//     // let PrayersTimings: Array<entity.IPrayerTime> = new Array();
+//     // PrayersTimings.push({ prayerName: entity.Prayers.ASR, time: Date.now(), adjustment: 2 });
+//     // debug(PrayersTimings + 'hi');
+// }
 
 

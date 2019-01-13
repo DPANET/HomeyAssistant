@@ -19,12 +19,19 @@ export interface ILocation {
 }
 export interface ITimeZone {
   timeZoneId: string,
-  timeZoneName: string,
+  timeZoneName:string,
   dstOffset: number,
   rawOffset: number
 
 }
-export class Location {
+interface ILocationEntity
+{
+  getLocation(): ILocation,
+  getTimeZone(): ITimeZone,
+  setLocation(ILocation),
+  
+}
+export class Location implements ILocationEntity{
   private _location: ILocation;
   private _timeZone: ITimeZone;
   // private _locationValidator: LocationValidator
