@@ -6,11 +6,10 @@ import request = require('request-promise-native');
 const to =require( 'await-to-js').default;
 //const { googleMapsClient } = require("./location");
 import prayerEntity = require("./prayers");
-import {ILocation,Location,LocationFactory} from './location';
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
 import {Settings} from './settings';
-import {LocationProviderFactory, LocationProviderName,LocationProvider} from './providers';
+import {LocationProviderFactory, LocationProviderName,LocationProvider,ILocation} from './location';
 
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
@@ -38,15 +37,12 @@ locationInput = {
     latitude:51.5073509
 }
 
-
-
 let locationProvider: LocationProvider = LocationProviderFactory.createLocationProviderFactory(LocationProviderName.GOOGLE);
 
 console.log(locationProvider.getProviderName());
 locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude)
 .then((locationResult)=> console.log(locationResult))
 .catch((err)=> console.log(err.message));
-
 
 
 locationProvider.getLocationByAddress(locationInput.address,locationInput.countryCode)
