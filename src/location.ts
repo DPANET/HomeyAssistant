@@ -11,7 +11,8 @@ export interface ILocation {
   latitude?: number,
   longtitude?: number,
   city?: string,
-  countryCode?: string
+  countryCode?: string,
+  countryName?:string,
   address?: string
 }
 export interface ITimeZone {
@@ -124,6 +125,7 @@ class GoogleLocationProvider extends LocationProvider {
           return {
               address: locationAddress.long_name,
               countryCode: locationCountry.short_name,
+              countryName:locationCountry.long_name,
               latitude: locationCoordinates.lat,
               longtitude: locationCoordinates.lng
           };
