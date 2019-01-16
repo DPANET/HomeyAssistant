@@ -1,63 +1,77 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = require('dotenv');
 dotenv.config();
-const Debug = require("debug");
+import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
-const ramda = require("ramda");
-var LocationProviderName;
-(function (LocationProviderName) {
-    LocationProviderName["GOOGLE"] = "Google";
-    LocationProviderName["APPLE"] = "Apple";
-    LocationProviderName["PRAYERTIME"] = "Prayer Time";
-})(LocationProviderName = exports.LocationProviderName || (exports.LocationProviderName = {}));
-const LocationErrorMessages = {
+import ramda = require('ramda');
+import { ITimeZone, ILocation } from './location';
+
+export enum LocationProviderName {
+    GOOGLE = "Google",
+    APPLE = "Apple",
+    PRAYERTIME = "Prayer Time"
+
+}
+const LocationErrorMessages =
+{
     BAD_INPUT: 'Location input provided are not valid',
     NOT_FOUND: 'Location provided cannot be found, try again with different input',
     BAD_RESULT: 'Location provided results have caused unexpected error, please try different input',
     TIME_OUT: 'Connection cannot be made to location provider, please try again after a while'
-};
+}
+export interface ILocationProvider {
+    getProviderName(): LocationProviderName
+    getLocationByCoordinates(lng: number, lat: number): Promise<ILocation>
+    getTimeZoneByCoordinates(lng: number, lat: number): Promise<ITimeZone>
+    getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>
+
+}
 //add validation later as a seperate class
-class LocationProvider {
-    constructor(providerName) {
+export abstract class LocationProvider implements ILocationProvider {
+
+    private _providerName;
+    constructor(providerName: LocationProviderName) {
         this._providerName = providerName;
     }
-    getProviderName() {
+    getProviderName(): LocationProviderName {
         return this._providerName;
     }
+    abstract async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation>;
+    abstract async getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone>;
+    abstract async getLocationByAddress(address: string, countryCode: string): Promise<ILocation>;
+
 }
-exports.LocationProvider = LocationProvider;
+
 class GoogleLocationProvider extends LocationProvider {
+    private _googleMapClient;
+    private _location: ILocation;
     constructor() {
         super(LocationProviderName.GOOGLE);
         this._googleMapClient = require('@google/maps').createClient({
             key: process.env.GOOGLE_API_KEY,
             Promise: Promise
         });
+
     }
-    async getLocationByCoordinates(lat, lng) {
+    public async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation> {
         let googleLocation, err;
         if (lat !== null && lng !== null) {
             [err, googleLocation] = await to(this._googleMapClient.reverseGeocode({
                 latlng: [lat, lng],
                 result_type: ['locality', 'country']
             }).asPromise());
-            if (err)
-                throw new Error(LocationErrorMessages.NOT_FOUND);
+            if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
             return this.parseLocation(googleLocation);
         }
-        else
-            throw new Error(LocationErrorMessages.BAD_INPUT);
+        else throw new Error(LocationErrorMessages.BAD_INPUT);
     }
-    async getTimeZoneByCoordinates(lat, lng) {
+    public async getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone> {
         let googleTimeZone, err, timezoneObject;
         if (lat !== null && lng !== null) {
             [err, googleTimeZone] = await to(this._googleMapClient
                 .timezone({ location: [lat, lng] })
                 .asPromise());
-            if (err)
-                throw new Error(LocationErrorMessages.NOT_FOUND);
+            if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
             timezoneObject = googleTimeZone.json;
             return {
                 timeZoneId: timezoneObject.timeZoneId,
@@ -66,27 +80,27 @@ class GoogleLocationProvider extends LocationProvider {
                 rawOffset: timezoneObject.rawOffset
             };
         }
-        else
-            throw new Error(LocationErrorMessages.BAD_INPUT);
+        else throw new Error(LocationErrorMessages.BAD_INPUT);
     }
-    async getLocationByAddress(address, countryCode) {
+    public async getLocationByAddress(address: string, countryCode: string): Promise<ILocation> {
         let googleLocation, err;
         if (address !== null && countryCode !== null) {
             [err, googleLocation] = await to(this._googleMapClient.
                 geocode({ address: address, components: { country: countryCode } })
                 .asPromise());
-            if (err)
-                throw new Error(LocationErrorMessages.NOT_FOUND);
+            if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
             return this.parseLocation(googleLocation);
         }
-        else
-            throw new Error(LocationErrorMessages.BAD_INPUT);
+        else throw new Error(LocationErrorMessages.BAD_INPUT);
+
+
     }
-    parseLocation(googleLocation) {
+    private parseLocation(googleLocation: any): ILocation {
         let locationCoordinates, locationAddress, locationCountry;
         let filterbycountry = n => ramda.contains('country', n.types);
         let filterbyaddress = n => ramda.contains('locality', n.types);
         if (googleLocation !== null && googleLocation.json.results.length > 0) {
+
             locationCoordinates = ramda.path(['results', '0', 'geometry', 'location'], googleLocation.json);
             locationAddress = ramda.find(filterbyaddress)(googleLocation.json.results[0].address_components);
             locationCountry = ramda.find(filterbycountry)(googleLocation.json.results[0].address_components);
@@ -100,12 +114,12 @@ class GoogleLocationProvider extends LocationProvider {
                 longtitude: locationCoordinates.lng
             };
         }
-        else
-            throw new Error(LocationErrorMessages.NOT_FOUND);
+        else throw new Error(LocationErrorMessages.NOT_FOUND);
     }
 }
-class LocationProviderFactory {
-    static createLocationProviderFactory(locationProviderName) {
+
+export class LocationProviderFactory {
+    static createLocationProviderFactory(locationProviderName: LocationProviderName): LocationProvider {
         switch (locationProviderName) {
             case LocationProviderName.GOOGLE:
                 return new GoogleLocationProvider();
@@ -113,4 +127,3 @@ class LocationProviderFactory {
         }
     }
 }
-exports.LocationProviderFactory = LocationProviderFactory;

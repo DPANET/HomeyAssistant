@@ -9,8 +9,8 @@ import prayerEntity = require("./prayers");
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
 import {Settings} from './settings';
-import {LocationProviderFactory, LocationProviderName,LocationProvider,ILocation,ITimeZone,Location,PrayerLocationBuider} from './location';
-
+import {ILocation,ITimeZone, Location,LocationBuilder,}  from './location';
+import {LocationProvider,LocationProviderFactory,LocationProviderName} from './providers';
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
 var queryString: object =[
@@ -29,7 +29,7 @@ var queryString: object =[
 }];
 let locationInput: ILocation;
 
-let LocationEnity:Location;
+let LocationEnity: Location;
 locationInput = {
     address: "Westminster",
     countryCode: "GB",
@@ -49,7 +49,7 @@ buildLocationObject(locationProvider);
 console.log(locationProvider.getProviderName());
 async function buildLocationObject(locationProvider:LocationProvider)
 {
-    let locationResult: ILocation;
+    let locationResult:ILocation;
     let timeZoneResult: ITimeZone;
     let location:Location;
     locationResult = await locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude);
@@ -62,12 +62,12 @@ async function buildLocationObject(locationProvider:LocationProvider)
 }
 async function createLocation()
 {
-    let locationBuilder: PrayerLocationBuider= new PrayerLocationBuider();
+    let locationBuilder: LocationBuilder= new LocationBuilder(locationProvider);
     let locationEntity : Location;
      locationBuilder.setLocationCoordinates(locationInput.latitude,locationInput.longtitude)
     .then(()=>locationBuilder.setLocationAddress(locationInput.address,locationInput.countryCode))
     .then(()=>locationBuilder.setLocationTimeZone(locationInput.latitude,locationInput.longtitude))
-    .then(()=>{locationEntity = locationBuilder.createLocation()})
+    .then(()=>{ locationBuilder.createLocation();})
     .catch((err)=> console.log(err.message));
 }
 
