@@ -11,6 +11,7 @@ import JasmineExpect = require('jasmine-expect');
 import {Settings} from './settings';
 import {ILocation,ITimeZone, Location,LocationBuilder,}  from './location';
 import {LocationProvider,LocationProviderFactory,LocationProviderName} from './providers';
+import * as Joi from 'joi';
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
 var queryString: object =[
@@ -45,8 +46,8 @@ let locationUpdated =
 }
 
 let locationProvider: LocationProvider = LocationProviderFactory.createLocationProviderFactory(LocationProviderName.GOOGLE);
-buildLocationObject(locationProvider);
-console.log(locationProvider.getProviderName());
+//buildLocationObject(locationProvider);
+//console.log(locationProvider.getProviderName());
 async function buildLocationObject(locationProvider:LocationProvider)
 {
     let locationResult:ILocation;
@@ -72,6 +73,26 @@ async function createLocation()
 }
 
 
+async function validate()
+{
+    const joiSchema = Joi.object().keys({
+        countryCode:Joi.string()
+    });
+    let location : ILocation;
+    let result,err;
+    location.countryCode = "AE";
+    [err,result] = await to(Joi.validate<ILocation>(location,joiSchema));
+    if(err)
+    console.log(err.message);
+    else
+    console.log(result);
+}
+
+
+validate().catch((err)=>
+{
+    console.log(err.message);
+});
 // createLocationEntity(locationInput)
 // .then((result) => {
 //     LocationEnity=  result;
