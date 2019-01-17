@@ -138,6 +138,7 @@ interface ILocationBuilder<T> {
   private _locationProvider: ILocationProvider;
   constructor(locationProvider:ILocationProvider) {
     this._location = new Location();
+    
   }
   async setLocationCoordinates(lat: number, lng: number): Promise<LocationBuilder> {
     return this
