@@ -5,7 +5,7 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import Joi = require('joi');
 import * as location from './location';
-
+export type ValidtionTypes = location.ILocationEntity;
 export enum ValidatorProviders {
     LocationValidator = "Validate Location"
 
@@ -67,13 +67,13 @@ class ValidationError implements IValidationError {
     }
 
 }
-export interface IValid<T> {
-    validate(validateObject: T): Promise<boolean>;
+export interface IValid<ValidtionTypes> {
+    validate(validateObject: ValidtionTypes): Promise<boolean>;
     isValid(): boolean;
     getValidationError(): IValidationError;
 
 }
- abstract class Validator<T> implements IValid<T>
+ abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
 {
 
     private _validatorName: string;
@@ -89,7 +89,7 @@ export interface IValid<T> {
     protected setIsValid(state: boolean) {
         this._isValid = state;
     }
-    abstract validate(validateObject: T): Promise<boolean>;
+    abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
     public get validatorName(): string {
         return this._validatorName;
     }
@@ -119,19 +119,20 @@ export interface IValid<T> {
             longtitude: Joi.number().min(-180).max(180),
             countryName: Joi.any()
         })
-            .with('address', 'countryCode')
-            .with('latitude', 'longtitude');
+            .and('address', 'countryCode')
+            .and('latitude', 'longtitude');
 
     }
     public async validate(validateObject: location.ILocationEntity): Promise<boolean> {
         
-        let result, err: Joi.ValidationError, iErr:IValidationError;
-        [err, result] = to(await Joi.validate(validateObject, this._joiSchema));
+        let result, err, iErr:IValidationError;
+        [err, result] = await to( Joi.validate(validateObject, this._joiSchema));
         if (err) {
             iErr= this.processErrorMessages(err);
+        
             this.setIsValid(false);
             this.setValidatonError(iErr);
-            Promise.reject(iErr);
+            return Promise.reject(iErr);
         }
         else{
             this.setIsValid(true);
@@ -152,9 +153,9 @@ export interface IValid<T> {
     }
 
 }
-type validtionTypes = location.ILocationEntity| location.ILocation;
+
 export class ValidatorProviderFactory {
-    static createValidateProvider(validatorProviderName:ValidatorProviders): IValid<validtionTypes> {
+    static createValidateProvider(validatorProviderName:ValidatorProviders): IValid<ValidtionTypes> {
     
         switch (validatorProviderName) {
             case ValidatorProviders.LocationValidator:

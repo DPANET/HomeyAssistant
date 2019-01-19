@@ -32,7 +32,8 @@ var queryString: object =[
 }];
 let locationInput: loc.ILocation;
 
-let LocationEnity: loc.Location;
+let LocationEnity: loc.ILocationEntity;
+
 locationInput = {
     address: "Westminster",
     countryCode: "GB",
@@ -47,48 +48,81 @@ let locationUpdated =
     longtitude: 55.2792565
 }
 
-let locationProvider: provider.ILocationProvider = provider.LocationProviderFactory.createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
-//buildLocationObject(locationProvider);
+buildLocationObject().catch((err)=>console.log(err));
 //console.log(locationProvider.getProviderName());
-async function buildLocationObject(locationProvider:provider.ILocationProvider)
+async function buildLocationObject()
 {
-    let locationResult:loc.ILocation;
-    let timeZoneResult: loc.ITimeZone;
+    let locationBuilder : loc.ILocationBuilder=loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
+
     let locationObject:loc.ILocationEntity;
-    locationResult = await locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude);
-    timeZoneResult = await locationProvider.getTimeZoneByCoordinates(locationInput.latitude,locationInput.longtitude);
-
-    locationObject = new loc.Location(locationResult,timeZoneResult);
-    console.log(locationObject);
-    console.log(locationObject.timeZoneName);
+    let err;
+    [err,locationObject]= await to(
+    locationBuilder.setLocationCoordinates(25.1972858,55.2792565).
+    then(()=> {return locationBuilder.createLocation();}));
+    if(err)
+    console.log(err);
+    else
+    console.log(locationObject);    
 
 }
-// async function createLocation()
-// {
-//     let locationBuilder: LocationBuilder= new LocationBuilder(locationProvider);
-//     let locationEntity : Location;
-//      locationBuilder.setLocationCoordinates(locationInput.latitude,locationInput.longtitude)
-//     .then(()=>locationBuilder.setLocationAddress(locationInput.address,locationInput.countryCode))
-//     .then(()=>locationBuilder.setLocationTimeZone(locationInput.latitude,locationInput.longtitude))
-//     .then(()=>{ locationBuilder.createLocation();})
-//     .catch((err)=> console.log(err.message));
-// }
-
-
-async function validate()
-{
+async function validate1()
+{    
+    let locationEntity:loc.ILocationEntity;
+    let validationError:val.IValidationError,validationResult:boolean;
+    locationEntity= {
     
-    
-    val.ValidatorProviderFactory.
+      address:"fs",
+      // countryCode: "GB",
+        latitude:20,
+        longtitude:-0.1277583
+    }
+   let validate:val.IValid<val.ValidtionTypes> =  val.ValidatorProviderFactory.
     createValidateProvider(val.ValidatorProviders.LocationValidator);
-  
+    [validationError,validationResult] = await to(validate.validate(locationEntity));
+    if(validationError)
+    {
+    console.log("validartion error : "+validationError.message);
+
+    }
+    else
+    return validationResult;
+
 }
+async function validate2()
+{
+    let locationEntity:loc.ILocationEntity;
+
+    locationEntity= {
+    
+       
+        countryCode: "GB",
+        latitude:2000,
+        longtitude:-0.1277583
+    }
+    let  _joiSchema = Joi.object().keys({
+    countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
+    address: Joi.string(),
+    latitude: Joi.number().min(-90).max(90),
+    longtitude: Joi.number().min(-180).max(180),
+    countryName: Joi.any()
+})
+    .with('address', 'countryCode')
+    .with('latitude', 'longtitude');
+
+    let result, err;
+        [err, result] = await to( Joi.validate(locationEntity, _joiSchema));
+
+        if(err)
+        console.log("validartion 2 error : "+err.message);
+        else
+        console.log(true);
+}
+validate1().then(()=>{}).catch((err)=>
+{
+    console.log("error : "+ err.message);
+});
 
 
-// validate().catch((err)=>
-// {
-//     console.log(err.message);
-// });
 //console.log(manager.BuilderFactory.createBuilderFactory());
 // createLocationEntity(locationInput)
 // .then((result) => {

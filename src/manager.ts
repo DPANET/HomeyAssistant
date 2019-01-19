@@ -5,13 +5,11 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import * as location from './location';
+import * as provider from './providers';
+import * as validator from './validator';
 import prayerEntity = require('./prayers');
-export enum BuilderType {
-    LocationBuilder = "Location Builder",
-    APPLE = "Apple",
-    PRAYERTIME = "Prayer Time"
 
-}
+export type BuilderTypes = location.ILocationBuilder;
 class PrayerManager 
 {
     
@@ -27,4 +25,5 @@ class PrayerManagerFactory
     }
 
 }
+
 
