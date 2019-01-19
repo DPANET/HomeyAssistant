@@ -4,7 +4,8 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import {LocationProvider,LocationProviderFactory,LocationProviderName,ILocationProvider} from './providers';
+import * as provider from './providers';
+import * as validator from "./validator"; 
 
 export interface ILocation {
   latitude?: number,
@@ -25,7 +26,6 @@ export interface ILocationEntity extends ILocation,ITimeZone
 {
 
 }
-
 
 export class Location implements ILocationEntity {
   private _latitude?: number;
@@ -124,33 +124,67 @@ export class Location implements ILocationEntity {
 }
 
 
-interface ILocationBuilder<T> {
-  setLocationCoordinates(lat: number, lng: number): Promise<T>
-  setLocationAddress(address: string, countryCode: string): Promise<T>
-  setLocationTimeZone(lat: number, lng: number): Promise<T>
+interface ILocationBuilder {
+  setLocationCoordinates(lat: number, lng: number): Promise<ILocationBuilder>
+  setLocationAddress(address: string, countryCode: string): Promise<ILocationBuilder>
   createLocation(): Promise<ILocationEntity>
 
 }
 
- export class LocationBuilder implements ILocationBuilder<LocationBuilder>
+class LocationBuilder implements ILocationBuilder
 {
   private _location: ILocationEntity
-  private _locationProvider: ILocationProvider;
-  constructor(locationProvider:ILocationProvider) {
+  private _locationProvider: provider.ILocationProvider;
+  private _validtor: validator.IValid<ILocationEntity>;
+  constructor(locationProvider:provider.ILocationProvider, validator:validator.IValid<ILocationEntity>) {
     this._location = new Location();
-    
+    this._validtor = validator;
   }
-  async setLocationCoordinates(lat: number, lng: number): Promise<LocationBuilder> {
+  public async setLocationCoordinates(lat: number, lng: number): Promise<LocationBuilder> {
+    this._location.latitude = lat;
+    this._location.longtitude = lng;
     return this
   }
-  async setLocationAddress(address: string, countryCode: string): Promise<LocationBuilder> {
+ public async setLocationAddress(address: string, countryCode: string): Promise<LocationBuilder> {
+    this._location.countryCode = countryCode;
+    this._location.address = address;
+
     return this;
   }
-  async setLocationTimeZone(lat: number, lng: number): Promise<LocationBuilder> {
-    return this;
-  }
-  async createLocation(): Promise<ILocationEntity> {
-    return this._location;
+  public async createLocation(): Promise<ILocationEntity> {
+    let validationErr:validator.IValidationError,validationResult:boolean=false;
+    let providerErr:Error , locationResult: ILocationEntity;
+    [validationErr,validationResult] = await to(this._validtor.validate(this._location));
+    if(validationErr)
+    Promise.reject(validationErr);
+    if(validationResult)
+    {
+      if(this._location.latitude!== null)
+      [providerErr,locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude,this._location.longtitude));
+      else
+      [providerErr,locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address,this._location.countryCode));
+      
+      if(providerErr)
+      Promise.reject(providerErr);
+      
+      this._location = locationResult;
+      return Promise.resolve(this._location);
+
+    }
+
+
   }
 
+}
+
+export class LocationBuilderFactory{
+//FACTORY to read from config default location proivder, and validator
+  static createBuilderFactory(): ILocationBuilder {
+    let providerName:provider.ILocationProvider= provider.LocationProviderFactory.createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
+  //  let validatorProvider: validator.IValid
+      
+      return;// "string";
+             
+      }
+  
 }
