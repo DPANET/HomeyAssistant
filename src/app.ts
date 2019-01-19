@@ -8,10 +8,12 @@ const to =require( 'await-to-js').default;
 import prayerEntity = require("./prayers");
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
-import {Settings} from './settings';
-import {ILocation,ITimeZone, Location,LocationBuilder,}  from './location';
-import {LocationProvider,LocationProviderFactory,LocationProviderName} from './providers';
+import * as loc  from './location';
+import * as provider from './providers';
 import * as Joi from 'joi';
+import * as manager from './manager';
+import * as val from './validator';
+
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
 var queryString: object =[
@@ -28,9 +30,9 @@ var queryString: object =[
     resolveWithFullResponse: false
 
 }];
-let locationInput: ILocation;
+let locationInput: loc.ILocation;
 
-let LocationEnity: Location;
+let LocationEnity: loc.Location;
 locationInput = {
     address: "Westminster",
     countryCode: "GB",
@@ -45,54 +47,49 @@ let locationUpdated =
     longtitude: 55.2792565
 }
 
-let locationProvider: LocationProvider = LocationProviderFactory.createLocationProviderFactory(LocationProviderName.GOOGLE);
+let locationProvider: provider.ILocationProvider = provider.LocationProviderFactory.createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
 //buildLocationObject(locationProvider);
 //console.log(locationProvider.getProviderName());
-async function buildLocationObject(locationProvider:LocationProvider)
+async function buildLocationObject(locationProvider:provider.ILocationProvider)
 {
-    let locationResult:ILocation;
-    let timeZoneResult: ITimeZone;
-    let location:Location;
+    let locationResult:loc.ILocation;
+    let timeZoneResult: loc.ITimeZone;
+    let locationObject:loc.ILocationEntity;
     locationResult = await locationProvider.getLocationByCoordinates(locationInput.latitude,locationInput.longtitude);
     timeZoneResult = await locationProvider.getTimeZoneByCoordinates(locationInput.latitude,locationInput.longtitude);
 
-    location = new Location(locationResult,timeZoneResult);
-    console.log(location.timeZoneName);
-    console.log(location.timeZoneName);
+    locationObject = new loc.Location(locationResult,timeZoneResult);
+    console.log(locationObject);
+    console.log(locationObject.timeZoneName);
 
 }
-async function createLocation()
-{
-    let locationBuilder: LocationBuilder= new LocationBuilder(locationProvider);
-    let locationEntity : Location;
-     locationBuilder.setLocationCoordinates(locationInput.latitude,locationInput.longtitude)
-    .then(()=>locationBuilder.setLocationAddress(locationInput.address,locationInput.countryCode))
-    .then(()=>locationBuilder.setLocationTimeZone(locationInput.latitude,locationInput.longtitude))
-    .then(()=>{ locationBuilder.createLocation();})
-    .catch((err)=> console.log(err.message));
-}
+// async function createLocation()
+// {
+//     let locationBuilder: LocationBuilder= new LocationBuilder(locationProvider);
+//     let locationEntity : Location;
+//      locationBuilder.setLocationCoordinates(locationInput.latitude,locationInput.longtitude)
+//     .then(()=>locationBuilder.setLocationAddress(locationInput.address,locationInput.countryCode))
+//     .then(()=>locationBuilder.setLocationTimeZone(locationInput.latitude,locationInput.longtitude))
+//     .then(()=>{ locationBuilder.createLocation();})
+//     .catch((err)=> console.log(err.message));
+// }
 
 
 async function validate()
 {
-    const joiSchema = Joi.object().keys({
-        countryCode:Joi.string()
-    });
-    let location : ILocation;
-    let result,err;
-    location.countryCode = "AE";
-    [err,result] = await to(Joi.validate<ILocation>(location,joiSchema));
-    if(err)
-    console.log(err.message);
-    else
-    console.log(result);
+    
+    
+    val.ValidatorProviderFactory.
+    createValidateProvider(val.ValidatorProviders.LocationValidator);
+  
 }
 
 
-validate().catch((err)=>
-{
-    console.log(err.message);
-});
+// validate().catch((err)=>
+// {
+//     console.log(err.message);
+// });
+//console.log(manager.BuilderFactory.createBuilderFactory());
 // createLocationEntity(locationInput)
 // .then((result) => {
 //     LocationEnity=  result;

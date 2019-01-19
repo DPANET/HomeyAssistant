@@ -4,7 +4,7 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import { ITimeZone, ILocation } from './location';
+import { ITimeZone, ILocation, ILocationEntity } from './location';
 
 export enum LocationProviderName {
     GOOGLE = "Google",
@@ -27,7 +27,7 @@ export interface ILocationProvider {
 
 }
 //add validation later as a seperate class
-export abstract class LocationProvider implements ILocationProvider {
+ abstract class LocationProvider implements ILocationProvider {
 
     private _providerName;
     constructor(providerName: LocationProviderName) {

@@ -13,6 +13,7 @@
   ],
   "dependencies": {
     "@google/maps": "^0.5.5",
+    "@types/joi": "^14.0.1",
     "await-to-js": "^2.1.1",
     "config": "^3.0.1",
     "debug": "^2.6.9",
@@ -34,7 +35,6 @@
     "@types/googlemaps": "^3.30.16",
     "@types/jasmine": "^3.3.5",
     "@types/jasmine-expect": "^3.8.1",
-    "@types/joi": "^14.0.1",
     "@types/node": "^10.12.18",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
