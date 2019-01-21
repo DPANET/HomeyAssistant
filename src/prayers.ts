@@ -11,32 +11,37 @@ import ramda = require('ramda');
 import {ILocation} from './location';
 import { number } from 'joi';
 
-
+export enum Prayers {
+    FAJR= "Fajr",
+    SUNRISE= "Sunrise",
+    DHUHR= "Dhuhr",
+    ASR= "Asr",
+    MAGHRIB= "Maghrib",
+    SUNSET= "Sunset",
+    ISHA= "Isha",
+    MIDNIGHT= "Midnight"
+};
 export interface IPrayerTime {
-    prayerName: string;
+    prayerName: Prayers;
     time: string;
 //    adjustment: number
 }
 export interface IPrayersSettings
 {
-    adjustments : {payerName:string, adjustment:number} [];
-    method: number;
+    adjustments : {payerName:Prayers, adjustment:number} [];
+    method: IPrayerMethods;
     school: number;
     midnight:number;
     latitudeAdjustmentMethod:string;
     
 }
+export interface IPrayerMethods
+{
 
-export const Prayers = {
-    FAJR: "Fajr",
-    SUNRISE: "Sunrise",
-    DHUHR: "Dhuhr",
-    ASR: "Asr",
-    MAGHRIB: "Maghrib",
-    SUNSET: "Sunset",
-    ISHA: "Isha",
-    MIDNIGHT: "Midnight"
-};
+}
+
+
+
 export class PrayersTime
 {
     private _prayers: Array<IPrayerTime> ;

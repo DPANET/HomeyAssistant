@@ -9,7 +9,6 @@ import prayerEntity = require("./prayers");
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
 import * as loc  from './location';
-import * as provider from './providers';
 import * as Joi from 'joi';
 import * as manager from './manager';
 import * as val from './validator';
@@ -52,17 +51,20 @@ buildLocationObject().catch((err)=>console.log(err));
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject()
 {
+    try{
     let locationBuilder : loc.ILocationBuilder=loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
-
-    let locationObject:loc.ILocationEntity;
-    let err;
-    [err,locationObject]= await to(
-    locationBuilder.setLocationCoordinates(25.1972858,55.2792565).
-    then(()=> {return locationBuilder.createLocation();}));
-    if(err)
-    console.log(err);
-    else
+    let locationObject:loc.ILocationEntity= await locationBuilder.setLocationAddress('Dubai','AE').
+    then(lb=>lb.createLocation());
+    
     console.log(locationObject);    
+    }
+    catch(err)
+    {
+        console.log(err.message);
+    }
+    //console.log(util.inspect(err.message, false, null, true /* enable colors */));
+   
+    
 
 }
 async function validate1()
@@ -117,10 +119,8 @@ async function validate2()
         else
         console.log(true);
 }
-validate1().then(()=>{}).catch((err)=>
-{
-    console.log("error : "+ err.message);
-});
+
+
 
 
 //console.log(manager.BuilderFactory.createBuilderFactory());

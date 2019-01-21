@@ -5,7 +5,7 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import * as location from './location';
-import * as provider from './providers';
+import * as provider from './location-provider';
 import * as validator from './validator';
 import prayerEntity = require('./prayers');
 

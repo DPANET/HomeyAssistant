@@ -4,8 +4,9 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import * as provider from './providers';
+import * as provider from './location-provider';
 import * as validator from "./validator";
+import { isNullOrUndefined } from 'util';
 export enum LocationTypeName {
   LocationBuilder = "Location Builder"
 
@@ -28,7 +29,6 @@ export interface ITimeZone {
 export interface ILocationEntity extends ILocation, ITimeZone {
 
 }
-
 class Location implements ILocationEntity {
   private _latitude?: number;
   private _longtitude?: number;
@@ -43,14 +43,14 @@ class Location implements ILocationEntity {
   private _rawOffset: number;
 
   constructor(location?: ILocation, timeZone?: ITimeZone) {
-    if (location !== null) {
+    if (!isNullOrUndefined(location)) {
       this._latitude = location.latitude;
-      this.longtitude - location.longtitude;
+      this._longtitude - location.longtitude;
       this._countryCode = location.countryCode;
       this._countryName = location.countryName;
       this._address = location.address;
     }
-    if (timeZone !== null) {
+    if (!isNullOrUndefined(timeZone)) {
       this._timeZoneId = timeZone.timeZoneId;
       this._timeZoneName = timeZone.timeZoneName;
       this._dstOffset = timeZone.dstOffset;
@@ -139,18 +139,20 @@ class LocationBuilder implements ILocationBuilder {
   constructor(locationProvider: provider.ILocationProvider, validator: validator.IValid<ILocationEntity>) {
     this._location = new Location();
     this._validtor = validator;
+    this._locationProvider=locationProvider;
+
   }
   public async setLocationCoordinates(lat: number, lng: number): Promise<LocationBuilder> {
-    console.log(lat);
+
     this._location.latitude = lat;
-    console.log(this._location.latitude);
     this._location.longtitude = lng;
+
+
     return this
   }
   public async setLocationAddress(address: string, countryCode: string): Promise<LocationBuilder> {
     this._location.countryCode = countryCode;
     this._location.address = address;
-
     return this;
   }
   public async createLocation(): Promise<ILocationEntity> {
@@ -158,16 +160,20 @@ class LocationBuilder implements ILocationBuilder {
     let providerErr: Error, locationResult: ILocationEntity;
     [validationErr, validationResult] = await to(this._validtor.validate(this._location));
     if (validationErr)
-      Promise.reject(validationErr);
+      return Promise.reject(validationErr);
     if (validationResult) {
-      if (this._location.latitude !== null)
+      if (!isNullOrUndefined(this._location.latitude))
         [providerErr, locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude, this._location.longtitude));
-      else
+      else if ((!isNullOrUndefined(this._location.address))) {
         [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
-      if (providerErr)
-        Promise.reject(providerErr);
-      this._location = locationResult;
-      return Promise.resolve(this._location);
+        if (providerErr)
+          return Promise.reject(providerErr);
+        this._location = locationResult;
+        return Promise.resolve(this._location);
+      }
+      else {
+        return Promise.reject()
+      }
     }
   }
 
