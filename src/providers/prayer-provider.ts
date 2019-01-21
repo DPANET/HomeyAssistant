@@ -19,10 +19,10 @@ const LocationErrorMessages =
     BAD_RESULT: 'Location provided results have caused unexpected error, please try different input',
     TIME_OUT: 'Connection cannot be made to location provider, please try again after a while'
 }
-export interface IPrayersProvider {
-    getProviderName(): LocationProviderName
-    getLocationByCoordinates(lng: number, lat: number): Promise<ILocation>
-    getTimeZoneByCoordinates(lng: number, lat: number): Promise<ITimeZone>
-    getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>
+// export interface IPrayersProvider {
+//     getProviderName(): LocationProviderName
+//     getLocationByCoordinates(lng: number, lat: number): Promise<ILocation>
+//     getTimeZoneByCoordinates(lng: number, lat: number): Promise<ITimeZone>
+//     getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>
 
-}
+// }
