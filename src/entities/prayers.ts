@@ -10,8 +10,6 @@ const to = require('await-to-js').default;
 import ramda = require('ramda');
 import {ILocation} from './location';
 import { number } from 'joi';
-import { ENGINE_METHOD_RAND, ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
-import { Interface } from 'readline';
 
 export enum Prayers {
     FAJR= "Fajr",
