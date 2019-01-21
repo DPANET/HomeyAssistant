@@ -1,5 +1,5 @@
 import config = require('config');
-import { IPrayersSettings } from './prayers';
+import { IPrayersSettings } from '../entities/prayers';
 import { array } from 'joi';
 interface IApiSettings
 {

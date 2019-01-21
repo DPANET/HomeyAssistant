@@ -3,13 +3,15 @@
 //const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
-import settings = require('./settings');
+import settings = require('../configurators/settings');
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import {ILocation} from './location';
 import { number } from 'joi';
+import { ENGINE_METHOD_RAND, ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
+import { Interface } from 'readline';
 
 export enum Prayers {
     FAJR= "Fajr",
@@ -26,17 +28,39 @@ export interface IPrayerTime {
     time: string;
 //    adjustment: number
 }
+export interface IPrayerAdjustments
+{
+    prayerName:Prayers,
+    adjustments:number
+}
+export interface IPrayerMidnight
+{
+    id:number,
+    midnight:string
+}
+export interface IPrayerLatitude
+{
+    id:number,
+    latitudeMethod:string
+}
 export interface IPrayersSettings
 {
-    adjustments : {payerName:Prayers, adjustment:number} [];
+    adjustments : IPrayerAdjustments [];
     method: IPrayerMethods;
-    school: number;
-    midnight:number;
-    latitudeAdjustmentMethod:string;
+    school: IPrayerSchools;
+    midnight:IPrayerMidnight;
+    latitudeAdjustment:IPrayerLatitude;
     
+}
+export interface IPrayerSchools
+{
+    id:number,
+    school:string
 }
 export interface IPrayerMethods
 {
+    id:number,
+    methodName: string
 
 }
 

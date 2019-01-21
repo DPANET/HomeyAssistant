@@ -5,13 +5,13 @@ const debug = Debug("app:startup");
 import request = require('request-promise-native');
 const to =require( 'await-to-js').default;
 //const { googleMapsClient } = require("./location");
-import prayerEntity = require("./prayers");
+import prayerEntity = require("./entities/prayers");
 import util = require('util');
 import JasmineExpect = require('jasmine-expect');
-import * as loc  from './location';
+import * as loc  from './entities/location';
 import * as Joi from 'joi';
-import * as manager from './manager';
-import * as val from './validator';
+import * as manager from './manager/manager';
+import * as val from './validators/validator';
 
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();

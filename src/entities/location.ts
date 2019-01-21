@@ -4,8 +4,8 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import * as provider from './location-provider';
-import * as validator from "./validator";
+import * as provider from '../providers/location-provider';
+import * as validator from "../validators/validator";
 import { isNullOrUndefined } from 'util';
 export enum LocationTypeName {
   LocationBuilder = "Location Builder"
