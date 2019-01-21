@@ -4,6 +4,7 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
+import { isNullOrUndefined } from 'util';
 import { ITimeZone, ILocation, ILocationEntity } from './location';
 
 export enum LocationProviderName {
@@ -55,7 +56,7 @@ class GoogleLocationProvider extends LocationProvider {
     }
     public async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation> {
         let googleLocation, err;
-        if (lat !== null && lng !== null) {
+        if (!isNullOrUndefined(lat) && !isNullOrUndefined(lng)) {
             [err, googleLocation] = await to(this._googleMapClient.reverseGeocode({
                 latlng: [lat, lng],
                 result_type: ['locality', 'country']
@@ -67,7 +68,7 @@ class GoogleLocationProvider extends LocationProvider {
     }
     public async getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone> {
         let googleTimeZone, err, timezoneObject;
-        if (lat !== null && lng !== null) {
+        if (!isNullOrUndefined(lat)  && !isNullOrUndefined(lng)) {
             [err, googleTimeZone] = await to(this._googleMapClient
                 .timezone({ location: [lat, lng] })
                 .asPromise());
@@ -84,7 +85,7 @@ class GoogleLocationProvider extends LocationProvider {
     }
     public async getLocationByAddress(address: string, countryCode: string): Promise<ILocation> {
         let googleLocation, err;
-        if (address !== null && countryCode !== null) {
+        if (!isNullOrUndefined(address)  && !isNullOrUndefined(countryCode)) {
             [err, googleLocation] = await to(this._googleMapClient.
                 geocode({ address: address, components: { country: countryCode } })
                 .asPromise());
@@ -99,12 +100,12 @@ class GoogleLocationProvider extends LocationProvider {
         let locationCoordinates, locationAddress, locationCountry;
         let filterbycountry = n => ramda.contains('country', n.types);
         let filterbyaddress = n => ramda.contains('locality', n.types);
-        if (googleLocation !== null && googleLocation.json.results.length > 0) {
+        if (!isNullOrUndefined(googleLocation) && googleLocation.json.results.length > 0) {
 
             locationCoordinates = ramda.path(['results', '0', 'geometry', 'location'], googleLocation.json);
             locationAddress = ramda.find(filterbyaddress)(googleLocation.json.results[0].address_components);
             locationCountry = ramda.find(filterbycountry)(googleLocation.json.results[0].address_components);
-            if (locationCoordinates === null || locationAddress === null || locationCountry === null)
+            if (isNullOrUndefined(locationCoordinates)  || isNullOrUndefined(locationAddress) || isNullOrUndefined(locationCountry))
                 throw new Error(LocationErrorMessages.BAD_RESULT);
             return {
                 address: locationAddress.long_name,

@@ -5,6 +5,7 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import Joi = require('joi');
 import * as location from './location';
+import { isNullOrUndefined } from 'util';
 export type ValidtionTypes = location.ILocationEntity;
 export enum ValidatorProviders {
     LocationValidator = "Validate Location"
@@ -119,27 +120,28 @@ export interface IValid<ValidtionTypes> {
             longtitude: Joi.number().min(-180).max(180),
             countryName: Joi.any()
         })
-            .and('address', 'countryCode')
-            .and('latitude', 'longtitude');
+        .and('address', 'countryCode')
+        .and('latitude', 'longtitude');
 
     }
     public async validate(validateObject: location.ILocationEntity): Promise<boolean> {
         
         let result, err, iErr:IValidationError;
-        [err, result] = await to( Joi.validate(validateObject, this._joiSchema));
-        if (err) {
+      //  console.log('object : ' + util.inspect(validateObject, false, null, true /* enable colors */));
+        [err, result] = await to( Joi.validate(validateObject, this._joiSchema,{abortEarly:false,allowUnknown:true}));
+        if (!isNullOrUndefined(err)) {
             iErr= this.processErrorMessages(err);
-        
             this.setIsValid(false);
             this.setValidatonError(iErr);
+
             return Promise.reject(iErr);
+            
         }
         else{
+            
             this.setIsValid(true);
             return Promise.resolve( true);
         }
-
-
     }
     private processErrorMessages(err: Joi.ValidationError): IValidationError {
         let validationError: IValidationError = new ValidationError(err);
