@@ -49,7 +49,8 @@ export interface IPrayersSettings
     school: IPrayerSchools;
     midnight:IPrayerMidnight;
     latitudeAdjustment:IPrayerLatitude;
-    
+    startDate:Date;
+    endDate:Date;
 }
 export interface IPrayerSchools
 {
@@ -67,8 +68,7 @@ export interface IPrayersTime
     location: ILocationEntity;
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
-    startDate:Date;
-    endDate:Date;
+
 
 }
 class PrayerAdjustment implements IPrayerAdjustments
@@ -223,6 +223,11 @@ class PrayersTime implements IPrayersTime
     public set prayers(value: IPrayers[]) {
         this._prayers = value;
     }
+ 
+
+}
+class PrayersSettings implements IPrayersSettings
+{
     private _startDate: Date;
     public get startDate(): Date {
         return this._startDate;
@@ -237,9 +242,6 @@ class PrayersTime implements IPrayersTime
     public set endDate(value: Date) {
         this._endDate = value;
     }
-}
-class PrayersSettings implements IPrayersSettings
-{
     private _adjustments: IPrayerAdjustments[];
     public get adjustments(): IPrayerAdjustments[] {
         return this._adjustments;
