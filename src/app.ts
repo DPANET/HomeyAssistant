@@ -10,7 +10,7 @@ import util = require('util');
 import JasmineExpect = require('jasmine-expect');
 import * as loc  from './entities/location';
 import * as Joi from 'joi';
-import * as manager from './manager/manager';
+import * as manager from './managers/manager';
 import * as val from './validators/validator';
 
 //console.log(process.env.GOOGLE_API_KEY);

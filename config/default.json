@@ -42,11 +42,47 @@
                     "latitudeAdjustmentMethod": 3,
                     "hijrAdjustment": 1
                 }
-            }
+            },
+            "schools": [
+                {
+                    "id": 0,
+                    "name": "Sahfi, Hanbali and Maliki"
+                },
+                {
+                    "id": 1,
+                    "name": "Hanafi"
+                }
+            ],
+            "latitude":[
+                {
+                    "id": 1,
+                    "name": "Middle of the night"
+                },
+                {
+                    "id": 2,
+                    "name": "One Seventh"
+                },
+                {
+                    "id":3,
+                    "name": "Angle Based"
+                }
+
+            ],
+            "midnight":[
+                {
+                    "id": 1,
+                    "name": "Standard (Mid Sunset to Sunrise)"
+                },
+                {
+                    "id": 2,
+                    "name": "Jafari (Mid Sunset to Sunrise)"
+                }
+
+            ]
+
         }
-     
     },
     "locationProvider": {
-        "defaultProvider":"Google"
+        "defaultProvider": "Google"
     }
 }

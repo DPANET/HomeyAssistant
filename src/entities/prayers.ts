@@ -22,70 +22,223 @@ export enum PrayersName {
     MIDNIGHT= "Midnight"
 };
 export interface IPrayers {
-    prayerName: PrayersName,
-    time: string,
-    prayersDate:Date
+    prayerName: PrayersName;
+    time: string;
+    prayersDate:Date;
 //    adjustment: number
 }
 export interface IPrayerAdjustments
 {
-    prayerName:PrayersName,
-    adjustments:number
+    prayerName:PrayersName;
+    adjustments:number;
 }
 export interface IPrayerMidnight
 {
-    id:number,
-    midnight:string
+    id:number;
+    midnight:string;
 }
 export interface IPrayerLatitude
 {
-    id:number,
-    latitudeMethod:string
+    id:number;
+    latitudeMethod:string;
 }
 export interface IPrayersSettings
 {
-    adjustments : IPrayerAdjustments [],
-    method: IPrayerMethods,
-    school: IPrayerSchools,
-    midnight:IPrayerMidnight,
-    latitudeAdjustment:IPrayerLatitude
+    adjustments : IPrayerAdjustments [];
+    method: IPrayerMethods;
+    school: IPrayerSchools;
+    midnight:IPrayerMidnight;
+    latitudeAdjustment:IPrayerLatitude;
     
 }
 export interface IPrayerSchools
 {
-    id:number,
-    school:string
+    id:number;
+    school:string;
 }
 export interface IPrayerMethods
 {
-    id:number,
-    methodName: string
+    id:number;
+    methodName: string;
 
 }
 export interface IPrayersTime
 {
-    location: ILocationEntity,
-    pareyerSettings: IPrayersSettings,
-    prayers: Array<IPrayers>,
-    startDate:Date,
-    endDate:Date
+    location: ILocationEntity;
+    pareyerSettings: IPrayersSettings;
+    prayers: Array<IPrayers>;
+    startDate:Date;
+    endDate:Date;
 
 }
-
-export class PrayersTime implements IPrayersTime
+class PrayerAdjustment implements IPrayerAdjustments
 {
-    private _prayers: Array<IPrayers> ;
-    private _prayersDate : Date;
-    //prayer constructors, with timing,
-    constructor(prayersDate: Date, prayers: Array<IPrayers>)
-    {
-        this._prayersDate = prayersDate;
-        this._prayers = prayers;
-       // this._prayersTimings = new Array();
+    private _prayerName: PrayersName;   
+    public get prayerName(): PrayersName {
+        return this._prayerName;
+    }
+    public set prayerName(value: PrayersName) {
+        this._prayerName = value;
+    }
+    private _adjustments: number;
+    public get adjustments(): number {
+        return this._adjustments;
+    }
+    public set adjustments(value: number) {
+        this._adjustments = value;
+    }
+
+
+}
+class PrayersMidnight implements IPrayerMidnight{
+    private _id: number;    
+    public get id(): number {
+        return this._id;
+    }
+    public set id(value: number) {
+        this._id = value;
+    }
+    private _midnight: string;
+    public get midnight(): string {
+        return this._midnight;
+    }
+    public set midnight(value: string) {
+        this._midnight = value;
     }
 
 }
-export class PrayersSettings implements IPrayersSettings
+class PrayerLatitude implements IPrayerLatitude
+{
+    private _id: number;    
+    public get id(): number {
+        return this._id;
+    }
+    public set id(value: number) {
+        this._id = value;
+    }
+    private _latitudeMethod: string;
+    public get latitudeMethod(): string {
+        return this._latitudeMethod;
+    }
+    public set latitudeMethod(value: string) {
+        this._latitudeMethod = value;
+    }
+
+
+}
+class PrayerSchools implements IPrayerSchools
+{
+    private _id: number;   
+    public get id(): number {
+        return this._id;
+    }
+    public set id(value: number) {
+        this._id = value;
+    }
+    private _school: string;
+    public get school(): string {
+        return this._school;
+    }
+    public set school(value: string) {
+        this._school = value;
+    }
+
+
+}
+class PrayersMethods implements IPrayerMethods
+{
+    private _id: number;   
+    public get id(): number {
+        return this._id;
+    }
+    public set id(value: number) {
+        this._id = value;
+    }
+    private _methodName: string;
+    public get methodName(): string {
+        return this._methodName;
+    }
+    public set methodName(value: string) {
+        this._methodName = value;
+    }
+
+
+
+}
+class Prayers implements IPrayers
+{
+    private _prayerName: PrayersName;   
+    public get prayerName(): PrayersName {
+        return this._prayerName;
+    }
+    public set prayerName(value: PrayersName) {
+        this._prayerName = value;
+    }
+     private _time: string;
+    public get time(): string {
+        return this._time;
+    }
+    public set time(value: string) {
+        this._time = value;
+    }
+    private _prayersDate: Date;
+    public get prayersDate(): Date {
+        return this._prayersDate;
+    }
+    public set prayersDate(value: Date) {
+        this._prayersDate = value;
+    }
+
+
+}
+class PrayersTime implements IPrayersTime
+{
+
+    //prayer constructors, with timing,
+    constructor(startDate: Date,endDate:Date, prayers: Array<IPrayers>)
+    {
+        this._startDate= startDate;
+        this._endDate= endDate;
+        this._prayers = prayers;
+       // this._prayersTimings = new Array();
+    }
+    private _location: ILocationEntity;
+    public get location(): ILocationEntity {
+        return this._location;
+    }
+    public set location(value: ILocationEntity) {
+        this._location = value;
+    }
+    private _pareyerSettings: IPrayersSettings;
+    public get pareyerSettings(): IPrayersSettings {
+        return this._pareyerSettings;
+    }
+    public set pareyerSettings(value: IPrayersSettings) {
+        this._pareyerSettings = value;
+    }
+    private _prayers: IPrayers[];
+    public get prayers(): IPrayers[] {
+        return this._prayers;
+    }
+    public set prayers(value: IPrayers[]) {
+        this._prayers = value;
+    }
+    private _startDate: Date;
+    public get startDate(): Date {
+        return this._startDate;
+    }
+    public set startDate(value: Date) {
+        this._startDate = value;
+    }
+    private _endDate: Date;
+    public get endDate(): Date {
+        return this._endDate;
+    }
+    public set endDate(value: Date) {
+        this._endDate = value;
+    }
+}
+class PrayersSettings implements IPrayersSettings
 {
     private _adjustments: IPrayerAdjustments[];
     public get adjustments(): IPrayerAdjustments[] {
@@ -130,8 +283,7 @@ export class PrayersSettings implements IPrayersSettings
 
 
 }
-
-export class PrayersTimeFactory
+class PrayersTimeFactory
 {
 
     public static async createPrayersTimeFactory(location?: ILocation, prayerSettings?:IPrayersSettings): Promise<Array<PrayersTime>> 
