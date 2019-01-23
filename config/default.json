@@ -56,15 +56,15 @@
             "latitude":[
                 {
                     "id": 1,
-                    "name": "Middle of the night"
+                    "latitudeMethod": "Middle of the night"
                 },
                 {
                     "id": 2,
-                    "name": "One Seventh"
+                    "latitudeMethod": "One Seventh"
                 },
                 {
                     "id":3,
-                    "name": "Angle Based"
+                    "latitudeMethod": "Angle Based"
                 }
 
             ],
