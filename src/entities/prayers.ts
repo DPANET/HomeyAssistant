@@ -21,6 +21,8 @@ export enum PrayersName {
     ISHA= "Isha",
     MIDNIGHT= "Midnight"
 };
+
+
 export interface IPrayers {
     prayerName: PrayersName;
     time: string;
@@ -195,10 +197,9 @@ class PrayersTime implements IPrayersTime
 {
 
     //prayer constructors, with timing,
-    constructor(startDate: Date,endDate:Date, prayers: Array<IPrayers>)
+    constructor( prayers: Array<IPrayers>)
     {
-        this._startDate= startDate;
-        this._endDate= endDate;
+
         this._prayers = prayers;
        // this._prayersTimings = new Array();
     }

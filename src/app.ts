@@ -12,9 +12,12 @@ import * as loc  from './entities/location';
 import * as Joi from 'joi';
 import * as manager from './managers/manager';
 import * as val from './validators/validator';
-
+import { PrayerTimeProvider } from './providers/prayer-provider';
+import * as LU from 'levelup';
+import * as LD from 'leveldown'
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
+
 var queryString: object =[
 {
     url: 'http://api.aladhan.com/v1/timingsByCity/' + '01-01-2019',
@@ -120,9 +123,26 @@ async function validate2()
         console.log(true);
 }
 
+buildPrayerObject().catch((err)=>console.log(err));
+async function buildPrayerObject()
+{
+    let prayerProvider:PrayerTimeProvider = new PrayerTimeProvider();
+    let result ,err;
+    [err,result]= await to(prayerProvider.getPrayerLatitudeById(2));
+    if(err)
+    console.log(err);
+    else
+    {
+        console.log(result);
+    }
 
+}
 
+async function readJsonFile()
+{
+    let db = 
 
+}
 //console.log(manager.BuilderFactory.createBuilderFactory());
 // createLocationEntity(locationInput)
 // .then((result) => {

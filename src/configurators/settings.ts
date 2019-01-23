@@ -1,6 +1,4 @@
 import config = require('config');
-import { IPrayersSettings } from '../entities/prayers';
-import { array } from 'joi';
 interface IApiSettings
 {
     timing:string,
@@ -14,7 +12,7 @@ const paths =
     calculationsSettings: 'settings.calcuations'
 
 }
-export class Settings {
+export class PrayerSettings {
     public static async getApiSettings(): Promise<IApiSettings> {
         return await config.get(paths.apisettings);
 
