@@ -21,13 +21,12 @@
     "jasmine": "^3.3.1",
     "jasmine-expect": "^4.0.1",
     "joi": "^14.3.1",
-    "leveldown": "^4.0.1",
-    "levelup": "^4.0.0",
     "moment": "^2.23.0",
     "ramda": "^0.26.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "serve-favicon": "^2.3.0",
+    "taffydb": "^2.7.3",
     "ts-node": "^7.0.1"
   },
   "devDependencies": {
@@ -37,8 +36,6 @@
     "@types/googlemaps": "^3.30.16",
     "@types/jasmine": "^3.3.5",
     "@types/jasmine-expect": "^3.8.1",
-    "@types/leveldown": "^4.0.0",
-    "@types/levelup": "^3.1.0",
     "@types/node": "^10.12.18",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",

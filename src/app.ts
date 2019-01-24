@@ -13,8 +13,7 @@ import * as Joi from 'joi';
 import * as manager from './managers/manager';
 import * as val from './validators/validator';
 import { PrayerTimeProvider } from './providers/prayer-provider';
-import * as LU from 'levelup';
-import * as LD from 'leveldown'
+import * as TD from 'taffydb';
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
 
@@ -51,6 +50,7 @@ let locationUpdated =
 }
 
 buildLocationObject().catch((err)=>console.log(err));
+readJsonFile();
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject()
 {
@@ -140,8 +140,9 @@ async function buildPrayerObject()
 
 async function readJsonFile()
 {
-    let db = 
-
+    let db =  LU.default(LD.default('src/configurators/prayers'));
+    db.get('apis').then((result)=> console.log(result)).catch(err=>console.log(err));
+    
 }
 //console.log(manager.BuilderFactory.createBuilderFactory());
 // createLocationEntity(locationInput)
