@@ -52,7 +52,7 @@ let locationUpdated =
 }
 
 buildLocationObject().catch((err)=>console.log(err));
-readJsonFile();
+//readJsonFile();
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject()
 {
@@ -128,18 +128,18 @@ async function validate2()
 buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject()
 {
-    let prayerProvider:PrayerTimeProvider = new PrayerTimeProvider();
+    let prayerProvider:PrayerTimeProvider =  new PrayerTimeProvider();
     let result ,err;
-    [err,result]= await to(prayerProvider.getPrayerLatitudeById(2));
+    [err,result]= await to(prayerProvider.getPrayerMethods());
     if(err)
     console.log(err);
     else
     {
-        console.log(result);
+        //console.log(result);
     }
 
 }
-readJsonFile().catch(err=>console.log(err));
+//readJsonFile().catch(err=>console.log(err));
 async function readJsonFile()
 {
 
