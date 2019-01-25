@@ -13,9 +13,11 @@ import * as Joi from 'joi';
 import * as manager from './managers/manager';
 import * as val from './validators/validator';
 import { PrayerTimeProvider } from './providers/prayer-provider';
-import * as TD from 'taffydb';
+import lowdb from "lowdb";
+import { default as FileAsync } from "lowdb/adapters/FileAsync";
 //console.log(process.env.GOOGLE_API_KEY);
 //googleMap();
+
 
 var queryString: object =[
 {
@@ -137,11 +139,17 @@ async function buildPrayerObject()
     }
 
 }
-
+readJsonFile().catch(err=>console.log(err));
 async function readJsonFile()
 {
-    let db =  LU.default(LD.default('src/configurators/prayers'));
-    db.get('apis').then((result)=> console.log(result)).catch(err=>console.log(err));
+
+    let db = await lowdb(new FileAsync('src/configurators/prayers.json'));
+   // console.log(db.get('api'));
+
+    let x = db.get('apis.prayersAPI.urls').value();
+    
+   console.log(util.inspect(x, false, null, true /* enable colors */));
+   
     
 }
 //console.log(manager.BuilderFactory.createBuilderFactory());
