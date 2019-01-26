@@ -51,7 +51,7 @@ let locationUpdated =
     longtitude: 55.2792565
 }
 
-buildLocationObject().catch((err)=>console.log(err));
+//buildLocationObject().catch((err)=>console.log(err));
 //readJsonFile();
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject()
@@ -128,16 +128,24 @@ async function validate2()
 buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject()
 {
-    let prayerProvider:PrayerTimeProvider =  new PrayerTimeProvider();
-    let result:prayerEntity.IPrayersSettings ,err;
-    [err,result]= await to(prayerProvider.getPrayerSettings());
-    if(err)
-    console.log(err);
-    else
-    {
-        console.log(result);
+    try{
+        let locationBuilder : loc.ILocationBuilder=loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
+        let locationObject:loc.ILocationEntity= await locationBuilder.setLocationAddress('Dubai','AE').
+        then(lb=>lb.createLocation());
+        let prayerProvider:PrayerTimeProvider =  new PrayerTimeProvider();
+        let result:prayerEntity.IPrayersSettings ,err;
+        let prayers:Array<prayerEntity.IPrayers>;
+        [err,result]= await to(prayerProvider.getPrayerSettings());
+        [err,prayers]= await to(prayerProvider.getPrayerTime(result,locationObject));
+       // console.log(prayers);
+      console.log(util.inspect(prayers, false, null, true /* enable colors */));        
     }
-    //prayerProvider.getPrayerTime(result);
+        catch(err)
+        {
+            console.log(err.message);
+        }
+
+    
 
 }
 //readJsonFile().catch(err=>console.log(err));

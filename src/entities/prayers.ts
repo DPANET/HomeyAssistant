@@ -9,23 +9,28 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import {ILocation, ILocationEntity} from './location';
-import { number } from 'joi';
+
 
 export enum PrayersName {
     FAJR= "Fajr",
     SUNRISE= "Sunrise",
     DHUHR= "Dhuhr",
     ASR= "Asr",
-    MAGHRIB= "Maghrib",
     SUNSET= "Sunset",
+    MAGHRIB= "Maghrib",
     ISHA= "Isha",
+    IMSAK= "Imsak",
     MIDNIGHT= "Midnight"
+
 };
 
-
+export interface IPrayersTiming
+{
+    prayerName:PrayersName;
+    prayerTime:string;
+}
 export interface IPrayers {
-    prayerName: PrayersName;
-    time: string;
+    prayerTime:IPrayersTiming[];
     prayersDate:Date;
 //    adjustment: number
 }
@@ -169,20 +174,14 @@ class PrayersMethods implements IPrayerMethods
 }
 class Prayers implements IPrayers
 {
-    private _prayerName: PrayersName;   
-    public get prayerName(): PrayersName {
-        return this._prayerName;
+    private _prayerTime: IPrayersTiming[];
+    public get prayerTime(): IPrayersTiming[] {
+        return this._prayerTime;
     }
-    public set prayerName(value: PrayersName) {
-        this._prayerName = value;
+    public set prayerTime(value: IPrayersTiming[]) {
+        this._prayerTime = value;
     }
-     private _time: string;
-    public get time(): string {
-        return this._time;
-    }
-    public set time(value: string) {
-        this._time = value;
-    }
+
     private _prayersDate: Date;
     public get prayersDate(): Date {
         return this._prayersDate;
