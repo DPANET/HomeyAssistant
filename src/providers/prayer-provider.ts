@@ -10,7 +10,10 @@ import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IP
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileASync";
 import * as request from 'request-promise-native';
-import { removeAllListeners } from 'cluster';
+import * as mom from 'moment';
+import moment = require('moment');
+import { start } from 'repl';
+import { ILocationEntity } from '../entities/location';
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
     APPLE = "Apple"
@@ -22,8 +25,11 @@ const prayerTimePaths =
     methods: 'api.prayersAPI.methods',
     apiurl: 'apis.urls',
     methodsUrl: 'apis.prayersAPI.urls.prayerMethodsUrl',
+    prayerTimeUrl: 'apis.prayersAPI.urls.prayersByCoordinatesUrl.monthly',
     adjustment: 'settings.adjustments',
     calculations: 'settings.calcuations',
+    schools:'apis.prayersAPI.schools',
+    settings:'apis.prayersAPI.settings.calculations'
 
 
 }
@@ -31,9 +37,10 @@ const PrayerErrorMessages =
 {
     BAD_INPUT: 'Location input provided are not valid',
     LATITUDE_NOT_FOUND: 'Latitude record is not found, please try again',
-    BAD_RESULT: 'Location provided results have caused unexpected error, please try different input',
+    PRAYERMETHOD_NOT_FOUND: 'Prayer Method record is not found, please try again',
+    SCHOOLS_NOT_FOUND: 'School Method record is not found, please try again',
     TIME_OUT: 'Connection cannot be made to prayer provider, please try again after a while',
-    FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try to reinstall the app'
+    FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try ensure internet connectivity'
 }
 export interface IPrayerProvider {
     getProviderName(): PrayerProviderName;
@@ -44,7 +51,7 @@ export interface IPrayerProvider {
     getPrayerSchools(): Promise<Array<IPrayerSchools>>;
     getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     getPrayerSettings(): Promise<IPrayersSettings>;
-    getPrayerTime(prayerSettings: IPrayersSettings): Promise<Array<IPrayers>>;
+    getPrayerTime(prayerSettings: IPrayersSettings,prayerLocation:ILocationEntity): Promise<Array<IPrayers>>;
 }
 abstract class PrayerProvider implements IPrayerProvider {
     private _providerName;
@@ -62,7 +69,7 @@ abstract class PrayerProvider implements IPrayerProvider {
     abstract getPrayerSchools(): Promise<Array<IPrayerSchools>>;
     abstract getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     abstract getPrayerSettings(): Promise<IPrayersSettings>;
-    abstract getPrayerTime(prayerSettings: IPrayersSettings): Promise<Array<IPrayers>>;
+    abstract getPrayerTime(prayerSettings: IPrayersSettings,prayerLocation:ILocationEntity): Promise<Array<IPrayers>>;
 }
 
 export class PrayerTimeProvider extends PrayerProvider {
@@ -107,47 +114,137 @@ export class PrayerTimeProvider extends PrayerProvider {
     private async getPrayerMethodUrl(): Promise<any> {
         return await this.getDB().then(result => result.get(prayerTimePaths.methodsUrl).value());
     }
-    private  parsePrayerMethods(prayerMethodsJson:any) : Array<IPrayerMethods>
-    {
-        const result = n=> console.log(n);
-        //console.log(ramda.flatten(prayerMethodsJson));
-        ramda.forEach(result,prayerMethodsJson);
-        console.log(prayerMethodsJson);
-        return;
+    private parsePrayerMethods(prayerMethodsJson: object): Array<IPrayerMethods> {
+
+        let collection: Array<IPrayerMethods> = new Array<IPrayerMethods>();
+        const result = (value, key) => {
+            if (!isNullOrUndefined(value.name)) {
+                collection.push({
+                    id: value.id,
+                    methodName: value.name
+                });
+            }
+        }
+
+        ramda.forEachObjIndexed(result, prayerMethodsJson);
+        return collection;
 
     }
     public async getPrayerMethods(): Promise<IPrayerMethods[]> {
-        let err, result:any, url: any;
+        let err, result: any, url: any;
         [err, url] = await to(this.getPrayerMethodUrl());
         if (err)
             return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-        let queryString:any = 
-            {
-                uri:url.methods,
-                method: 'GET',
-                json: true,
-                resolveWithFullResponse: false
+        let queryString: any =
+        {
+            uri: url.methods,
+            method: 'GET',
+            json: true,
+            resolveWithFullResponse: false
 
-            };
+        };
         [err, result] = await to(request.get(queryString));
         if (err)
-        return Promise.reject(PrayerErrorMessages.TIME_OUT);
+            return Promise.reject(PrayerErrorMessages.TIME_OUT);
         return this.parsePrayerMethods(result['data']);
     }
-    getPrayerMethodsById(id: number): Promise<IPrayerMethods> {
-        throw new Error("Method not implemented.");
+    public async getPrayerMethodsById(index: number): Promise<IPrayerMethods> {
+        let err, prayerMethodsList: Array<IPrayerMethods>, prayerMethod: IPrayerMethods;
+        const filterById = ramda.where({ id: ramda.equals(index) });
+        [err, prayerMethodsList] = await to(this.getPrayerMethods());
+        if (err)
+            return Promise.reject(PrayerErrorMessages.TIME_OUT);
+        prayerMethod = ramda.filter<IPrayerMethods>(filterById, prayerMethodsList).pop();
+        if (!isNullOrUndefined(prayerMethod))
+            return prayerMethod;
+        else
+            return Promise.reject(PrayerErrorMessages.PRAYERMETHOD_NOT_FOUND);
     }
-    getPrayerSchools(): Promise<IPrayerSchools[]> {
-        throw new Error("Method not implemented.");
+    public async getPrayerSchools(): Promise<IPrayerSchools[]> {
+        return await this.getDB().then(result => result.get(prayerTimePaths.schools).value());
     }
-    getPrayerSchoolsById(id: number): Promise<IPrayerSchools> {
-        throw new Error("Method not implemented.");
+   public async getPrayerSchoolsById(index: number): Promise<IPrayerSchools> {
+        let err, prayerSchoolsList: Array<IPrayerSchools>, prayerSchool: IPrayerSchools;
+        const filterById = ramda.where({ id: ramda.equals(index) });
+        [err, prayerSchoolsList] = await to(this.getPrayerLatitude());
+        if (err)
+            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+        prayerSchool = ramda.filter<IPrayerSchools>(filterById, prayerSchoolsList).pop();
+        if (!isNullOrUndefined(prayerSchool))
+            return prayerSchool;
+        else
+            return Promise.reject(PrayerErrorMessages.SCHOOLS_NOT_FOUND);
+
     }
-    getPrayerSettings(): Promise<IPrayersSettings> {
-        throw new Error("Method not implemented.");
+    public async getPrayerSettings(): Promise<IPrayersSettings> {
+       let err, result:IPrayersSettings;
+        [err,result]=  await to(this.getDB().then(result => result.get(prayerTimePaths.settings).value()));
+        if(err || isNullOrUndefined(result))
+        return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+        return {
+            method: result.method,
+            midnight:result.midnight,
+            school:result.school,
+            latitudeAdjustment:result.latitudeAdjustment,
+            startDate:result.startDate,
+            endDate:result.endDate,
+            adjustments:result.adjustments
+        };
     }
-    getPrayerTime(prayerSettings: IPrayersSettings): Promise<IPrayers[]> {
-        throw new Error("Method not implemented.");
+    public async getPrayerTime(prayerSettings: IPrayersSettings,prayerLocation:ILocationEntity): Promise<IPrayers[]> {
+       let duration:number = this.getMonthsDifference(prayerSettings.startDate,prayerSettings.endDate);
+       let err, result: any, url: any,queryString:any;
+       [err, url] = await to(this.getPrayerTimeUrl());
+       if (err)
+           return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+        queryString = this.buildPrayerAPIQueryString(url,prayerSettings,prayerLocation);
+
+       [err, result] = await to(request.get(queryString));
+       if (err)
+           return Promise.reject(PrayerErrorMessages.TIME_OUT);
+        this.buildPrayersObject(result['data']);
+      // return this.parsePrayerMethods(result['data']);
+       return;
+    }
+   public buildPrayersObject(result: any): Array<IPrayers> {
+
+    }
+
+    private async getPrayerTimeUrl(): Promise<any> {
+        return await this.getDB().then(result => result.get(prayerTimePaths.prayerTimeUrl).value());
+    }
+    private getMonthsDifference(startDate:Date,endDate:Date):number
+    {
+        let startMoment:mom.Moment = moment(startDate).startOf('M');
+        let endMoment:mom.Moment = moment(endDate).startOf('M');
+        return   endMoment.diff(startMoment,'M',false)+1;
+    
+    }
+    private buildPrayerAPIQueryString(url:string,prayerSettings: IPrayersSettings,prayerLocation:ILocationEntity) : any
+    {
+        let queryString: any =
+        {
+            uri: url,
+            qs :{
+                uri:url,
+                latitude:prayerLocation.latitude,
+                longitude: prayerLocation.longtitude,
+                month: moment(prayerSettings.startDate).month(),
+                year : moment(prayerSettings.startDate).year(),
+                method: prayerSettings.method,
+                school: prayerSettings.school,
+                midnightMode:prayerSettings.midnight,
+                timezonestring: prayerLocation.timeZoneId,
+                latitudeAdjustmentMethod: prayerSettings.latitudeAdjustment
+
+            },
+            method: 'GET',
+            json: true,
+            resolveWithFullResponse: false
+
+        };
+
+        return queryString;
     }
 
 

@@ -129,14 +129,15 @@ buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject()
 {
     let prayerProvider:PrayerTimeProvider =  new PrayerTimeProvider();
-    let result ,err;
-    [err,result]= await to(prayerProvider.getPrayerMethods());
+    let result:prayerEntity.IPrayersSettings ,err;
+    [err,result]= await to(prayerProvider.getPrayerSettings());
     if(err)
     console.log(err);
     else
     {
-        //console.log(result);
+        console.log(result);
     }
+    //prayerProvider.getPrayerTime(result);
 
 }
 //readJsonFile().catch(err=>console.log(err));

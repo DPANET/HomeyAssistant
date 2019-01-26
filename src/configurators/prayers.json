@@ -15,30 +15,25 @@
         },
         "settings": {
             "apiSettings": {
-                "timing": "monthly",
-                "location": "prayersByCoordinatesUrl"
+                "timing": "monthly"            
             },
-            "adjustments": {
-                "Fajr": 0,
-                "Sunrise": 0,
-                "Dhuhr": 0,
-                "Asr": 0,
-                "Maghrib": 0,
-                "Sunset": 0,
-                "Isha": 0,
-                "Midnight": 0
-            },
-            "location": {
-                "city": "Abu Dhabi",
-                "countryLong": "United Arab Emirates",
-                "countryCode": "AE"
-            },
-            "calcuations": {
+            "calculations": {
                 "method": 4,
                 "school": 1,
-                "midnightMode": 0,
-                "latitudeAdjustmentMethod": 3,
-                "hijrAdjustment": 1
+                "midnight": 0,
+                "latitudeAdjustment": 3,
+                "startDate": "2018-01-01",
+                "endDate":"2019-01-28",
+                "adjustments": {
+                    "Fajr": 0,
+                    "Sunrise": 0,
+                    "Dhuhr": 0,
+                    "Asr": 0,
+                    "Maghrib": 0,
+                    "Sunset": 0,
+                    "Isha": 0,
+                    "Midnight": 0
+                }
             }
         },
         "schools": [
@@ -78,6 +73,26 @@
 
         ]
 
+    },
+    "locationAPI":
+    {
+        "settings":{
+            "location": {
+                "latitude": 25.2048493,
+                "longtitude": 55.2707828,
+                "city": "Dubai",
+                "countryCode": "AE",
+                "countryName": "United Arab Emirates",
+                "address": "Dubai"
+            },
+            "timezone":
+            {
+                "timeZoneId": "Asia/Dubai",
+                "timeZoneName": "Gulf Standard Time" ,
+                "dstOffset": 0,
+                "rawOffset": 14400
+            }
+        }
     }
 }
 }

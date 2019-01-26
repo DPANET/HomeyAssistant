@@ -157,7 +157,7 @@ class LocationBuilder implements ILocationBuilder {
   }
   public async createLocation(): Promise<ILocationEntity> {
     let validationErr: validator.IValidationError, validationResult: boolean = false;
-    let providerErr: Error, locationResult: ILocationEntity;
+    let providerErr: Error, locationResult: ILocation,timezoneResult:ITimeZone;
     [validationErr, validationResult] = await to(this._validtor.validate(this._location));
     if (validationErr)
       return Promise.reject(validationErr);
@@ -168,7 +168,10 @@ class LocationBuilder implements ILocationBuilder {
         [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
         if (providerErr)
           return Promise.reject(providerErr);
-        this._location = locationResult;
+        [providerErr,timezoneResult]= await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude,locationResult.longtitude));
+        if(providerErr)
+        return Promise.reject(providerErr);
+        this._location = ramda.mergeWith(ramda.concat,locationResult,timezoneResult);
         return Promise.resolve(this._location);
       }
       else {
