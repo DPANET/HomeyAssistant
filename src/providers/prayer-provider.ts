@@ -279,11 +279,11 @@ export class PrayerTimeProvider extends PrayerProvider {
                 longitude: prayerLocation.longtitude,
                 month: DateUtil.getMonth(date),
                 year: DateUtil.getYear(date),
-                method: prayerSettings.method,
-                school: prayerSettings.school,
-                midnightMode: prayerSettings.midnight,
+                method: prayerSettings.method.id,
+                school: prayerSettings.school.id,
+                midnightMode: prayerSettings.midnight.id,
                 timezonestring: prayerLocation.timeZoneId,
-                latitudeAdjustmentMethod:prayerSettings.latitudeAdjustment,
+                latitudeAdjustmentMethod:prayerSettings.latitudeAdjustment.id,
                 tune: prayerSettings.adjustments.map(n=> n.adjustments).toString()
                 
             },
