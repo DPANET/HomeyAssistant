@@ -129,9 +129,18 @@ async function buildPrayerObject() {
             then(lb => lb.createLocation());
         let prayerProvider: PrayerTimeProvider = new PrayerTimeProvider();
         let result: prayerEntity.IPrayersSettings, err: Error;
-        let prayers: Array<prayerEntity.IPrayers>;
-        [err, result] = await to(prayerProvider.getPrayerMethodsById(1));
-        console.log(result);
+        let midnight: prayerEntity.IPrayerMidnight = await prayerProvider.getPrayerMidnightById(1);
+        console.log(midnight);
+        // let prayers: Array<prayerEntity.IPrayers>;
+        // let saveResult : boolean= false;
+        // [err, result] = await to(prayerProvider.getPrayerSettings());
+
+        // result.method= methods;
+        // [err,saveResult] = await to( prayerProvider.savePrayerSettings(result));
+        // if(err)
+        // console.log(err);
+
+        // console.log(saveResult);
        // [err, prayers] = await to(prayerProvider.getPrayerTime(result, locationObject));
         // console.log(prayers);
        // console.log(util.inspect(prayers, false, null, true /* enable colors */));

@@ -178,16 +178,33 @@ export class PrayerTimeProvider extends PrayerProvider {
 
     }
     public async savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean> {
-        let err: Error, result: IPrayersSettings;
+        let err: Error, orignal: object;
+        let prayerSettingsObject:object;
         let db: lowdb.LowdbAsync<any>;
         db = await this.getDB();
-        [err] = await to(db.get(prayerTimePaths.calculations).remove().write());
-        if (err) {
-            Promise.reject(err);
-            return false;
-        }
-        else
-            return true;
+        [err,orignal] = await to(db.get(prayerTimePaths.calculations).value());
+        if(err)
+            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+        prayerSettingsObject = this.mergeUpdate(orignal,prayerSettings);
+        [err] = await to(db.get(prayerTimePaths.calculations)
+        .assign(prayerSettingsObject)
+        .write());
+        if(err)
+        return Promise.reject(err);
+        return true;
+    }
+    private mergeUpdate(orignal: object, prayerSettings: IPrayersSettings): object {
+        let updates:object=
+        {
+            method: prayerSettings.method.id,
+            school: prayerSettings.school.id,
+            midnight: prayerSettings.midnight.id,
+            latitudeAdjustment: prayerSettings.latitudeAdjustment.id,
+            startDate: prayerSettings.startDate,
+            endDate: prayerSettings.endDate,
+            adjustments: prayerSettings.adjustments
+        };
+        return ramda.mergeDeepRight(orignal, updates);
     }
     public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<IPrayers[]> {
         let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
@@ -269,11 +286,12 @@ export class PrayerTimeProvider extends PrayerProvider {
             return await this.getObjectById<IPrayerMidnight>(index,this.getPrayerMidnight);
 
     }
-    private async getObjectById<T>(index:number, fn:any)
+    private async getObjectById<T>(index:number, fn:Function)
     {
         let err: Error, list: Array<T>, listObject: T;
         const filterById = ramda.where({ id: ramda.equals(index) });
-        [err, list] = await to(fn(index));
+        list = await fn();
+        console.log(list);
         if (err)
             return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
         listObject = ramda.filter<T>(filterById, list).pop();
