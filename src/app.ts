@@ -19,7 +19,7 @@ import { DateUtil } from './util/utility';
 //console.log(process.env.GOOGLE_API_KEY);
 import moment = require('moment');
 import { formatDate } from 'tough-cookie';
-import _= require('lodash');
+import _ = require('lodash');
 //googleMap();
 import ramda = require('ramda');
 
@@ -144,10 +144,10 @@ async function buildPrayerObject() {
 }
 readJsonFile().catch(err => console.log(err));
 async function readJsonFile() {
-    let i: Array<prayerEntity.IPrayersSettings> =
-    { method: 03,
-
-       adjustments: [
+    let i: object =
+    {
+        method: 3,
+        adjustments: [
             {
                 prayerName: prayerEntity.PrayersName.FAJR,
                 adjustments: 3
@@ -167,53 +167,53 @@ async function readJsonFile() {
             {
                 prayerName: prayerEntity.PrayersName.SUNSET,
                 adjustments: 0
-              },
-              {
+            },
+            {
                 prayerName: prayerEntity.PrayersName.MAGHRIB,
                 adjustments: 1
-              },
-              {
-                prayerName:  prayerEntity.PrayersName.ISHA,
+            },
+            {
+                prayerName: prayerEntity.PrayersName.ISHA,
                 adjustments: 0
-              },
-              {
+            },
+            {
                 prayerName: prayerEntity.PrayersName.IMSAK,
                 adjustments: 0
-              },
-              {
+            },
+            {
                 prayerName: prayerEntity.PrayersName.MIDNIGHT,
                 adjustments: 25
-              }
+            }
         ]
     };
-        //console.log(i);
+    //console.log(i);
     let db: lowdb.LowdbAsync<any> = await lowdb(new FileAsync('src/configurators/prayers.json'));
     let err: Error, result: any;
     let fn = (n: any) => n = 1;
-    try{
-    result = await db.get('apis.prayersAPI.settings.calculations')
-      .value();
-    let orginal=
-    {x:3,
-     y:2
-    };
-    let update=
-    {  
-        x:1,
-        y:5,
-        z:4
+    try {
+        result = await db.get('apis.prayersAPI.settings.calculations')
+            .value();
+        let orginal =
+        {
+            x: 3,
+            y: 2
+        };
+        let update =
+        {
+            x: 1,
+            y: 5,
+            z: 4
 
-    };
+        };
 
-      //  return false;
-     console.log( ramda.mergeDeepRight(result,i));
-     let z=  _.merge(orginal,i);
-    //console.log(z);
+        //  return false;
+        console.log(ramda.mergeDeepRight(result, i));
+        let z = _.merge(result, i);
+        console.log(z);
 
-    //console.log(result);
+        //console.log(result);
         return true;
-    }catch(err)
-    {
+    } catch (err) {
         console.log(err);
     }
 
