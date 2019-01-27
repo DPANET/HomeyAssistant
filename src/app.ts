@@ -70,9 +70,6 @@ async function buildLocationObject() {
         console.log(err.message);
     }
     //console.log(util.inspect(err.message, false, null, true /* enable colors */));
-
-
-
 }
 async function validate1() {
     let locationEntity: loc.ILocationEntity;
@@ -124,7 +121,7 @@ async function validate2() {
         console.log(true);
 }
 
-//buildPrayerObject().catch((err)=>console.log(err));
+buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject() {
     try {
         let locationBuilder: loc.ILocationBuilder = loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
@@ -133,16 +130,17 @@ async function buildPrayerObject() {
         let prayerProvider: PrayerTimeProvider = new PrayerTimeProvider();
         let result: prayerEntity.IPrayersSettings, err: Error;
         let prayers: Array<prayerEntity.IPrayers>;
-        [err, result] = await to(prayerProvider.getPrayerSettings());
-        [err, prayers] = await to(prayerProvider.getPrayerTime(result, locationObject));
+        [err, result] = await to(prayerProvider.getPrayerMethodsById(1));
+        console.log(result);
+       // [err, prayers] = await to(prayerProvider.getPrayerTime(result, locationObject));
         // console.log(prayers);
-        console.log(util.inspect(prayers, false, null, true /* enable colors */));
+       // console.log(util.inspect(prayers, false, null, true /* enable colors */));
     }
     catch (err) {
         console.log(err.message);
     }
 }
-readJsonFile().catch(err => console.log(err));
+//readJsonFile().catch(err => console.log(err));
 async function readJsonFile() {
     let i: object =
     {
