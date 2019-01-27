@@ -10,7 +10,7 @@ import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IP
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileASync";
 import * as request from 'request-promise-native';
-import {DateUtil} from '../util/utility';
+import { DateUtil } from '../util/utility';
 import { start } from 'repl';
 import { ILocationEntity } from '../entities/location';
 export enum PrayerProviderName {
@@ -25,7 +25,7 @@ const prayerTimePaths =
     apiurl: 'apis.urls',
     methodsUrl: 'apis.prayersAPI.urls.prayerMethodsUrl',
     prayerTimeUrl: 'apis.prayersAPI.urls.prayersByCoordinatesUrl.monthly',
-    adjustment: 'settings.adjustments',
+    adjustment: 'apis.prayersAPI.settings.calcuations.adjustments',
     calculations: 'settings.calcuations',
     schools: 'apis.prayersAPI.schools',
     settings: 'apis.prayersAPI.settings.calculations',
@@ -35,7 +35,7 @@ const prayerTimePaths =
 }
 const PrayerErrorMessages =
 {
-    BAD_INPUT: 'Location input provided are not valid',
+    BAD_INPUT: 'Prayer setting recond is not found, please try again',
     LATITUDE_NOT_FOUND: 'Latitude record is not found, please try again',
     PRAYERMETHOD_NOT_FOUND: 'Prayer Method record is not found, please try again',
     SCHOOLS_NOT_FOUND: 'School Method record is not found, please try again',
@@ -52,9 +52,10 @@ export interface IPrayerProvider {
     getPrayerSchools(): Promise<Array<IPrayerSchools>>;
     getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     getPrayerSettings(): Promise<IPrayersSettings>;
-    getPrayerMidnight():Promise<Array<IPrayerMidnight>>;
-    getPrayerMidnightById(index:number):Promise<IPrayerMidnight>;
-    savePrayerSettings(prayerSettings:IPrayersSettings):Promise<boolean>;
+    getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
+    getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
+    savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean>;
+    getPrayerAdjustments(): Promise<Array<IPrayerAdjustments>>;
     getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
 }
 abstract class PrayerProvider implements IPrayerProvider {
@@ -73,9 +74,10 @@ abstract class PrayerProvider implements IPrayerProvider {
     abstract getPrayerSchools(): Promise<Array<IPrayerSchools>>;
     abstract getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     abstract getPrayerSettings(): Promise<IPrayersSettings>;
-    abstract savePrayerSettings(prayerSettings:IPrayersSettings):Promise<boolean>;
-    abstract getPrayerMidnight():Promise<Array<IPrayerMidnight>>;
-    abstract getPrayerMidnightById(index:number):Promise<IPrayerMidnight>;
+    abstract savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean>;
+    abstract getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
+    abstract getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
+    abstract getPrayerAdjustments(): Promise<Array<IPrayerAdjustments>>;
     abstract getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
 }
 
@@ -106,16 +108,7 @@ export class PrayerTimeProvider extends PrayerProvider {
         return await this.getDB().then(result => result.get(prayerTimePaths.latitude).value());
     }
     async getPrayerLatitudeById(index: number): Promise<IPrayerLatitude> {
-        let err, prayerLatitudeList: Array<IPrayerLatitude>, prayerLatitude: IPrayerLatitude;
-        const filterById = ramda.where({ id: ramda.equals(index) });
-        [err, prayerLatitudeList] = await to(this.getPrayerLatitude());
-        if (err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-        prayerLatitude = ramda.filter<IPrayerLatitude>(filterById, prayerLatitudeList).pop();
-        if (!isNullOrUndefined(prayerLatitude))
-            return prayerLatitude;
-        else
-            return Promise.reject(PrayerErrorMessages.LATITUDE_NOT_FOUND);
+        return await this.getObjectById<IPrayerLatitude>(index,this.getPrayerLatitude);
 
     }
     private async getPrayerMethodUrl(): Promise<any> {
@@ -124,7 +117,7 @@ export class PrayerTimeProvider extends PrayerProvider {
     private parsePrayerMethods(prayerMethodsJson: object): Array<IPrayerMethods> {
 
         let collection: Array<IPrayerMethods> = new Array<IPrayerMethods>();
-        const result = (value:any, key:string) => {
+        const result = (value: any, key: string) => {
             if (!isNullOrUndefined(value.name)) {
                 collection.push({
                     id: value.id,
@@ -156,41 +149,23 @@ export class PrayerTimeProvider extends PrayerProvider {
         return this.parsePrayerMethods(result['data']);
     }
     public async getPrayerMethodsById(index: number): Promise<IPrayerMethods> {
-        let err, prayerMethodsList: Array<IPrayerMethods>, prayerMethod: IPrayerMethods;
-        const filterById = ramda.where({ id: ramda.equals(index) });
-        [err, prayerMethodsList] = await to(this.getPrayerMethods());
-        if (err)
-            return Promise.reject(PrayerErrorMessages.TIME_OUT);
-        prayerMethod = ramda.filter<IPrayerMethods>(filterById, prayerMethodsList).pop();
-        if (!isNullOrUndefined(prayerMethod))
-            return prayerMethod;
-        else
-            return Promise.reject(PrayerErrorMessages.PRAYERMETHOD_NOT_FOUND);
+        return await this.getObjectById<IPrayerMethods>(index,this.getPrayerMethods);
     }
     public async getPrayerSchools(): Promise<IPrayerSchools[]> {
         return await this.getDB().then(result => result.get(prayerTimePaths.schools).value());
     }
     public async getPrayerSchoolsById(index: number): Promise<IPrayerSchools> {
-        let err:Error, prayerSchoolsList: Array<IPrayerSchools>, prayerSchool: IPrayerSchools;
-        const filterById = ramda.where({ id: ramda.equals(index) });
-        [err, prayerSchoolsList] = await to(this.getPrayerSchools());
-        if (err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-        prayerSchool = ramda.filter<IPrayerSchools>(filterById, prayerSchoolsList).pop();
-        if (!isNullOrUndefined(prayerSchool))
-            return prayerSchool;
-        else
-            return Promise.reject(PrayerErrorMessages.SCHOOLS_NOT_FOUND);
+        return await this.getObjectById<IPrayerSchools>(index,this.getPrayerSchools);
 
     }
-    
+
     public async getPrayerSettings(): Promise<IPrayersSettings> {
-        
-        let err:Error, result: any;
+
+        let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(prayerTimePaths.settings).value()));
         if (err || isNullOrUndefined(result))
             return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-           
+
         return {
             method: await this.getPrayerMethodsById(result.method as number),
             midnight: await this.getPrayerMidnightById(result.method as number),
@@ -198,62 +173,54 @@ export class PrayerTimeProvider extends PrayerProvider {
             latitudeAdjustment: await this.getPrayerLatitudeById(result.latitudeAdjustment as number),
             startDate: DateUtil.formatDate(result.startDate as string),
             endDate: DateUtil.formatDate(result.endDate as string),
-            adjustments:result.adjustments
+            adjustments: result.adjustments
         };
 
     }
-    public async savePrayerSettings(prayerSettings:IPrayersSettings):Promise<boolean>
-    {
-        let err:Error, result:IPrayersSettings;
-        let db :lowdb.LowdbAsync<any>;
+    public async savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean> {
+        let err: Error, result: IPrayersSettings;
+        let db: lowdb.LowdbAsync<any>;
         db = await this.getDB();
-        [err]= await to(db.get(prayerTimePaths.calculations).remove().write());
-        if(err)
-        {
-        Promise.reject(err);
-        return false;
+        [err] = await to(db.get(prayerTimePaths.calculations).remove().write());
+        if (err) {
+            Promise.reject(err);
+            return false;
         }
         else
-        return true;
+            return true;
     }
     public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<IPrayers[]> {
         let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
-        let err:Error, result: any, url: any, queryString: any;
-        let date:Date = prayerSettings.startDate;
-        let prayersList:Array<IPrayers> = new Array<IPrayers>();
+        let err: Error, result: any, url: any, queryString: any;
+        let date: Date = prayerSettings.startDate;
+        let prayersList: Array<IPrayers> = new Array<IPrayers>();
 
-        for( let i:number = 0; i <= duration;i++)
-        {
-        [err, url] = await to(this.getPrayerTimeUrl());
-        if (err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-        queryString = this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation,date);
-    
-        date= DateUtil.addMonth(1,date);
-
-        [err, result] = await to(request.get(queryString));
-        if (err)
-            return Promise.reject(PrayerErrorMessages.TIME_OUT);
-
-        prayersList= ramda.concat(prayersList,this.buildPrayersObject(result['data']));//.concat(this.buildPrayersObject(result['data']));
-
+        for (let i: number = 0; i <= duration; i++) {
+            [err, url] = await to(this.getPrayerTimeUrl());
+            if (err)
+                return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+            queryString = this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date);
+            date = DateUtil.addMonth(1, date);
+            [err, result] = await to(request.get(queryString));
+            if (err)
+                return Promise.reject(PrayerErrorMessages.TIME_OUT);
+            prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data']));//.concat(this.buildPrayersObject(result['data']))
         }
-        
-        return prayersList.filter(n=> ( n.prayersDate>= prayerSettings.startDate && n.prayersDate<= prayerSettings.endDate));;
+        return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));;
     }
     private buildPrayersObject(result: any): Array<IPrayers> {
 
         let prayersTimingList: Array<IPrayersTiming> = new Array<IPrayersTiming>();
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
-        let  i:number =0;
-        let fnPrayer = (value:any, key:string) => {
+        let i: number = 0;
+        let fnPrayer = (value: any, key: string) => {
 
             prayersTimingList.push({
                 prayerName: key as PrayersName,
                 prayerTime: (value as string).substring(0, 5)
             });
         };
-        let fn = (n:any) => {
+        let fn = (n: any) => {
             prayersTimingList = [];
             ramda.forEachObjIndexed(fnPrayer, n.timings);
             prayersList.push({
@@ -264,12 +231,11 @@ export class PrayerTimeProvider extends PrayerProvider {
         ramda.forEach(fn, result);
         return prayersList;
     }
-
     private async getPrayerTimeUrl(): Promise<any> {
         return await this.getDB().then(result => result.get(prayerTimePaths.prayerTimeUrl).value());
     }
 
-    private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity,date:Date): any {
+    private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity, date: Date): any {
         let queryString: any =
         {
             uri: url,
@@ -283,9 +249,9 @@ export class PrayerTimeProvider extends PrayerProvider {
                 school: prayerSettings.school.id,
                 midnightMode: prayerSettings.midnight.id,
                 timezonestring: prayerLocation.timeZoneId,
-                latitudeAdjustmentMethod:prayerSettings.latitudeAdjustment.id,
-                tune: prayerSettings.adjustments.map(n=> n.adjustments).toString()
-                
+                latitudeAdjustmentMethod: prayerSettings.latitudeAdjustment.id,
+                tune: prayerSettings.adjustments.map(n => n.adjustments).toString()
+
             },
             method: 'GET',
             json: true,
@@ -295,24 +261,30 @@ export class PrayerTimeProvider extends PrayerProvider {
 
         return queryString;
     }
-    public async getPrayerMidnight(): Promise<Array<IPrayerMidnight>>
-    {
+    public async getPrayerMidnight(): Promise<Array<IPrayerMidnight>> {
         return await this.getDB().then(result => result.get(prayerTimePaths.midnight).value());
 
     }
-    public async getPrayerMidnightById(index:number) : Promise<IPrayerMidnight>
+    public async getPrayerMidnightById(index: number): Promise<IPrayerMidnight> {
+            return await this.getObjectById<IPrayerMidnight>(index,this.getPrayerMidnight);
+
+    }
+    private async getObjectById<T>(index:number, fn:any)
     {
-        let err:Error, prayerMidnightList: Array<IPrayerMidnight>, prayerMidnight: IPrayerMidnight;
+        let err: Error, list: Array<T>, listObject: T;
         const filterById = ramda.where({ id: ramda.equals(index) });
-        [err, prayerMidnightList] = await to(this.getPrayerMidnight());
+        [err, list] = await to(fn(index));
         if (err)
             return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-        prayerMidnight = ramda.filter<IPrayerMidnight>(filterById, prayerMidnightList).pop();
-        if (!isNullOrUndefined(prayerMidnight))
-            return prayerMidnight;
+        listObject = ramda.filter<T>(filterById, list).pop();
+        if (!isNullOrUndefined(listObject))
+            return listObject;
         else
-            return Promise.reject(PrayerErrorMessages.MIDNIGHT_NOT_FOUND);
+            return Promise.reject(PrayerErrorMessages.BAD_INPUT);
 
+    }
+    public async getPrayerAdjustments(): Promise<Array<IPrayerAdjustments>> {
+        return await this.getDB().then(result => result.get(prayerTimePaths.adjustment).value());
     }
 
 }
