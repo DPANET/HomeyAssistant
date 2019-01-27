@@ -3,7 +3,6 @@
 //const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
-import settings = require('../configurators/settings');
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;

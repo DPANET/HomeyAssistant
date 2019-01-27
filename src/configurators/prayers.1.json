@@ -1,0 +1,122 @@
+{
+    "apis": {
+        "prayersAPI": {
+            "urls": {
+                "prayersByCityUrl": {
+                    "monthly": "http://api.aladhan.com/v1/calendarByCity",
+                    "daily": "http://api.aladhan.com/v1/timingsByCity/:date_or_timestamp"
+                },
+                "prayersByCoordinatesUrl": {
+                    "monthly": "http://api.aladhan.com/v1/calendar",
+                    "daily": "http://api.aladhan.com/v1/timings/:date_or_timestamp"
+                },
+                "prayerMethodsUrl": {
+                    "methods": "http://api.aladhan.com/v1/methods"
+                }
+            },
+            "settings": {
+                "apiSettings": {
+                    "timing": "monthly"
+                },
+                "calculations": {
+                    "method": 4,
+                    "school": 1,
+                    "midnight": 0,
+                    "latitudeAdjustment": 3,
+                    "startDate": "2019-01-15",
+                    "endDate": "2019-01-28",
+                    "adjustments": [
+                        {
+                            "prayerName": "Fajr",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Sunrise",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Dhuhr",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Asr",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Sunset",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Maghrib",
+                            "adjustments": 1
+                        },
+                        {
+                            "prayerName": "Isha",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Imsak",
+                            "adjustments": 0
+                        },
+                        {
+                            "prayerName": "Midnight",
+                            "adjustments": 30
+                        }
+                    ]
+                }
+            },
+            "schools": [
+                {
+                    "id": 0,
+                    "name": "Sahfi, Hanbali and Maliki"
+                },
+                {
+                    "id": 1,
+                    "name": "Hanafi"
+                }
+            ],
+            "latitude": [
+                {
+                    "id": 1,
+                    "latitudeMethod": "Middle of the night"
+                },
+                {
+                    "id": 2,
+                    "latitudeMethod": "One Seventh"
+                },
+                {
+                    "id": 3,
+                    "latitudeMethod": "Angle Based"
+                }
+            ],
+            "midnight": [
+                {
+                    "id": 1,
+                    "name": "Standard (Mid Sunset to Sunrise)"
+                },
+                {
+                    "id": 2,
+                    "name": "Jafari (Mid Sunset to Sunrise)"
+                }
+            ]
+        },
+        "locationAPI": {
+            "settings": {
+                "location": {
+                    "latitude": 25.2048493,
+                    "longtitude": 55.2707828,
+                    "city": "Dubai",
+                    "countryCode": "AE",
+                    "countryName": "United Arab Emirates",
+                    "address": "Dubai"
+                },
+                "timezone": {
+                    "timeZoneId": "Asia/Dubai",
+                    "timeZoneName": "Gulf Standard Time",
+                    "dstOffset": 0,
+                    "rawOffset": 14400
+                }
+            }
+        }
+    }
+}

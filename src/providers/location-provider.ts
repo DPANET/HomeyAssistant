@@ -30,7 +30,7 @@ export interface ILocationProvider {
 //add validation later as a seperate class
  abstract class LocationProvider implements ILocationProvider {
 
-    private _providerName;
+    private _providerName:LocationProviderName;
     constructor(providerName: LocationProviderName) {
         this._providerName = providerName;
     }
@@ -44,7 +44,7 @@ export interface ILocationProvider {
 }
 
 class GoogleLocationProvider extends LocationProvider {
-    private _googleMapClient;
+    private _googleMapClient:any;
     private _location: ILocation;
     constructor() {
         super(LocationProviderName.GOOGLE);
@@ -97,9 +97,9 @@ class GoogleLocationProvider extends LocationProvider {
 
     }
     private parseLocation(googleLocation: any): ILocation {
-        let locationCoordinates, locationAddress, locationCountry;
-        let filterbycountry = n => ramda.contains('country', n.types);
-        let filterbyaddress = n => ramda.contains('locality', n.types);
+        let locationCoordinates:any, locationAddress:any, locationCountry:any;
+        let filterbycountry= (n:any) => ramda.contains('country', n.types);
+        let filterbyaddress = (n:any) => ramda.contains('locality', n.types);
         if (!isNullOrUndefined(googleLocation) && googleLocation.json.results.length > 0) {
 
             locationCoordinates = ramda.path(['results', '0', 'geometry', 'location'], googleLocation.json);

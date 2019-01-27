@@ -36,21 +36,21 @@ class Location implements ILocationEntity {
   private _city?: string;
   private _countryName?: string;
   private _address?: string;
-  private _timeZoneId: string;
+  private _timeZoneId?: string;
 
-  private _timeZoneName: string;
-  private _dstOffset: number;
-  private _rawOffset: number;
+  private _timeZoneName?: string;
+  private _dstOffset?: number;
+  private _rawOffset?: number;
 
   constructor(location?: ILocation, timeZone?: ITimeZone) {
     if (!isNullOrUndefined(location)) {
       this._latitude = location.latitude;
-      this._longtitude - location.longtitude;
+      this._longtitude = location.longtitude;
       this._countryCode = location.countryCode;
       this._countryName = location.countryName;
       this._address = location.address;
     }
-    if (!isNullOrUndefined(timeZone)) {
+   if (!isNullOrUndefined(timeZone)) {
       this._timeZoneId = timeZone.timeZoneId;
       this._timeZoneName = timeZone.timeZoneName;
       this._dstOffset = timeZone.dstOffset;
@@ -59,6 +59,8 @@ class Location implements ILocationEntity {
   }
 
   public get latitude(): number {
+   
+    
     return this._latitude;
   }
   public set latitude(value: number) {
