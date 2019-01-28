@@ -7,79 +7,102 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import {ILocation, ILocationEntity} from './location';
+import { ILocation, ILocationEntity } from './location';
 
 
 export enum PrayersName {
-    FAJR= "Fajr",
-    SUNRISE= "Sunrise",
-    DHUHR= "Dhuhr",
-    ASR= "Asr",
-    SUNSET= "Sunset",
-    MAGHRIB= "Maghrib",
-    ISHA= "Isha",
-    IMSAK= "Imsak",
-    MIDNIGHT= "Midnight"
+    FAJR = "Fajr",
+    SUNRISE = "Sunrise",
+    DHUHR = "Dhuhr",
+    ASR = "Asr",
+    SUNSET = "Sunset",
+    MAGHRIB = "Maghrib",
+    ISHA = "Isha",
+    IMSAK = "Imsak",
+    MIDNIGHT = "Midnight"
 
 };
-
-export interface IPrayersTiming
+export enum Schools
 {
-    prayerName:PrayersName;
-    prayerTime:string;
+    Hanafi=0,
+    Shafi
+};
+export enum MidnightMode
+{
+    Standard=0,
+    Jafari
+};
+export enum LatitudeMethod
+{
+    MidNight = 1,
+    Seventh,
+    Angle
+};
+export enum Methods
+{
+    Shia=0,
+    Karchi,
+    America,
+    MuslimLeague,
+    Makka,
+    Egypt,
+    Iran,
+    Gulf,
+    Kuwait,
+    Qatar,
+    Singapore,
+    France,
+    Turkey,
+    Custom= 99
+};
+export interface IPrayersTiming {
+    prayerName: PrayersName;
+    prayerTime: string;
 }
 export interface IPrayers {
-    prayerTime:IPrayersTiming[];
-    prayersDate:Date;
-//    adjustment: number
+    prayerTime: IPrayersTiming[];
+    prayersDate: Date;
+    //    adjustment: number
 }
-export interface IPrayerAdjustments
-{
-    prayerName:PrayersName;
-    adjustments:number;
+export interface IPrayerAdjustments {
+    prayerName: PrayersName;
+    adjustments: number;
 }
-export interface IPrayerMidnight
-{
-    id:number;
-    midnight:string;
+export interface IPrayerMidnight {
+    id: MidnightMode;
+    midnight: string;
 }
-export interface IPrayerLatitude
-{
-    id:number;
-    latitudeMethod:string;
+export interface IPrayerLatitude {
+    id: LatitudeMethod;
+    latitudeMethod: string;
 }
-export interface IPrayersSettings
-{
-    adjustments : IPrayerAdjustments [];
+export interface IPrayersSettings {
+    adjustments: IPrayerAdjustments[];
     method: IPrayerMethods;
     school: IPrayerSchools;
-    midnight:IPrayerMidnight;
-    latitudeAdjustment:IPrayerLatitude;
-    startDate:Date;
-    endDate:Date;
+    midnight: IPrayerMidnight;
+    latitudeAdjustment: IPrayerLatitude;
+    startDate: Date;
+    endDate: Date;
 }
-export interface IPrayerSchools
-{
-    id:number;
-    school:string;
+export interface IPrayerSchools {
+    id: Schools;
+    school: string;
 }
-export interface IPrayerMethods
-{
-    id:number;
+export interface IPrayerMethods {
+    id: Methods;
     methodName: string;
 
 }
-export interface IPrayersTime
-{
+export interface IPrayersTime {
     location: ILocationEntity;
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
 
 
 }
-class PrayerAdjustment implements IPrayerAdjustments
-{
-    private _prayerName: PrayersName;   
+class PrayerAdjustment implements IPrayerAdjustments {
+    private _prayerName: PrayersName;
     public get prayerName(): PrayersName {
         return this._prayerName;
     }
@@ -96,12 +119,12 @@ class PrayerAdjustment implements IPrayerAdjustments
 
 
 }
-class PrayersMidnight implements IPrayerMidnight{
-    private _id: number;    
-    public get id(): number {
+class PrayersMidnight implements IPrayerMidnight {
+    private _id: MidnightMode;
+    public get id(): MidnightMode {
         return this._id;
     }
-    public set id(value: number) {
+    public set id(value: MidnightMode) {
         this._id = value;
     }
     private _midnight: string;
@@ -113,13 +136,12 @@ class PrayersMidnight implements IPrayerMidnight{
     }
 
 }
-class PrayerLatitude implements IPrayerLatitude
-{
-    private _id: number;    
-    public get id(): number {
+class PrayerLatitude implements IPrayerLatitude {
+    private _id: LatitudeMethod;
+    public get id(): LatitudeMethod {
         return this._id;
     }
-    public set id(value: number) {
+    public set id(value: LatitudeMethod) {
         this._id = value;
     }
     private _latitudeMethod: string;
@@ -132,13 +154,12 @@ class PrayerLatitude implements IPrayerLatitude
 
 
 }
-class PrayerSchools implements IPrayerSchools
-{
-    private _id: number;   
-    public get id(): number {
+class PrayerSchools implements IPrayerSchools {
+    private _id: Schools;
+    public get id(): Schools {
         return this._id;
     }
-    public set id(value: number) {
+    public set id(value: Schools) {
         this._id = value;
     }
     private _school: string;
@@ -151,13 +172,12 @@ class PrayerSchools implements IPrayerSchools
 
 
 }
-class PrayersMethods implements IPrayerMethods
-{
-    private _id: number;   
-    public get id(): number {
+class PrayersMethods implements IPrayerMethods {
+    private _id: Methods;
+    public get id(): Methods {
         return this._id;
     }
-    public set id(value: number) {
+    public set id(value: Methods) {
         this._id = value;
     }
     private _methodName: string;
@@ -171,8 +191,7 @@ class PrayersMethods implements IPrayerMethods
 
 
 }
-class Prayers implements IPrayers
-{
+class Prayers implements IPrayers {
     private _prayerTime: IPrayersTiming[];
     public get prayerTime(): IPrayersTiming[] {
         return this._prayerTime;
@@ -191,15 +210,13 @@ class Prayers implements IPrayers
 
 
 }
-class PrayersTime implements IPrayersTime
-{
+class PrayersTime implements IPrayersTime {
 
     //prayer constructors, with timing,
-    constructor( prayers: Array<IPrayers>)
-    {
+    constructor(prayers: Array<IPrayers>) {
 
         this._prayers = prayers;
-       // this._prayersTimings = new Array();
+        // this._prayersTimings = new Array();
     }
     private _location: ILocationEntity;
     public get location(): ILocationEntity {
@@ -210,7 +227,7 @@ class PrayersTime implements IPrayersTime
     }
     private _pareyerSettings: IPrayersSettings;
     public get pareyerSettings(): IPrayersSettings {
-        return this._pareyerSettings;
+          return this._pareyerSettings;
     }
     public set pareyerSettings(value: IPrayersSettings) {
         this._pareyerSettings = value;
@@ -222,11 +239,10 @@ class PrayersTime implements IPrayersTime
     public set prayers(value: IPrayers[]) {
         this._prayers = value;
     }
- 
+
 
 }
-class PrayersSettings implements IPrayersSettings
-{
+class PrayersSettings implements IPrayersSettings {
     private _startDate: Date;
     public get startDate(): Date {
         return this._startDate;
@@ -276,26 +292,22 @@ class PrayersSettings implements IPrayersSettings
     public set latitudeAdjustment(value: IPrayerLatitude) {
         this._latitudeAdjustment = value;
     }
-    private _prayersSettings: IPrayersSettings  ;
-    constructor(prayersSettings?: IPrayersSettings)
-    {
-        this._prayersSettings=  prayersSettings;
+    private _prayersSettings: IPrayersSettings;
+    constructor(prayersSettings?: IPrayersSettings) {
+        this._prayersSettings = prayersSettings;
     }
 
 
 }
-class PrayersTimeFactory
-{
+class PrayersTimeFactory {
 
-    public static async createPrayersTimeFactory(location?: ILocation, prayerSettings?:IPrayersSettings): Promise<Array<PrayersTime>> 
-    {
-   
-         return;
+    public static async createPrayersTimeFactory(location?: ILocation, prayerSettings?: IPrayersSettings): Promise<Array<PrayersTime>> {
+
+        return;
     }
-    public static async createPrayersSettingFactory (prayerSettings?: IPrayersSettings): Promise<PrayersSettings>
-    {
+    public static async createPrayersSettingFactory(prayerSettings?: IPrayersSettings): Promise<PrayersSettings> {
         //ifPrayersSettings are not passed, read it from config
-return;
+        return;
     }
 
 }
