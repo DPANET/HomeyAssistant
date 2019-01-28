@@ -19,6 +19,7 @@ export class DateUtil
 }
     public static  formatDate(date:string) :Date
     {
+      
         if(!date.includes('Z'))
         return new Date(date + 'Z');
         else

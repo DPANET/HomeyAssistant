@@ -51,11 +51,8 @@ export interface IPrayerProvider {
     getPrayerMethodsById(index: number): Promise<IPrayerMethods>;
     getPrayerSchools(): Promise<Array<IPrayerSchools>>;
     getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
-    getPrayerSettings(): Promise<IPrayersSettings>;
     getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
     getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
-    savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean>;
-    getPrayerAdjustments(): Promise<Array<IPrayerAdjustments>>;
     getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
 }
 abstract class PrayerProvider implements IPrayerProvider {
@@ -73,11 +70,8 @@ abstract class PrayerProvider implements IPrayerProvider {
     abstract getPrayerMethodsById(index: number): Promise<IPrayerMethods>;
     abstract getPrayerSchools(): Promise<Array<IPrayerSchools>>;
     abstract getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
-    abstract getPrayerSettings(): Promise<IPrayersSettings>;
-    abstract savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean>;
     abstract getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
     abstract getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
-    abstract getPrayerAdjustments(): Promise<Array<IPrayerAdjustments>>;
     abstract getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
 }
 
@@ -108,7 +102,7 @@ export class PrayerTimeProvider extends PrayerProvider {
         return await this.getDB().then(result => result.get(prayerTimePaths.latitude).value());
     }
     async getPrayerLatitudeById(index: number): Promise<IPrayerLatitude> {
-        return await this.getObjectById<IPrayerLatitude>(index,this.getPrayerLatitude);
+        return await this.getObjectById<IPrayerLatitude>(index,()=>this.getPrayerLatitude());
 
     }
     private async getPrayerMethodUrl(): Promise<any> {
@@ -149,62 +143,14 @@ export class PrayerTimeProvider extends PrayerProvider {
         return this.parsePrayerMethods(result['data']);
     }
     public async getPrayerMethodsById(index: number): Promise<IPrayerMethods> {
-        return await this.getObjectById<IPrayerMethods>(index,this.getPrayerMethods);
+        return await this.getObjectById<IPrayerMethods>(index,()=>this.getPrayerMethods());
     }
     public async getPrayerSchools(): Promise<IPrayerSchools[]> {
         return await this.getDB().then(result => result.get(prayerTimePaths.schools).value());
     }
     public async getPrayerSchoolsById(index: number): Promise<IPrayerSchools> {
-        return await this.getObjectById<IPrayerSchools>(index,this.getPrayerSchools);
+        return await this.getObjectById<IPrayerSchools>(index,()=>this.getPrayerSchools());
 
-    }
-
-    public async getPrayerSettings(): Promise<IPrayersSettings> {
-
-        let err: Error, result: any;
-        [err, result] = await to(this.getDB().then(result => result.get(prayerTimePaths.settings).value()));
-        if (err || isNullOrUndefined(result))
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-
-        return {
-            method: await this.getPrayerMethodsById(result.method as number),
-            midnight: await this.getPrayerMidnightById(result.method as number),
-            school: await this.getPrayerSchoolsById(result.school as number),
-            latitudeAdjustment: await this.getPrayerLatitudeById(result.latitudeAdjustment as number),
-            startDate: DateUtil.formatDate(result.startDate as string),
-            endDate: DateUtil.formatDate(result.endDate as string),
-            adjustments: result.adjustments
-        };
-
-    }
-    public async savePrayerSettings(prayerSettings: IPrayersSettings): Promise<boolean> {
-        let err: Error, orignal: object;
-        let prayerSettingsObject:object;
-        let db: lowdb.LowdbAsync<any>;
-        db = await this.getDB();
-        [err,orignal] = await to(db.get(prayerTimePaths.calculations).value());
-        if(err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
-        prayerSettingsObject = this.mergeUpdate(orignal,prayerSettings);
-        [err] = await to(db.get(prayerTimePaths.calculations)
-        .assign(prayerSettingsObject)
-        .write());
-        if(err)
-        return Promise.reject(err);
-        return true;
-    }
-    private mergeUpdate(orignal: object, prayerSettings: IPrayersSettings): object {
-        let updates:object=
-        {
-            method: prayerSettings.method.id,
-            school: prayerSettings.school.id,
-            midnight: prayerSettings.midnight.id,
-            latitudeAdjustment: prayerSettings.latitudeAdjustment.id,
-            startDate: prayerSettings.startDate,
-            endDate: prayerSettings.endDate,
-            adjustments: prayerSettings.adjustments
-        };
-        return ramda.mergeDeepRight(orignal, updates);
     }
     public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<IPrayers[]> {
         let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
@@ -283,15 +229,15 @@ export class PrayerTimeProvider extends PrayerProvider {
 
     }
     public async getPrayerMidnightById(index: number): Promise<IPrayerMidnight> {
-            return await this.getObjectById<IPrayerMidnight>(index,this.getPrayerMidnight);
+            return await this.getObjectById<IPrayerMidnight>(index,()=> this.getPrayerMidnight());
 
     }
     private async getObjectById<T>(index:number, fn:Function)
     {
         let err: Error, list: Array<T>, listObject: T;
         const filterById = ramda.where({ id: ramda.equals(index) });
-        list = await fn();
-        console.log(list);
+        [err,list] = await to(fn());
+    
         if (err)
             return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
         listObject = ramda.filter<T>(filterById, list).pop();
@@ -301,8 +247,6 @@ export class PrayerTimeProvider extends PrayerProvider {
             return Promise.reject(PrayerErrorMessages.BAD_INPUT);
 
     }
-    public async getPrayerAdjustments(): Promise<Array<IPrayerAdjustments>> {
-        return await this.getDB().then(result => result.get(prayerTimePaths.adjustment).value());
-    }
+
 
 }

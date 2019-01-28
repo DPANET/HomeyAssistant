@@ -2,27 +2,17 @@ import dotenv = require('dotenv');
 dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
-import request = require('request-promise-native');
 const to = require('await-to-js').default;
-//const { googleMapsClient } = require("./location");
 import prayerEntity = require("./entities/prayers");
 import util = require('util');
-import JasmineExpect = require('jasmine-expect');
 import * as loc from './entities/location';
 import * as Joi from 'joi';
-import * as manager from './managers/manager';
 import * as val from './validators/validator';
-import { PrayerTimeProvider } from './providers/prayer-provider';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
-import { DateUtil } from './util/utility';
-//console.log(process.env.GOOGLE_API_KEY);
-import moment = require('moment');
-import { formatDate } from 'tough-cookie';
 import _ = require('lodash');
-//googleMap();
 import ramda = require('ramda');
-
+import cg = require("./configurators/configuration");
 var queryString: object = [
     {
         url: 'http://api.aladhan.com/v1/timingsByCity/' + '01-01-2019',
@@ -124,26 +114,15 @@ async function validate2() {
 buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject() {
     try {
-        let locationBuilder: loc.ILocationBuilder = loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
-        let locationObject: loc.ILocationEntity = await locationBuilder.setLocationAddress('Dubai', 'AE').
-            then(lb => lb.createLocation());
-        let prayerProvider: PrayerTimeProvider = new PrayerTimeProvider();
-        let result: prayerEntity.IPrayersSettings, err: Error;
-        let midnight: prayerEntity.IPrayerMidnight = await prayerProvider.getPrayerMidnightById(1);
-        console.log(midnight);
-        // let prayers: Array<prayerEntity.IPrayers>;
-        // let saveResult : boolean= false;
-        // [err, result] = await to(prayerProvider.getPrayerSettings());
+        // let locationBuilder: loc.ILocationBuilder = loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
+        // let locationObject: loc.ILocationEntity = await locationBuilder.setLocationAddress('Dubai', 'AE').
+        //     then(lb => lb.createLocation());
+        let config : cg.IConfig = new cg.default();
+        let prayerConfig : cg.IPrayersConfig = await config.getPrayerConfig();
+        console.log(prayerConfig);
+        prayerConfig.method =2;
+        let result:boolean = await config.savePrayerConfig(prayerConfig);
 
-        // result.method= methods;
-        // [err,saveResult] = await to( prayerProvider.savePrayerSettings(result));
-        // if(err)
-        // console.log(err);
-
-        // console.log(saveResult);
-       // [err, prayers] = await to(prayerProvider.getPrayerTime(result, locationObject));
-        // console.log(prayers);
-       // console.log(util.inspect(prayers, false, null, true /* enable colors */));
     }
     catch (err) {
         console.log(err.message);
