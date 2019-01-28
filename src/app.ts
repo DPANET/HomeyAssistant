@@ -7,7 +7,8 @@ import prayerEntity = require("./entities/prayers");
 import util = require('util');
 import * as loc from './entities/location';
 import * as Joi from 'joi';
-import * as val from './validators/validator';
+import val = require( './validators/validator');
+import validator =val.validators;
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import _ = require('lodash');
@@ -61,55 +62,55 @@ async function buildLocationObject() {
     }
     //console.log(util.inspect(err.message, false, null, true /* enable colors */));
 }
-async function validate1() {
-    let locationEntity: loc.ILocationEntity;
-    let validationError: val.IValidationError, validationResult: boolean;
-    locationEntity = {
+// async function validate1() {
+//     let locationEntity: loc.ILocationEntity;
+//     let validationError: val.IValidationError, validationResult: boolean;
+//     locationEntity = {
 
-        address: "fs",
-        // countryCode: "GB",
-        latitude: 20,
-        longtitude: -0.1277583
-    }
-    let validate: val.IValid<val.ValidtionTypes> = val.ValidatorProviderFactory.
-        createValidateProvider(val.ValidatorProviders.LocationValidator);
-    [validationError, validationResult] = await to(validate.validate(locationEntity));
-    if (validationError) {
-        console.log("validartion error : " + validationError.message);
+//         address: "fs",
+//         // countryCode: "GB",
+//         latitude: 20,
+//         longtitude: -0.1277583
+//     }
+//     let validate: val.IValid<val.ValidtionTypes> = val.ValidatorProviderFactory.
+//         createValidateProvider(val.ValidatorProviders.LocationValidator);
+//     [validationError, validationResult] = await to(validate.validate(locationEntity));
+//     if (validationError) {
+//         console.log("validartion error : " + validationError.message);
 
-    }
-    else
-        return validationResult;
+//     }
+//     else
+//         return validationResult;
 
-}
-async function validate2() {
-    let locationEntity: loc.ILocationEntity;
+// }
+// async function validate2() {
+//     let locationEntity: loc.ILocationEntity;
 
-    locationEntity = {
+//     locationEntity = {
 
 
-        countryCode: "GB",
-        latitude: 2000,
-        longtitude: -0.1277583
-    }
-    let _joiSchema = Joi.object().keys({
-        countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
-        address: Joi.string(),
-        latitude: Joi.number().min(-90).max(90),
-        longtitude: Joi.number().min(-180).max(180),
-        countryName: Joi.any()
-    })
-        .with('address', 'countryCode')
-        .with('latitude', 'longtitude');
+//         countryCode: "GB",
+//         latitude: 2000,
+//         longtitude: -0.1277583
+//     }
+//     let _joiSchema = Joi.object().keys({
+//         countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
+//         address: Joi.string(),
+//         latitude: Joi.number().min(-90).max(90),
+//         longtitude: Joi.number().min(-180).max(180),
+//         countryName: Joi.any()
+//     })
+//         .with('address', 'countryCode')
+//         .with('latitude', 'longtitude');
 
-    let result, err;
-    [err, result] = await to(Joi.validate(locationEntity, _joiSchema));
+//     let result, err;
+//     [err, result] = await to(Joi.validate(locationEntity, _joiSchema));
 
-    if (err)
-        console.log("validartion 2 error : " + err.message);
-    else
-        console.log(true);
-}
+//     if (err)
+//         console.log("validartion 2 error : " + err.message);
+//     else
+//         console.log(true);
+// }
 
 buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject() {
@@ -120,7 +121,7 @@ async function buildPrayerObject() {
         let config : cg.IConfig = new cg.default();
         let prayerConfig : cg.IPrayersConfig = await config.getPrayerConfig();
         console.log(prayerConfig);
-        prayerConfig.method =2;
+
         let result:boolean = await config.savePrayerConfig(prayerConfig);
 
     }
