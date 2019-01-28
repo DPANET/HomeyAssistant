@@ -21,7 +21,7 @@
     "jasmine-expect": "^4.0.1",
     "joi": "^14.3.1",
     "lowdb": "^1.0.0",
-    "moment": "^2.23.0",
+    "moment": "^2.24.0",
     "ramda": "^0.26.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
@@ -33,7 +33,7 @@
     "@types/debug": "0.0.31",
     "@types/dotenv": "^6.1.0",
     "@types/googlemaps": "^3.30.16",
-    "@types/jasmine": "^3.3.5",
+    "@types/jasmine": "^3.3.8",
     "@types/jasmine-expect": "^3.8.1",
     "@types/joi": "^14.3.0",
     "@types/lowdb": "^1.0.6",
@@ -41,6 +41,6 @@
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
-    "typescript": "^3.2.2"
+    "typescript": "^3.2.4"
   }
 }
