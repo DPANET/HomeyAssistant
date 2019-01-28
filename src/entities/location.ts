@@ -5,9 +5,7 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import * as provider from '../providers/location-provider';
-import val = require( '../validators/validator');
-import validator =val.validators;
-
+import {validators}  from '../validators/validator';
 
 
 
@@ -142,8 +140,8 @@ export interface ILocationBuilder {
 class LocationBuilder implements ILocationBuilder {
   private _location: ILocationEntity
   private _locationProvider: provider.ILocationProvider;
-  private _validtor: validator.IValid<ILocationEntity>;
-  constructor(locationProvider: provider.ILocationProvider, validator: validator.IValid<ILocationEntity>) {
+  private _validtor: validators.IValid<ILocationEntity>;
+  constructor(locationProvider: provider.ILocationProvider, validator: validators.IValid<ILocationEntity>) {
     this._location = new Location();
     this._validtor = validator;
     this._locationProvider=locationProvider;
@@ -163,7 +161,7 @@ class LocationBuilder implements ILocationBuilder {
     return this;
   }
   public async createLocation(): Promise<ILocationEntity> {
-    let validationErr: validator.IValidationError, validationResult: boolean = false;
+    let validationErr: validators.IValidationError, validationResult: boolean = false;
     let providerErr: Error, locationResult: ILocation,timezoneResult:ITimeZone;
     [validationErr, validationResult] = await to(this._validtor.validate(this._location));
     if (validationErr)
@@ -196,8 +194,8 @@ export class LocationBuilderFactory {
       case LocationTypeName.LocationBuilder:
         let providerName: provider.ILocationProvider = provider.LocationProviderFactory.
           createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
-        let validate: validator.IValid<validator.ValidtionTypes> = validator.ValidatorProviderFactory.
-          createValidateProvider(validator.ValidatorProviders.LocationValidator);
+        let validate: validators.IValid<validators.ValidtionTypes> = validators.ValidatorProviderFactory.
+          createValidateProvider(validators.ValidatorProviders.LocationValidator);
         return new LocationBuilder(providerName, validate);
     }
 

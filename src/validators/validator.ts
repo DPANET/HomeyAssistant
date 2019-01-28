@@ -7,166 +7,166 @@ import Joi = require('joi');
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
 
-export namespace validators
-{
-export type ValidtionTypes = location.ILocationEntity;
-export enum ValidatorProviders {
-    LocationValidator = "Validate Location"
-
-}
-interface IError {
-    message: string,
-    objectName: string,
-    value: object
-
-}
-export interface IValidationError extends Error {
-    err: Error,
-    details: Array<IError>
-    value: object
-}
-
-class ValidationError implements IValidationError {
-
-    constructor(err: Error) {
-        this._err = err;
-        this._name = err.name;
-        this._message = err.message;
-    }
-    private _name: string;
-    public get name(): string {
-        return this._name;
-    }
-    public set name(value: string) {
-        this._name = value;
-    }
-    private _err: Error;
-    public get err(): Error {
-        return this._err;
-    }
-    public set err(value: Error) {
-        this._err = value;
-    }
-    private _message: string;
-    public get message(): string {
-        return this._message
-    }
-    public set message(value: string) {
-        this._message = value;
-    }
-
-    private _details: Array<IError>;
-    public get details(): Array<IError> {
-        return this._details;
-    }
-    public set details(value: Array<IError>) {
-        this._details = value;
-    }
-    private _value: object;
-    public get value(): object {
-        return this._value;
-    }
-    public set value(value: object) {
-        this._value = value;
-    }
-
-}
-export interface IValid<ValidtionTypes> {
-    validate(validateObject: ValidtionTypes): Promise<boolean>;
-    isValid(): boolean;
-    getValidationError(): IValidationError;
-
-}
- abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
-{
-
-    private _validatorName: string;
-    private _valdationErrors: IValidationError;
-    private _isValid: boolean;
-    constructor(validatorName: string) {
-        this._validatorName = validatorName;
-        this._isValid = false;
-    }
-    public isValid(): boolean {
-        return this._isValid;
-    }
-    protected setIsValid(state: boolean) {
-        this._isValid = state;
-    }
-    abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
-    public get validatorName(): string {
-        return this._validatorName;
-    }
-    public set validatorName(value: string) {
-        this._validatorName = value;
-    }
-    public getValidationError(): IValidationError {
-        if(!this.isValid())
-        return this._valdationErrors;
-        else return null;
-    }
-    protected setValidatonError(error: IValidationError) {
-        this._valdationErrors = error;
+export namespace validators {
+    export type ValidtionTypes = location.ILocationEntity;
+    export enum ValidatorProviders {
+        LocationValidator = "Validate Location"
 
     }
-}
-
- class LocationValidator extends Validator<location.ILocationEntity>
-{
-    private _joiSchema: object;
-    constructor() {
-        super(ValidatorProviders.LocationValidator);
-        this._joiSchema = Joi.object().keys({
-            countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
-            address: Joi.string(),
-            latitude: Joi.number().min(-90).max(90),
-            longtitude: Joi.number().min(-180).max(180),
-            countryName: Joi.any()
-        })
-        .and('address', 'countryCode')
-        .and('latitude', 'longtitude');
+    interface IError {
+        message: string,
+        objectName: string,
+        value: object
 
     }
-    public async validate(validateObject: location.ILocationEntity): Promise<boolean> {
-        
-        let result, err, iErr:IValidationError;
-      //  console.log('object : ' + util.inspect(validateObject, false, null, true /* enable colors */));
-        [err, result] = await to( Joi.validate(validateObject, this._joiSchema,{abortEarly:false,allowUnknown:true}));
-        if (!isNullOrUndefined(err)) {
-            iErr= this.processErrorMessages(err);
-            this.setIsValid(false);
-            this.setValidatonError(iErr);
+    export interface IValidationError extends Error {
+        err: Error,
+        details: Array<IError>
+        value: object
+    }
 
-            return Promise.reject(iErr);
-            
+    class ValidationError implements IValidationError {
+
+        constructor(err: Error) {
+            this._err = err;
+            this._name = err.name;
+            this._message = err.message;
         }
-        else{
-            
-            this.setIsValid(true);
-            return Promise.resolve( true);
+        private _name: string;
+        public get name(): string {
+            return this._name;
+        }
+        public set name(value: string) {
+            this._name = value;
+        }
+        private _err: Error;
+        public get err(): Error {
+            return this._err;
+        }
+        public set err(value: Error) {
+            this._err = value;
+        }
+        private _message: string;
+        public get message(): string {
+            return this._message
+        }
+        public set message(value: string) {
+            this._message = value;
+        }
+
+        private _details: Array<IError>;
+        public get details(): Array<IError> {
+            return this._details;
+        }
+        public set details(value: Array<IError>) {
+            this._details = value;
+        }
+        private _value: object;
+        public get value(): object {
+            return this._value;
+        }
+        public set value(value: object) {
+            this._value = value;
+        }
+
+    }
+    export interface IValid<ValidtionTypes> {
+        validate(validateObject: ValidtionTypes): Promise<boolean>;
+        isValid(): boolean;
+        getValidationError(): IValidationError;
+
+    }
+    export abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
+    {
+
+        private _validatorName: string;
+        private _valdationErrors: IValidationError;
+        private _isValid: boolean;
+        constructor(validatorName: string) {
+            this._validatorName = validatorName;
+            this._isValid = false;
+        }
+        public isValid(): boolean {
+            return this._isValid;
+        }
+        protected setIsValid(state: boolean) {
+            this._isValid = state;
+        }
+        abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
+        public get validatorName(): string {
+            return this._validatorName;
+        }
+        public set validatorName(value: string) {
+            this._validatorName = value;
+        }
+        public getValidationError(): IValidationError {
+            if (!this.isValid())
+                return this._valdationErrors;
+            else return null;
+        }
+        protected setValidatonError(error: IValidationError) {
+            this._valdationErrors = error;
+
         }
     }
-    private processErrorMessages(err: Joi.ValidationError): IValidationError {
-        let validationError: IValidationError = new ValidationError(err);
-        let details = new Array<IError>();
-        validationError.value = err._object;
-        err.details.forEach(element => {
-            details.push({ message: element.message, objectName: element.type, value: element.context });
-        });
-        validationError.details = details;
-        return validationError;
+
+    class LocationValidator extends Validator<location.ILocationEntity>
+    {
+        private _joiSchema: object;
+        constructor() {
+            super(ValidatorProviders.LocationValidator);
+            this._joiSchema = Joi.object().keys({
+                countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
+                address: Joi.string(),
+                latitude: Joi.number().min(-90).max(90),
+                longtitude: Joi.number().min(-180).max(180),
+                countryName: Joi.any()
+            })
+                .and('address', 'countryCode')
+                .and('latitude', 'longtitude');
+
+        }
+        public async validate(validateObject: location.ILocationEntity): Promise<boolean> {
+
+            let result, err, iErr: IValidationError;
+            //  console.log('object : ' + util.inspect(validateObject, false, null, true /* enable colors */));
+            [err, result] = await to(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+            if (!isNullOrUndefined(err)) {
+                iErr = this.processErrorMessages(err);
+                this.setIsValid(false);
+                this.setValidatonError(iErr);
+
+                return Promise.reject(iErr);
+
+            }
+            else {
+
+                this.setIsValid(true);
+                return Promise.resolve(true);
+            }
+        }
+        private processErrorMessages(err: Joi.ValidationError): IValidationError {
+            let validationError: IValidationError = new ValidationError(err);
+            let details = new Array<IError>();
+            validationError.value = err._object;
+            err.details.forEach(element => {
+                details.push({ message: element.message, objectName: element.type, value: element.context });
+            });
+            validationError.details = details;
+            return validationError;
+        }
+
     }
 
-}
 
-export class ValidatorProviderFactory {
-    static createValidateProvider(validatorProviderName:ValidatorProviders): IValid<ValidtionTypes> {
-    
-        switch (validatorProviderName) {
-            case ValidatorProviders.LocationValidator:
-            let validation:IValid<location.ILocation> = new LocationValidator();
-                return validation;
+    export class ValidatorProviderFactory {
+        static createValidateProvider(validatorProviderName: ValidatorProviders): IValid<ValidtionTypes> {
+
+            switch (validatorProviderName) {
+                case ValidatorProviders.LocationValidator:
+                    let validation: IValid<location.ILocation> = new LocationValidator();
+                    return validation;
+            }
         }
     }
-}
 }
