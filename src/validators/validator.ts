@@ -6,6 +6,9 @@ const to = require('await-to-js').default;
 import Joi = require('joi');
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
+
+export namespace validators
+{
 export type ValidtionTypes = location.ILocationEntity;
 export enum ValidatorProviders {
     LocationValidator = "Validate Location"
@@ -165,4 +168,5 @@ export class ValidatorProviderFactory {
                 return validation;
         }
     }
+}
 }
