@@ -14,6 +14,7 @@ import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import _ = require('lodash');
 import ramda = require('ramda');
 import cg = require("./configurators/configuration");
+
 var queryString: object = [
     {
         url: 'http://api.aladhan.com/v1/timingsByCity/' + '01-01-2019',
