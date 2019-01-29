@@ -129,20 +129,15 @@ export namespace validators {
 
         }
         public async validate(validateObject: location.ILocationEntity): Promise<boolean> {
-
             let result, err, iErr: IValidationError;
-            //  console.log('object : ' + util.inspect(validateObject, false, null, true /* enable colors */));
             [err, result] = await to(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
             if (!isNullOrUndefined(err)) {
                 iErr = this.processErrorMessages(err);
                 this.setIsValid(false);
                 this.setValidatonError(iErr);
-
                 return Promise.reject(iErr);
-
             }
             else {
-
                 this.setIsValid(true);
                 return Promise.resolve(true);
             }
@@ -168,16 +163,12 @@ export namespace validators {
     {
         private _joiSchema: object;
         private constructor() {
-            super(ValidatorProviders.LocationValidator);
+            super(ValidatorProviders.PrayerSettingsValidator);
             this._joiSchema = Joi.object().keys({
-                countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
-                address: Joi.string(),
-                latitude: Joi.number().min(-90).max(90),
-                longtitude: Joi.number().min(-180).max(180),
-                countryName: Joi.any()
-            })
-                .and('address', 'countryCode')
-                .and('latitude', 'longtitude');
+                startDate: Joi.date().less(Joi.ref('endDate')).required(),
+                endDate: Joi.string().required(),
+                method: Joi.object().required()
+            });
 
         }
         validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {

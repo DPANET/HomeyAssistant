@@ -7,9 +7,10 @@ const to = require('await-to-js').default;
 import ramda = require('ramda');
 import { ILocation, ILocationEntity } from './location';
 import * as pp from '../providers/prayer-provider';
+import * as lp from '../providers/location-provider';
 import {ILocationConfig,IPrayersConfig}from "../configurators/configuration";
 import val = require( '../validators/validator');
-import validator =val.validators;
+import validators =val.validators;
 export enum PrayersName {
     FAJR = "Fajr",
     SUNRISE = "Sunrise",
@@ -333,31 +334,38 @@ class PrayerSettingsBuilder implements IPrayerSettingsBuilder
 {
     private _prayerSettings: IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
-    private _validtor: validator.IValid<IPrayersSettings>;
-    private constructor(prayerProvider:pp.IPrayerProvider,validator: validator.IValid<IPrayersSettings>)
+    private _validtor: validators.IValid<IPrayersSettings>;
+    private constructor(prayerProvider:pp.IPrayerProvider,validator: validators.IValid<IPrayersSettings>)
     {
         this._prayerProvider= prayerProvider;
         this._validtor = validator;
         this._prayerSettings = new PrayersSettings();
     }
-    setPrayerMethod(methodName: Methods): IPrayerSettingsBuilder {
+   public setPrayerMethod(methodName: Methods): IPrayerSettingsBuilder {
         throw new Error("Method not implemented.");
     }    
-    setPrayerSchool(schoolName: Schools): IPrayerSettingsBuilder {
+   public setPrayerSchool(schoolName: Schools): IPrayerSettingsBuilder {
         throw new Error("Method not implemented.");
     }
-    setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder {
+    public setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder {
         throw new Error("Method not implemented.");
     }
-    setPrayerMidnight(midnight: MidnightMode): IPrayerSettingsBuilder {
+   public setPrayerMidnight(midnight: MidnightMode): IPrayerSettingsBuilder {
         throw new Error("Method not implemented.");
     }
-    setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
+   public setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
         throw new Error("Method not implemented.");
     }
-    createPrayerSettings(): Promise<IPrayersSettings> {
-        throw new Error("Method not implemented.");
+    public createPrayerSettings() : Promise<IPrayersSettings>
+    {
+        return;
     }
+    public static  createPrayerSettingsBuilder(prayerConfig?:IPrayersConfig,prayerProvider?:pp.IPrayerProvider): IPrayerSettingsBuilder {
+       let prayerProviderName :pp.IPrayerProvider = pp.PrayerProviderFactory
+        .createPrayerProviderFactory(pp.PrayerProviderName.PRAYER_TIME);
+      let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
+      return new PrayerSettingsBuilder(prayerProviderName, validate);  
+      }
 
 
 }
