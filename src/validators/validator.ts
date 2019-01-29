@@ -6,19 +6,20 @@ const to = require('await-to-js').default;
 import Joi = require('joi');
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
+import * as prayer from '../entities/prayers';
 
 export namespace validators {
-    export type ValidtionTypes = location.ILocationEntity;
+    export type ValidtionTypes =   prayer.IPrayersSettings | location.ILocationEntity;
     export enum ValidatorProviders {
-        LocationValidator = "Validate Location"
-
-    }
+        LocationValidator = "Validate Location",
+        PrayerSettingsValidator = "Validate Prayer Settings"
+    };
     interface IError {
         message: string,
         objectName: string,
         value: object
 
-    }
+    };
     export interface IValidationError extends Error {
         err: Error,
         details: Array<IError>
@@ -76,7 +77,7 @@ export namespace validators {
         getValidationError(): IValidationError;
 
     }
-    export abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
+     abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
     {
 
         private _validatorName: string;
@@ -93,6 +94,7 @@ export namespace validators {
             this._isValid = state;
         }
         abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
+     //   abstract  createValidator(): IValid<ValidtionTypes>;
         public get validatorName(): string {
             return this._validatorName;
         }
@@ -110,10 +112,10 @@ export namespace validators {
         }
     }
 
-    class LocationValidator extends Validator<location.ILocationEntity>
+    export class LocationValidator extends Validator<location.ILocationEntity>
     {
         private _joiSchema: object;
-        constructor() {
+        private constructor() {
             super(ValidatorProviders.LocationValidator);
             this._joiSchema = Joi.object().keys({
                 countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
@@ -155,18 +157,49 @@ export namespace validators {
             validationError.details = details;
             return validationError;
         }
-
-    }
-
-
-    export class ValidatorProviderFactory {
-        static createValidateProvider(validatorProviderName: ValidatorProviders): IValid<ValidtionTypes> {
-
-            switch (validatorProviderName) {
-                case ValidatorProviders.LocationValidator:
-                    let validation: IValid<location.ILocation> = new LocationValidator();
-                    return validation;
-            }
+        public static createValidator(): IValid<location.ILocationEntity>
+        {
+            return new LocationValidator();
         }
+
     }
+
+  export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
+    {
+        private _joiSchema: object;
+        private constructor() {
+            super(ValidatorProviders.LocationValidator);
+            this._joiSchema = Joi.object().keys({
+                countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
+                address: Joi.string(),
+                latitude: Joi.number().min(-90).max(90),
+                longtitude: Joi.number().min(-180).max(180),
+                countryName: Joi.any()
+            })
+                .and('address', 'countryCode')
+                .and('latitude', 'longtitude');
+
+        }
+        validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {
+            throw new Error("Method not implemented.");
+        }
+        public static createValidator(): IValid<prayer.IPrayersSettings>
+        {
+            return new PrayerSettingsValidator();
+        }    
+    }
+    // export class ValidatorProviderFactory {
+    //     static createValidateProvider(validatorProviderName: ValidatorProviders): IValid<ValidtionTypes> {
+           
+    //         switch (validatorProviderName) {
+    //             case ValidatorProviders.LocationValidator:
+    //             return new LocationValidator();
+    //                 break;
+    //             case ValidatorProviders.PrayerSettingsValidator:
+    //             return new PrayerSettingsValidator();
+    //             break;
+    //         }
+
+    //     }
+    // }
 }

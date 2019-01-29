@@ -1,6 +1,4 @@
 
-
-//const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 import Debug = require('debug');
@@ -8,8 +6,10 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import { ILocation, ILocationEntity } from './location';
-
-
+import * as pp from '../providers/prayer-provider';
+import {ILocationConfig,IPrayersConfig}from "../configurators/configuration";
+import val = require( '../validators/validator');
+import validator =val.validators;
 export enum PrayersName {
     FAJR = "Fajr",
     SUNRISE = "Sunrise",
@@ -312,3 +312,52 @@ class PrayersTimeFactory {
 
 }
 
+class PrayerTimeBuilder
+{
+    private _prayerTime: IPrayersTime;
+    constructor(prayerConfig:IPrayersConfig,locationConfig:ILocationConfig)
+    {
+    }
+
+}
+export interface IPrayerSettingsBuilder
+{
+    setPrayerMethod(methodName:Methods) : IPrayerSettingsBuilder;
+    setPrayerSchool( schoolName:Schools):IPrayerSettingsBuilder;
+    setPrayerAdjustments(adjustments:IPrayerAdjustments[]):IPrayerSettingsBuilder;
+    setPrayerMidnight(midnight:MidnightMode):IPrayerSettingsBuilder;
+    setPrayerPeriod(startDate:Date,endDate:Date) : IPrayerSettingsBuilder;
+    createPrayerSettings():Promise<IPrayersSettings>;
+}
+class PrayerSettingsBuilder implements IPrayerSettingsBuilder
+{
+    private _prayerSettings: IPrayersSettings;
+    private _prayerProvider: pp.IPrayerProvider;
+    private _validtor: validator.IValid<IPrayersSettings>;
+    private constructor(prayerProvider:pp.IPrayerProvider,validator: validator.IValid<IPrayersSettings>)
+    {
+        this._prayerProvider= prayerProvider;
+        this._validtor = validator;
+        this._prayerSettings = new PrayersSettings();
+    }
+    setPrayerMethod(methodName: Methods): IPrayerSettingsBuilder {
+        throw new Error("Method not implemented.");
+    }    
+    setPrayerSchool(schoolName: Schools): IPrayerSettingsBuilder {
+        throw new Error("Method not implemented.");
+    }
+    setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder {
+        throw new Error("Method not implemented.");
+    }
+    setPrayerMidnight(midnight: MidnightMode): IPrayerSettingsBuilder {
+        throw new Error("Method not implemented.");
+    }
+    setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
+        throw new Error("Method not implemented.");
+    }
+    createPrayerSettings(): Promise<IPrayersSettings> {
+        throw new Error("Method not implemented.");
+    }
+
+
+}
