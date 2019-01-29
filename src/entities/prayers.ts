@@ -374,7 +374,7 @@ class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     public async createPrayerSettings(): Promise<IPrayersSettings> {
         let validationErr: validators.IValidationError;
         let validationResult: boolean = false;
-        let providerErr: Error, prayerSettingsResult: IPrayersSettings;
+        //let providerErr: Error, prayerSettingsResult: IPrayersSettings;
         let prayerMethod: IPrayerMethods, prayerLatitude: IPrayerLatitude, prayerSchool: IPrayerSchools, prayerMidnight: IPrayerMidnight;
         [validationErr, validationResult] = await to(this._validtor.validate(this._prayerSettings));
         if (validationErr)
