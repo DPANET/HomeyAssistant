@@ -344,8 +344,8 @@ class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerSettings = new PrayersSettings();
         this._prayerSettings.midnight.id = prayerConfig.midnight;
         this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
-        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? Schools.Hanafi: prayerConfig.school;
-        this._prayerSettings.latitudeAdjustment.id =isNullOrUndefined(prayerConfig.latitudeAdjustment) ? LatitudeMethod.Angle:prayerConfig.school;
+        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? Schools.Hanafi : prayerConfig.school;
+        this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
         this._prayerSettings.startDate = prayerConfig.startDate;
         this._prayerSettings.endDate = prayerConfig.endDate;
 
@@ -372,12 +372,27 @@ class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         return this;
     }
     public async createPrayerSettings(): Promise<IPrayersSettings> {
-        let validationErr: validators.IValidationError, validationResult: boolean = false;
+        let validationErr: validators.IValidationError;
+        let validationResult: boolean = false;
         let providerErr: Error, prayerSettingsResult: IPrayersSettings;
+        let prayerMethod: IPrayerMethods, prayerLatitude: IPrayerLatitude, prayerSchool: IPrayerSchools, prayerMidnight: IPrayerMidnight;
         [validationErr, validationResult] = await to(this._validtor.validate(this._prayerSettings));
         if (validationErr)
             return Promise.reject(validationErr);
         if (validationResult) {
+            try {
+                prayerMethod = await this._prayerProvider.getPrayerMethodsById(this._prayerSettings.method.id);
+                prayerLatitude = await this._prayerProvider.getPrayerLatitudeById(this._prayerSettings.latitudeAdjustment.id);
+                prayerMidnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
+                prayerSchool = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
+                this._prayerSettings.method= prayerMethod;
+                this._prayerSettings.midnight= prayerMidnight;
+                this._prayerSettings.school  = prayerSchool;
+                this._prayerSettings.latitudeAdjustment = prayerLatitude;
+                return this._prayerSettings;
+            } catch (error) {
+                return Promise.reject(error);
+            }
 
         }
     }
