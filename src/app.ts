@@ -47,14 +47,19 @@ let locationUpdated =
     longtitude: 55.2792565
 }
 
-//buildLocationObject().catch((err)=>console.log(err));
+buildLocationObject().catch((err)=>console.log(err));
 //readJsonFile();
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject() {
     try {
-        let locationBuilder: loc.ILocationBuilder = loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
-        let locationObject: loc.ILocationEntity = await locationBuilder.setLocationAddress('Dubai', 'AE').
-            then(lb => lb.createLocation());
+        let locationObject: loc.ILocationEntity  = await loc.LocationBuilder
+        .createLocationBuilder()
+        .setLocationAddress('Dubai','AE1')
+        .createLocation();
+         
+        //loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
+      //  let locationObject: loc.ILocationEntity = await locationBuilder.setLocationAddress('Dubai', 'AE').
+        //    then(lb => lb.createLocation());
 
         console.log(locationObject);
     }
@@ -113,7 +118,7 @@ async function buildLocationObject() {
 //         console.log(true);
 // }
 
-buildPrayerObject().catch((err)=>console.log(err));
+//buildPrayerObject().catch((err)=>console.log(err));
 async function buildPrayerObject() {
     try {
         // let locationBuilder: loc.ILocationBuilder = loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);

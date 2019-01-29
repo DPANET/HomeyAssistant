@@ -9,6 +9,7 @@ import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileASync";
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');
+import * as prayers from '../entities/prayers';
 const configPaths =
 {
     prayerConfig: 'config.prayerConfig.calculations',
@@ -21,14 +22,14 @@ const ConfigErrorMessages =
     FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try ensure internet connectivity'
 }
 export interface IPrayersConfig {
-    method: number;
-    midnight: number;
-    school: number;
-    latitudeAdjustment: number;
+    method: prayers.Methods;
+    midnight: prayers.MidnightMode;
+    school: prayers.Schools;
+    latitudeAdjustment: prayers.LatitudeMethod;
     startDate: Date;
     endDate: Date;
     adjustments:
-    [{prayerName: string,
+    [{prayerName: prayers.PrayersName,
     adjustments: number} ];
 }
 export interface ILocationConfig {

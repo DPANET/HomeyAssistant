@@ -5,11 +5,12 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import * as provider from '../providers/location-provider';
-import {validators}  from '../validators/validator';
+import { validators } from '../validators/validator';
 
 
 
 import { isNullOrUndefined } from 'util';
+import { ILocationConfig } from '../configurators/configuration';
 export enum LocationTypeName {
   LocationBuilder = "Location Builder"
 
@@ -53,7 +54,7 @@ class Location implements ILocationEntity {
       this._countryName = location.countryName;
       this._address = location.address;
     }
-   if (!isNullOrUndefined(timeZone)) {
+    if (!isNullOrUndefined(timeZone)) {
       this._timeZoneId = timeZone.timeZoneId;
       this._timeZoneName = timeZone.timeZoneName;
       this._dstOffset = timeZone.dstOffset;
@@ -62,8 +63,8 @@ class Location implements ILocationEntity {
   }
 
   public get latitude(): number {
-   
-    
+
+
     return this._latitude;
   }
   public set latitude(value: number) {
@@ -131,38 +132,34 @@ class Location implements ILocationEntity {
 
 
 export interface ILocationBuilder {
-  setLocationCoordinates(lat: number, lng: number): Promise<ILocationBuilder>
-  setLocationAddress(address: string, countryCode: string): Promise<ILocationBuilder>
+  setLocationCoordinates(lat: number, lng: number): ILocationBuilder
+  setLocationAddress(address: string, countryCode: string): ILocationBuilder
   createLocation(): Promise<ILocationEntity>
 
 }
 
-class LocationBuilder implements ILocationBuilder {
+export class LocationBuilder implements ILocationBuilder {
   private _location: ILocationEntity
   private _locationProvider: provider.ILocationProvider;
   private _validtor: validators.IValid<ILocationEntity>;
-  constructor(locationProvider: provider.ILocationProvider, validator: validators.IValid<ILocationEntity>) {
-    this._location = new Location();
-    this._validtor = validator;
+  private constructor(locationProvider: provider.ILocationProvider, validator: validators.IValid<ILocationEntity>) {
     this._locationProvider=locationProvider;
-
+    this._validtor = validator;
+    this._location = new Location();
   }
-  public async setLocationCoordinates(lat: number, lng: number): Promise<LocationBuilder> {
-
+  public  setLocationCoordinates(lat: number, lng: number): LocationBuilder {
     this._location.latitude = lat;
     this._location.longtitude = lng;
-
-
     return this
   }
-  public async setLocationAddress(address: string, countryCode: string): Promise<LocationBuilder> {
+  public  setLocationAddress(address: string, countryCode: string): LocationBuilder {
     this._location.countryCode = countryCode;
     this._location.address = address;
     return this;
   }
   public async createLocation(): Promise<ILocationEntity> {
     let validationErr: validators.IValidationError, validationResult: boolean = false;
-    let providerErr: Error, locationResult: ILocation,timezoneResult:ITimeZone;
+    let providerErr: Error, locationResult: ILocation, timezoneResult: ITimeZone;
     [validationErr, validationResult] = await to(this._validtor.validate(this._location));
     if (validationErr)
       return Promise.reject(validationErr);
@@ -173,10 +170,10 @@ class LocationBuilder implements ILocationBuilder {
         [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
         if (providerErr)
           return Promise.reject(providerErr);
-        [providerErr,timezoneResult]= await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude,locationResult.longtitude));
-        if(providerErr)
-        return Promise.reject(providerErr);
-        this._location = ramda.mergeWith(ramda.concat,locationResult,timezoneResult);
+        [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
+        if (providerErr)
+          return Promise.reject(providerErr);
+        this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
         return Promise.resolve(this._location);
       }
       else {
@@ -184,20 +181,26 @@ class LocationBuilder implements ILocationBuilder {
       }
     }
   }
-
-}
-
-export class LocationBuilderFactory {
-  //FACTORY to read from config default location proivder, and validator
-  static createBuilderFactory(builderTypeName: LocationTypeName) {
-    switch (builderTypeName) {
-      case LocationTypeName.LocationBuilder:
-        let providerName: provider.ILocationProvider = provider.LocationProviderFactory.
-          createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
-        let validate: validators.IValid<validators.ValidtionTypes> = validators.ValidatorProviderFactory.
-          createValidateProvider(validators.ValidatorProviders.LocationValidator);
-        return new LocationBuilder(providerName, validate);
-    }
-
+  public static createLocationBuilder(locationConfig?:ILocationConfig,ILocationProvider?:provider.ILocationProvider): LocationBuilder {
+    let providerName: provider.ILocationProvider = provider.LocationProviderFactory.
+      createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
+    let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
+    return new LocationBuilder(providerName, validate);
   }
+
 }
+
+//  class LocationBuilderFactory {
+//   //FACTORY to read from config default location proivder, and validator
+//   static createBuilderFactory(builderTypeName: LocationTypeName) {
+//     switch (builderTypeName) {
+//       case LocationTypeName.LocationBuilder:
+//         let providerName: provider.ILocationProvider = provider.LocationProviderFactory.
+//           createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
+//         let validate: validators.IValid<validators.ValidtionTypes> = validators.ValidatorProviderFactory.
+//           createValidateProvider(validators.ValidatorProviders.LocationValidator);
+//         return ;//new LocationBuilder(providerName, validate);
+//     }
+
+//   }
+// }

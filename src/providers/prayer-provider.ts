@@ -15,7 +15,7 @@ import { start } from 'repl';
 import { ILocationEntity } from '../entities/location';
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
-    APPLE = "Apple"
+   // APPLE = "Apple"
 
 }
 const prayerTimePaths =
@@ -75,7 +75,7 @@ abstract class PrayerProvider implements IPrayerProvider {
     abstract getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
 }
 
-export class PrayerTimeProvider extends PrayerProvider {
+ class PrayerTimeProvider extends PrayerProvider {
 
     private _prayerLatitude: IPrayerLatitude;
     private _prayerMethod: IPrayerMethods;
@@ -249,4 +249,14 @@ export class PrayerTimeProvider extends PrayerProvider {
     }
 
 
+}
+
+export class PrayerProviderFactory {
+    static createPrayerProviderFactory(prayerProviderName: PrayerProviderName): PrayerProvider {
+        switch (prayerProviderName) {
+            case PrayerProviderName.PRAYER_TIME:
+                return new PrayerTimeProvider();
+                break;
+        }
+    }
 }
