@@ -143,16 +143,16 @@ export class LocationBuilder implements ILocationBuilder {
   private _locationProvider: provider.ILocationProvider;
   private _validtor: validators.IValid<ILocationEntity>;
   private constructor(locationProvider: provider.ILocationProvider, validator: validators.IValid<ILocationEntity>) {
-    this._locationProvider=locationProvider;
+    this._locationProvider = locationProvider;
     this._validtor = validator;
     this._location = new Location();
   }
-  public  setLocationCoordinates(lat: number, lng: number): LocationBuilder {
+  public setLocationCoordinates(lat: number, lng: number): LocationBuilder {
     this._location.latitude = lat;
     this._location.longtitude = lng;
     return this
   }
-  public  setLocationAddress(address: string, countryCode: string): LocationBuilder {
+  public setLocationAddress(address: string, countryCode: string): LocationBuilder {
     this._location.countryCode = countryCode;
     this._location.address = address;
     return this;
@@ -181,7 +181,7 @@ export class LocationBuilder implements ILocationBuilder {
       }
     }
   }
-  public static createLocationBuilder(locationConfig?:ILocationConfig,ILocationProvider?:provider.ILocationProvider): LocationBuilder {
+  public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: provider.ILocationProvider): LocationBuilder {
     let providerName: provider.ILocationProvider = provider.LocationProviderFactory.
       createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
     let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();

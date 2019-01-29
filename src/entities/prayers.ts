@@ -8,9 +8,12 @@ import ramda = require('ramda');
 import { ILocation, ILocationEntity } from './location';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
-import {ILocationConfig,IPrayersConfig}from "../configurators/configuration";
-import val = require( '../validators/validator');
-import validators =val.validators;
+import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
+import val = require('../validators/validator');
+import validators = val.validators;
+import { isNullOrUndefined } from 'util';
+import * as util from '../util/utility';
+import { realpathSync } from 'fs';
 export enum PrayersName {
     FAJR = "Fajr",
     SUNRISE = "Sunrise",
@@ -23,25 +26,21 @@ export enum PrayersName {
     MIDNIGHT = "Midnight"
 
 };
-export enum Schools
-{
-    Hanafi=0,
+export enum Schools {
+    Hanafi = 0,
     Shafi
 };
-export enum MidnightMode
-{
-    Standard=0,
+export enum MidnightMode {
+    Standard = 0,
     Jafari
 };
-export enum LatitudeMethod
-{
+export enum LatitudeMethod {
     MidNight = 1,
     Seventh,
     Angle
 };
-export enum Methods
-{
-    Shia=0,
+export enum Methods {
+    Shia = 0,
     Karchi,
     America,
     MuslimLeague,
@@ -54,7 +53,7 @@ export enum Methods
     Singapore,
     France,
     Turkey,
-    Custom= 99
+    Custom = 99
 };
 export interface IPrayersTiming {
     prayerName: PrayersName;
@@ -228,7 +227,7 @@ class PrayersTime implements IPrayersTime {
     }
     private _pareyerSettings: IPrayersSettings;
     public get pareyerSettings(): IPrayersSettings {
-          return this._pareyerSettings;
+        return this._pareyerSettings;
     }
     public set pareyerSettings(value: IPrayersSettings) {
         this._pareyerSettings = value;
@@ -244,6 +243,7 @@ class PrayersTime implements IPrayersTime {
 
 }
 class PrayersSettings implements IPrayersSettings {
+
     private _startDate: Date;
     public get startDate(): Date {
         return this._startDate;
@@ -295,7 +295,14 @@ class PrayersSettings implements IPrayersSettings {
     }
     private _prayersSettings: IPrayersSettings;
     constructor(prayersSettings?: IPrayersSettings) {
-        this._prayersSettings = prayersSettings;
+        if (!isNullOrUndefined(prayersSettings))
+            this._prayersSettings = prayersSettings;
+        else {
+            this._method = new PrayersMethods();
+            this._adjustments = new Array<PrayerAdjustment>();
+            this._midnight = new PrayersMidnight();
+            this._school = new PrayerSchools();
+        }
     }
 
 
@@ -313,59 +320,73 @@ class PrayersTimeFactory {
 
 }
 
-class PrayerTimeBuilder
-{
+class PrayerTimeBuilder {
     private _prayerTime: IPrayersTime;
-    constructor(prayerConfig:IPrayersConfig,locationConfig:ILocationConfig)
-    {
+    constructor(prayerConfig: IPrayersConfig, locationConfig: ILocationConfig) {
     }
 
 }
-export interface IPrayerSettingsBuilder
-{
-    setPrayerMethod(methodName:Methods) : IPrayerSettingsBuilder;
-    setPrayerSchool( schoolName:Schools):IPrayerSettingsBuilder;
-    setPrayerAdjustments(adjustments:IPrayerAdjustments[]):IPrayerSettingsBuilder;
-    setPrayerMidnight(midnight:MidnightMode):IPrayerSettingsBuilder;
-    setPrayerPeriod(startDate:Date,endDate:Date) : IPrayerSettingsBuilder;
-    createPrayerSettings():Promise<IPrayersSettings>;
+export interface IPrayerSettingsBuilder {
+    setPrayerMethod(methodId: Methods): IPrayerSettingsBuilder;
+    setPrayerSchool(schoolId: Schools): IPrayerSettingsBuilder;
+    setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder;
+    setPrayerMidnight(midnightId: MidnightMode): IPrayerSettingsBuilder;
+    setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
+    createPrayerSettings(): Promise<IPrayersSettings>;
 }
-class PrayerSettingsBuilder implements IPrayerSettingsBuilder
-{
+class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerSettings: IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
     private _validtor: validators.IValid<IPrayersSettings>;
-    private constructor(prayerProvider:pp.IPrayerProvider,validator: validators.IValid<IPrayersSettings>)
-    {
-        this._prayerProvider= prayerProvider;
+    private constructor(prayerProvider: pp.IPrayerProvider, validator: validators.IValid<IPrayersSettings>, prayerConfig?: IPrayersConfig, ) {
+        this._prayerProvider = prayerProvider;
         this._validtor = validator;
         this._prayerSettings = new PrayersSettings();
+        this._prayerSettings.midnight.id = prayerConfig.midnight;
+        this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
+        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? Schools.Hanafi: prayerConfig.school;
+        this._prayerSettings.latitudeAdjustment.id =isNullOrUndefined(prayerConfig.latitudeAdjustment) ? LatitudeMethod.Angle:prayerConfig.school;
+        this._prayerSettings.startDate = prayerConfig.startDate;
+        this._prayerSettings.endDate = prayerConfig.endDate;
+
     }
-   public setPrayerMethod(methodName: Methods): IPrayerSettingsBuilder {
-        throw new Error("Method not implemented.");
-    }    
-   public setPrayerSchool(schoolName: Schools): IPrayerSettingsBuilder {
-        throw new Error("Method not implemented.");
+    public setPrayerMethod(methodId: Methods): IPrayerSettingsBuilder {
+        this._prayerSettings.method.id = methodId;
+        return this;
+    }
+    public setPrayerSchool(schoolId: Schools): IPrayerSettingsBuilder {
+        this._prayerSettings.school.id = schoolId;
+        return this;
     }
     public setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder {
-        throw new Error("Method not implemented.");
+        this._prayerSettings.adjustments = adjustments;
+        return this;
     }
-   public setPrayerMidnight(midnight: MidnightMode): IPrayerSettingsBuilder {
-        throw new Error("Method not implemented.");
+    public setPrayerMidnight(midnightId: MidnightMode): IPrayerSettingsBuilder {
+        this._prayerSettings.midnight.id = midnightId;
+        return this;
     }
-   public setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
-        throw new Error("Method not implemented.");
+    public setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
+        this._prayerSettings.startDate = startDate;
+        this._prayerSettings.endDate = endDate;
+        return this;
     }
-    public createPrayerSettings() : Promise<IPrayersSettings>
-    {
-        return;
+    public async createPrayerSettings(): Promise<IPrayersSettings> {
+        let validationErr: validators.IValidationError, validationResult: boolean = false;
+        let providerErr: Error, prayerSettingsResult: IPrayersSettings;
+        [validationErr, validationResult] = await to(this._validtor.validate(this._prayerSettings));
+        if (validationErr)
+            return Promise.reject(validationErr);
+        if (validationResult) {
+
+        }
     }
-    public static  createPrayerSettingsBuilder(prayerConfig?:IPrayersConfig,prayerProvider?:pp.IPrayerProvider): IPrayerSettingsBuilder {
-       let prayerProviderName :pp.IPrayerProvider = pp.PrayerProviderFactory
-        .createPrayerProviderFactory(pp.PrayerProviderName.PRAYER_TIME);
-      let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
-      return new PrayerSettingsBuilder(prayerProviderName, validate);  
-      }
+    public static createPrayerSettingsBuilder(prayerConfig?: IPrayersConfig, prayerProvider?: pp.IPrayerProvider): IPrayerSettingsBuilder {
+        let prayerProviderName: pp.IPrayerProvider = pp.PrayerProviderFactory
+            .createPrayerProviderFactory(pp.PrayerProviderName.PRAYER_TIME);
+        let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
+        return new PrayerSettingsBuilder(prayerProviderName, validate, prayerConfig);
+    }
 
 
 }
