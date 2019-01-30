@@ -237,8 +237,6 @@ export class PrayersTime implements IPrayersTime {
     public set prayers(value: IPrayers[]) {
         this._prayers = value;
     }
-
-
 }
 export class PrayersSettings implements IPrayersSettings {
 
