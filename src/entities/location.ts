@@ -21,10 +21,10 @@ export interface ITimeZone {
   rawOffset?: number
 
 }
-export interface ILocationEntity extends ILocation, ITimeZone {
+export interface ILocationSettings extends ILocation, ITimeZone {
 
 }
-export class Location implements ILocationEntity {
+export class Location implements ILocationSettings {
   private _latitude?: number;
   private _longtitude?: number;
   private _countryCode?: string;

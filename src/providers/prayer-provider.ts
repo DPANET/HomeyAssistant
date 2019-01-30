@@ -12,7 +12,7 @@ import { default as FileAsync } from "lowdb/adapters/FileASync";
 import * as request from 'request-promise-native';
 import { DateUtil } from '../util/utility';
 import { start } from 'repl';
-import { ILocationEntity } from '../entities/location';
+import { ILocationSettings } from '../entities/location';
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
    // APPLE = "Apple"
@@ -53,7 +53,7 @@ export interface IPrayerProvider {
     getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
     getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
-    getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
+    getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings): Promise<Array<IPrayers>>;
 }
 abstract class PrayerProvider implements IPrayerProvider {
     private _providerName: PrayerProviderName;
@@ -72,7 +72,7 @@ abstract class PrayerProvider implements IPrayerProvider {
     abstract getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     abstract getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
     abstract getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
-    abstract getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<Array<IPrayers>>;
+    abstract getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings): Promise<Array<IPrayers>>;
 }
 
  class PrayerTimeProvider extends PrayerProvider {
@@ -152,7 +152,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         return await this.getObjectById<IPrayerSchools>(index,()=>this.getPrayerSchools());
 
     }
-    public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity): Promise<IPrayers[]> {
+    public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings): Promise<IPrayers[]> {
         let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
         let err: Error, result: any, url: any, queryString: any;
         let date: Date = prayerSettings.startDate;
@@ -198,7 +198,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         return await this.getDB().then(result => result.get(prayerTimePaths.prayerTimeUrl).value());
     }
 
-    private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationEntity, date: Date): any {
+    private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date): any {
         let queryString: any =
         {
             uri: url,

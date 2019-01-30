@@ -9,7 +9,7 @@ import { isNullOrUndefined } from 'util';
 import * as prayer from '../entities/prayer';
 
 export namespace validators {
-    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationEntity;
+    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings;
     export enum ValidatorProviders {
         LocationValidator = "Validate Location",
         PrayerSettingsValidator = "Validate Prayer Settings"
@@ -110,27 +110,10 @@ export namespace validators {
             this._valdationErrors = error;
 
         }
-    }
-
-    export class LocationValidator extends Validator<location.ILocationEntity>
-    {
-        private _joiSchema: object;
-        private constructor() {
-            super(ValidatorProviders.LocationValidator);
-            this._joiSchema = Joi.object().keys({
-                countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
-                address: Joi.string(),
-                latitude: Joi.number().min(-90).max(90),
-                longtitude: Joi.number().min(-180).max(180),
-                countryName: Joi.any()
-            })
-                .and('address', 'countryCode')
-                .and('latitude', 'longtitude');
-
-        }
-        public async validate(validateObject: location.ILocationEntity): Promise<boolean> {
+        protected async genericValidator(validateFn:Function):Promise<boolean>
+        {
             let result, err, iErr: IValidationError;
-            [err, result] = await to(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+            [err, result] = await to(validateFn());
             if (!isNullOrUndefined(err)) {
                 iErr = this.processErrorMessages(err);
                 this.setIsValid(false);
@@ -152,7 +135,31 @@ export namespace validators {
             validationError.details = details;
             return validationError;
         }
-        public static createValidator(): IValid<location.ILocationEntity> {
+    }
+
+    export class LocationValidator extends Validator<location.ILocationSettings>
+    {
+        private _joiSchema: object;
+        private constructor() {
+            super(ValidatorProviders.LocationValidator);
+            this._joiSchema = Joi.object().keys({
+                countryCode: Joi.string().regex(/^[A-Z]{2}$/i),
+                address: Joi.string(),
+                latitude: Joi.number().min(-90).max(90),
+                longtitude: Joi.number().min(-180).max(180),
+                countryName: Joi.any()
+            })
+                .and('address', 'countryCode')
+                .and('latitude', 'longtitude');
+
+        }
+        public async validate(validateObject: location.ILocationSettings): Promise<boolean> {
+            return await 
+            super.genericValidator(()=> Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+
+        }
+ 
+        public static createValidator(): IValid<location.ILocationSettings> {
             return new LocationValidator();
         }
 
@@ -165,13 +172,14 @@ export namespace validators {
             super(ValidatorProviders.PrayerSettingsValidator);
             this._joiSchema = Joi.object().keys({
                 startDate: Joi.date().less(Joi.ref('endDate')).required(),
-                endDate: Joi.string().required(),
+                endDate: Joi.date().required(),
                 method: Joi.object().required()
             });
 
         }
-        validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {
-            throw new Error("Method not implemented.");
+        public async validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {
+            return await 
+            super.genericValidator(()=> Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
         }
         public static createValidator(): IValid<prayer.IPrayersSettings> {
             return new PrayerSettingsValidator();

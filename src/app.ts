@@ -3,7 +3,7 @@ dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
-import prayerEntity = require("./entities/prayer");
+import prayer = require("./entities/prayer");
 import util = require('util');
 import * as loc from './entities/location';
 import * as Joi from 'joi';
@@ -14,6 +14,7 @@ import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import _ = require('lodash');
 import ramda = require('ramda');
 import cg = require("./configurators/configuration");
+import * as manager from './managers/manager';
 
 var queryString: object = [
     {
@@ -31,7 +32,7 @@ var queryString: object = [
     }];
 let locationInput: loc.ILocation;
 
-let LocationEnity: loc.ILocationEntity;
+let LocationEnity: loc.ILocationSettings;
 
 locationInput = {
     address: "Westminster",
@@ -52,19 +53,26 @@ buildLocationObject().catch((err)=>console.log(err));
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject() {
     try {
-        let locationObject: loc.ILocationEntity  = await loc.LocationBuilder
+        let locationSettings: loc.ILocationSettings  = await manager.LocationBuilder
         .createLocationBuilder()
-        .setLocationAddress('Dubai','AE1')
+        .setLocationAddress('Dubai','AE')
         .createLocation();
-         
+        let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
+
+        let prayerSettings: prayer.IPrayersSettings  = await manager.PrayerSettingsBuilder
+        .createPrayerSettingsBuilder(prayerConfig)
+        .setPrayerMethod(prayer.Methods.Gulf)
+        .createPrayerSettings();
+
         //loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
       //  let locationObject: loc.ILocationEntity = await locationBuilder.setLocationAddress('Dubai', 'AE').
         //    then(lb => lb.createLocation());
 
-        console.log(locationObject);
+        console.log(locationSettings);
+        console.log(prayerSettings);
     }
     catch (err) {
-        console.log(err.message);
+        console.log(err);
     }
     //console.log(util.inspect(err.message, false, null, true /* enable colors */));
 }
@@ -142,39 +150,39 @@ async function readJsonFile() {
         method: 3,
         adjustments: [
             {
-                prayerName: prayerEntity.PrayersName.FAJR,
+                prayerName: prayer.PrayersName.FAJR,
                 adjustments: 3
             },
             {
-                prayerName: prayerEntity.PrayersName.SUNRISE,
+                prayerName: prayer.PrayersName.SUNRISE,
                 adjustments: 2
             },
             {
-                prayerName: prayerEntity.PrayersName.DHUHR,
+                prayerName: prayer.PrayersName.DHUHR,
                 adjustments: 2
             },
             {
-                prayerName: prayerEntity.PrayersName.ASR,
+                prayerName: prayer.PrayersName.ASR,
                 adjustments: 2
             },
             {
-                prayerName: prayerEntity.PrayersName.SUNSET,
+                prayerName: prayer.PrayersName.SUNSET,
                 adjustments: 0
             },
             {
-                prayerName: prayerEntity.PrayersName.MAGHRIB,
+                prayerName: prayer.PrayersName.MAGHRIB,
                 adjustments: 1
             },
             {
-                prayerName: prayerEntity.PrayersName.ISHA,
+                prayerName: prayer.PrayersName.ISHA,
                 adjustments: 0
             },
             {
-                prayerName: prayerEntity.PrayersName.IMSAK,
+                prayerName: prayer.PrayersName.IMSAK,
                 adjustments: 0
             },
             {
-                prayerName: prayerEntity.PrayersName.MIDNIGHT,
+                prayerName: prayer.PrayersName.MIDNIGHT,
                 adjustments: 25
             }
         ]
