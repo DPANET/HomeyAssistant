@@ -31,7 +31,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._validtor = validator;
         this._prayerSettings = new prayer.PrayersSettings();
         this._prayerSettings.midnight.id = isNullOrUndefined(prayerConfig.midnight) ? prayer.MidnightMode.Standard : prayerConfig.midnight;
-        this._prayerSettings.method.id = isNullOrUndefined(prayerConfig.method) ? prayer.Methods.Gulf : prayerConfig.method;
+        this._prayerSettings.method.id = isNullOrUndefined(prayerConfig.method) ? prayer.Methods.Mecca : prayerConfig.method;
         this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
         this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Shafi : prayerConfig.school;
         this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;

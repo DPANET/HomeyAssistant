@@ -59,8 +59,7 @@ async function buildLocationObject() {
 
         let prayerTime: prayer.IPrayersTime  = await manager.PrayerTimeBuilder
         .createPrayerTimeBuilder(null,prayerConfig)
-        .setPrayerMethod(prayer.Methods.Gulf)
-        .setPrayerSchool(prayer.Schools.Shafi)
+        .setPrayerMethod(prayer.Methods.Mecca)
         .setPrayerPeriod(new Date('2019-01-30'), new Date('2019-01-31'))
         .setLocationAddress('Dubai','AE')
         .createPrayerTime();

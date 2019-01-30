@@ -20,8 +20,8 @@ export enum PrayersName {
 
 };
 export enum Schools {
-    Hanafi = 0,
-    Shafi
+    Shafi = 0,
+    Hanafi
 };
 export enum MidnightMode {
     Standard = 0,
