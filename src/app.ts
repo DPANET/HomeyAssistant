@@ -57,6 +57,7 @@ async function buildLocationObject() {
         .createLocationBuilder()
         .setLocationAddress('Dubai','AE')
         .createLocation();
+
         let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
 
         let prayerSettings: prayer.IPrayersSettings  = await manager.PrayerSettingsBuilder

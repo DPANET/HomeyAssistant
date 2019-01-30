@@ -184,8 +184,12 @@ class PrayersMethods implements IPrayerMethods {
 
 
 }
-class Prayers implements IPrayers {
+export class Prayers implements IPrayers {
     private _prayerTime: IPrayersTiming[];
+    public constructor()
+    {
+        this._prayerTime = new Array<IPrayersTiming>();
+    }
     public get prayerTime(): IPrayersTiming[] {
         return this._prayerTime;
     }
@@ -203,12 +207,13 @@ class Prayers implements IPrayers {
 
 
 }
-class PrayersTime implements IPrayersTime {
+export class PrayersTime implements IPrayersTime {
 
     //prayer constructors, with timing,
-    constructor(prayers: Array<IPrayers>) {
-
+    constructor(prayers: Array<IPrayers>,locationSettings:ILocationSettings,prayerConfig:IPrayersSettings) {
+        this._location = locationSettings;
         this._prayers = prayers;
+        this._pareyerSettings = prayerConfig;
         // this._prayersTimings = new Array();
     }
     private _location: ILocationSettings;
