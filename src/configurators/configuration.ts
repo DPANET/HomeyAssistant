@@ -34,18 +34,18 @@ export interface IPrayersConfig {
 }
 export interface ILocationConfig {
     location: {
-        latitude: number,
-        longtitude: number,
-        city: string,
-        countryCode: string,
-        countryName: string,
-        address: string
+        latitude?: number,
+        longtitude?: number,
+        city?: string,
+        countryCode?: string,
+        countryName?: string,
+        address?: string
     };
     timezone: {
-        timeZoneId: string,
-        timeZoneName: string,
-        dstOffset: number,
-        rawOffset: number
+        timeZoneId?: string,
+        timeZoneName?: string,
+        dstOffset?: number,
+        rawOffset?: number
     };
 }
 export interface IConfig {
