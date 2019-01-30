@@ -9,7 +9,7 @@ import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileASync";
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');
-import * as prayers from '../entities/prayers';
+import * as prayers from '../entities/prayer';
 const configPaths =
 {
     prayerConfig: 'config.prayerConfig.calculations',

@@ -6,10 +6,10 @@ const to = require('await-to-js').default;
 import Joi = require('joi');
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
-import * as prayer from '../entities/prayers';
+import * as prayer from '../entities/prayer';
 
 export namespace validators {
-    export type ValidtionTypes =   prayer.IPrayersSettings | location.ILocationEntity;
+    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationEntity;
     export enum ValidatorProviders {
         LocationValidator = "Validate Location",
         PrayerSettingsValidator = "Validate Prayer Settings"
@@ -77,7 +77,7 @@ export namespace validators {
         getValidationError(): IValidationError;
 
     }
-     abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
+    abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
     {
 
         private _validatorName: string;
@@ -94,7 +94,7 @@ export namespace validators {
             this._isValid = state;
         }
         abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
-     //   abstract  createValidator(): IValid<ValidtionTypes>;
+        //   abstract  createValidator(): IValid<ValidtionTypes>;
         public get validatorName(): string {
             return this._validatorName;
         }
@@ -152,14 +152,13 @@ export namespace validators {
             validationError.details = details;
             return validationError;
         }
-        public static createValidator(): IValid<location.ILocationEntity>
-        {
+        public static createValidator(): IValid<location.ILocationEntity> {
             return new LocationValidator();
         }
 
     }
 
-  export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
+    export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
     {
         private _joiSchema: object;
         private constructor() {
@@ -174,14 +173,13 @@ export namespace validators {
         validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {
             throw new Error("Method not implemented.");
         }
-        public static createValidator(): IValid<prayer.IPrayersSettings>
-        {
+        public static createValidator(): IValid<prayer.IPrayersSettings> {
             return new PrayerSettingsValidator();
-        }    
+        }
     }
     // export class ValidatorProviderFactory {
     //     static createValidateProvider(validatorProviderName: ValidatorProviders): IValid<ValidtionTypes> {
-           
+
     //         switch (validatorProviderName) {
     //             case ValidatorProviders.LocationValidator:
     //             return new LocationValidator();
