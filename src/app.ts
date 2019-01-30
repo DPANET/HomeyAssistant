@@ -53,30 +53,27 @@ buildLocationObject().catch((err)=>console.log(err));
 //console.log(locationProvider.getProviderName());
 async function buildLocationObject() {
     try {
-        let locationSettings: loc.ILocationSettings  = await manager.LocationBuilder
-        .createLocationBuilder()
-        .setLocationAddress('Dubai','AE')
-        .createLocation();
+
 
         let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
 
-        let prayerSettings: prayer.IPrayersSettings  = await manager.PrayerSettingsBuilder
-        .createPrayerSettingsBuilder(prayerConfig)
-        .setPrayerMethod(prayer.Methods.France)
-        .setPrayerPeriod(new Date('2019-01-30'), new Date('2019-02-28'))
-        .createPrayerSettings();
+        let prayerTime: prayer.IPrayersTime  = await manager.PrayerTimeBuilder
+        .createPrayerTimeBuilder(null,prayerConfig)
+        .setPrayerMethod(prayer.Methods.Gulf)
+        .setPrayerPeriod(new Date('2019-01-30'), new Date('2019-01-31'))
+        .setLocationAddress('Dubai','AE')
+        .createPrayerTime();
 
         //loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);
       //  let locationObject: loc.ILocationEntity = await locationBuilder.setLocationAddress('Dubai', 'AE').
         //    then(lb => lb.createLocation());
 
-        console.log(locationSettings);
-        console.log(prayerSettings);
+        console.log(util.inspect(prayerTime, false, null, true /* enable colors */));       // console.log(prayerSettings);
     }
     catch (err) {
         console.log(err);
     }
-    //console.log(util.inspect(err.message, false, null, true /* enable colors */));
+   // console.log(util.inspect(err.message, false, null, true /* enable colors */));
 }
 // async function validate1() {
 //     let locationEntity: loc.ILocationEntity;

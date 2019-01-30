@@ -158,15 +158,17 @@ export interface IPrayerTimeBuilder {
     createPrayerTime(): Promise<prayer.IPrayersTime>;
 }
 
-class PrayerTimeBuilder implements IPrayerTimeBuilder {
+export class PrayerTimeBuilder implements IPrayerTimeBuilder {
 
     private _locationBuilder:ILocationBuilder;
     private _prayerSettingsBuilder:IPrayerSettingsBuilder;
     private _prayers:Array<prayer.IPrayers>;
-    private constructor(locationBuilder: ILocationBuilder,prayerSettingsBuilder: IPrayerSettingsBuilder) 
+    private _prayerProvider:pp.IPrayerProvider;
+    private constructor(prayerProvider:pp.IPrayerProvider,locationBuilder: ILocationBuilder,prayerSettingsBuilder: IPrayerSettingsBuilder) 
     {
         this._prayerSettingsBuilder = prayerSettingsBuilder;
         this._locationBuilder= locationBuilder;
+        this._prayerProvider = prayerProvider;
         this._prayers = new Array<prayer.Prayers>();
 
     }
@@ -199,9 +201,13 @@ class PrayerTimeBuilder implements IPrayerTimeBuilder {
         this._locationBuilder.setLocationAddress(address,countryCode);
         return this;
     }
-    createPrayerTime(): Promise<prayer.IPrayersTime> {
+    public async createPrayerTime(): Promise<prayer.IPrayersTime> {
         let location:location.ILocationSettings,prayerSettings:prayer.IPrayersSettings;
        try{
+
+        location = await this._locationBuilder.createLocation();
+        prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings();
+        this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings,location);
         return Promise.resolve(new prayer.PrayersTime(this._prayers,location,prayerSettings));
        } 
        catch(err)
@@ -209,12 +215,13 @@ class PrayerTimeBuilder implements IPrayerTimeBuilder {
            Promise.reject(err);
        }
     }
-    public static createLocationBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder {
+    public static createPrayerTimeBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder {
+        let prayerProvider:pp.IPrayerProvider = pp.PrayerProviderFactory.createPrayerProviderFactory(pp.PrayerProviderName.PRAYER_TIME);
         let locationBuilder:ILocationBuilder = LocationBuilder
         .createLocationBuilder(isNullOrUndefined(locationConfig)? null: locationConfig);
         let prayerSettingsBuilder:IPrayerSettingsBuilder = PrayerSettingsBuilder
         .createPrayerSettingsBuilder(isNullOrUndefined(prayerConfig)? null: prayerConfig);
-        return new PrayerTimeBuilder(locationBuilder, prayerSettingsBuilder);
+        return new PrayerTimeBuilder(prayerProvider,locationBuilder, prayerSettingsBuilder);
     }
 
 }
