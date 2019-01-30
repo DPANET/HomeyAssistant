@@ -13,8 +13,8 @@ export enum PrayersName {
     SUNRISE = "Sunrise",
     DHUHR = "Dhuhr",
     ASR = "Asr",
-    SUNSET = "Sunset",
     MAGHRIB = "Maghrib",
+    SUNSET = "Sunset",
     ISHA = "Isha",
     MIDNIGHT = "Midnight"
 

@@ -19,6 +19,7 @@ export interface IPrayerSettingsBuilder {
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerSettingsBuilder;
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerSettingsBuilder;
+    setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod):IPrayerSettingsBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
     createPrayerSettings(): Promise<prayer.IPrayersSettings>;
 }
@@ -60,6 +61,12 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerSettings.endDate = endDate;
         return this;
     }
+   public setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod):IPrayerSettingsBuilder
+   {
+       this._prayerSettings.latitudeAdjustment.id = latitudeAdjustment;
+       return this;
+   }
+
     public async createPrayerSettings(): Promise<prayer.IPrayersSettings> {
         let validationErr: validators.IValidationError;
         let validationResult: boolean = false;
@@ -151,6 +158,7 @@ export interface IPrayerTimeBuilder {
     setPrayerSchool(schoolId: prayer.Schools): IPrayerTimeBuilder;
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerTimeBuilder;
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerTimeBuilder;
+    setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod):IPrayerTimeBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
     setLocationAddress(address: string, countryCode: string): IPrayerTimeBuilder;
@@ -188,6 +196,11 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         this._prayerSettingsBuilder.setPrayerMidnight(midnightId);
         return this;
     }
+    public setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod):IPrayerTimeBuilder
+    {
+        this._prayerSettingsBuilder.setPrayerLatitudeAdjustment(latitudeAdjustment);
+        return this;
+    }
     public setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder {
         this._prayerSettingsBuilder.setPrayerPeriod(startDate,endDate);
         return this;
@@ -211,7 +224,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
        } 
        catch(err)
        {
-           Promise.reject(err);
+          return Promise.reject(err);
        }
     }
     public static createPrayerTimeBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder {
