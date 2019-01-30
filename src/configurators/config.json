@@ -13,6 +13,10 @@
         "endDate": "2019-01-28T00:00:00.000Z",
         "adjustments": [
           {
+            "prayerName": "Imsak",
+            "adjustments": 0
+          },
+          {
             "prayerName": "Fajr",
             "adjustments": 0
           },
@@ -22,7 +26,7 @@
           },
           {
             "prayerName": "Dhuhr",
-            "adjustments": 3
+            "adjustments": 20
           },
           {
             "prayerName": "Asr",
@@ -40,10 +44,7 @@
             "prayerName": "Isha",
             "adjustments": 0
           },
-          {
-            "prayerName": "Imsak",
-            "adjustments": 0
-          },
+
           {
             "prayerName": "Midnight",
             "adjustments": 0

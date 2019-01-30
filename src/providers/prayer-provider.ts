@@ -199,6 +199,7 @@ abstract class PrayerProvider implements IPrayerProvider {
     }
 
     private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date): any {
+        console.log(prayerSettings.adjustments.map(n => n.adjustments).toString());
         let queryString: any =
         {
             uri: url,
