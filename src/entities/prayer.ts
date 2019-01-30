@@ -8,6 +8,7 @@ import { ILocationConfig, IPrayersConfig } from "../configurators/configuration"
 import { isNullOrUndefined } from 'util';
 
 export enum PrayersName {
+    IMSAK = "Imsak",
     FAJR = "Fajr",
     SUNRISE = "Sunrise",
     DHUHR = "Dhuhr",
@@ -15,7 +16,6 @@ export enum PrayersName {
     SUNSET = "Sunset",
     MAGHRIB = "Maghrib",
     ISHA = "Isha",
-    IMSAK = "Imsak",
     MIDNIGHT = "Midnight"
 
 };
