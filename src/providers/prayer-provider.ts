@@ -125,10 +125,10 @@ abstract class PrayerProvider implements IPrayerProvider {
 
     }
     public async getPrayerMethods(): Promise<IPrayerMethods[]> {
-        let err, result: any, url: any;
+        let err:Error, result: any, url: any;
         [err, url] = await to(this.getPrayerMethodUrl());
         if (err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+            return Promise.reject(err.message =PrayerErrorMessages.FILE_NOT_FOUND);
         let queryString: any =
         {
             uri: url.methods,
@@ -139,7 +139,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         };
         [err, result] = await to(request.get(queryString));
         if (err)
-            return Promise.reject(PrayerErrorMessages.TIME_OUT);
+            return Promise.reject(err.message = PrayerErrorMessages.TIME_OUT);
         return this.parsePrayerMethods(result['data']);
     }
     public async getPrayerMethodsById(index: number): Promise<IPrayerMethods> {

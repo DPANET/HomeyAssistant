@@ -61,7 +61,8 @@ async function buildLocationObject() {
 
         let prayerSettings: prayer.IPrayersSettings  = await manager.PrayerSettingsBuilder
         .createPrayerSettingsBuilder(prayerConfig)
-        .setPrayerMethod(prayer.Methods.Gulf)
+        .setPrayerMethod(prayer.Methods.France)
+        .setPrayerPeriod(new Date('2019-01-30'), new Date('2019-02-28'))
         .createPrayerSettings();
 
         //loc.LocationBuilderFactory.createBuilderFactory(loc.LocationTypeName.LocationBuilder);

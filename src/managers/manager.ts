@@ -13,6 +13,7 @@ import { ILocationConfig, IPrayersConfig } from "../configurators/configuration"
 import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
+import { DateUtil } from '../util/utility';
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
@@ -55,7 +56,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         return this;
     }
     public setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
-        this._prayerSettings.startDate = startDate;
+        this._prayerSettings.startDate =startDate;
         this._prayerSettings.endDate = endDate;
         return this;
     }
