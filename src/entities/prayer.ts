@@ -50,7 +50,7 @@ export enum Methods {
 };
 export interface IPrayersTiming {
     prayerName: PrayersName;
-    prayerTime: string;
+    prayerTime: Date;
 }
 export interface IPrayers {
     prayerTime: IPrayersTiming[];

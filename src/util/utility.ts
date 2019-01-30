@@ -3,6 +3,11 @@ import moment = require('moment');
 export class DateUtil
 {
     private static readonly format:string = 'YYYY-MM-DD';
+    static getTime(date:string, time:string):Date
+    {
+        return moment(date + ' '+time +'Z').toDate();
+    }
+
     static getYear(date: Date): any {
         return date.getFullYear();
 

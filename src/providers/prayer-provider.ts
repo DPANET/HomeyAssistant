@@ -176,15 +176,18 @@ abstract class PrayerProvider implements IPrayerProvider {
         let prayersTimingList: Array<IPrayersTiming> = new Array<IPrayersTiming>();
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         let i: number = 0;
+        let dateString:string;
         let fnPrayer = (value: any, key: string) => {
 
             prayersTimingList.push({
                 prayerName: key as PrayersName,
-                prayerTime: (value as string).substring(0, 5)
+                prayerTime: 
+                DateUtil.getTime(dateString,value.substring(0,5)) 
             });
         };
         let fn = (n: any) => {
             prayersTimingList = [];
+            dateString = n.date.readable;
             ramda.forEachObjIndexed(fnPrayer, n.timings);
             prayersList.push({
                 prayerTime: prayersTimingList,
