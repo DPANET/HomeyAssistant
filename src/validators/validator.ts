@@ -171,9 +171,10 @@ export namespace validators {
         private constructor() {
             super(ValidatorProviders.PrayerSettingsValidator);
             this._joiSchema = Joi.object().keys({
-                startDate: Joi.date().less(Joi.ref('endDate')).required(),
+                startDate: Joi.date().max(Joi.ref('endDate')).required(),
                 endDate: Joi.date().required(),
-                method: Joi.object().required()
+                method: Joi.object().required(),
+                school: Joi.object().required()
             });
 
         }
