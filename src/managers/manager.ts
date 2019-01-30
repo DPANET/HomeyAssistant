@@ -33,7 +33,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerSettings.midnight.id = isNullOrUndefined(prayerConfig.midnight) ? prayer.MidnightMode.Standard : prayerConfig.midnight;
         this._prayerSettings.method.id = isNullOrUndefined(prayerConfig.method) ? prayer.Methods.Gulf : prayerConfig.method;
         this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
-        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Hanafi : prayerConfig.school;
+        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Shafi : prayerConfig.school;
         this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
         this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? this._prayerSettings.startDate : prayerConfig.startDate;
         this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? this._prayerSettings.endDate : prayerConfig.endDate;
@@ -68,9 +68,8 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
             return Promise.reject(validationErr);
         if (validationResult) {
             try {
-                console.log(this._prayerSettings.method.id);
+          
                 this._prayerSettings.method = await this._prayerProvider.getPrayerMethodsById(this._prayerSettings.method.id);
-
                 this._prayerSettings.latitudeAdjustment = await this._prayerProvider.getPrayerLatitudeById(this._prayerSettings.latitudeAdjustment.id);
                 this._prayerSettings.midnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
                 this._prayerSettings.school = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
