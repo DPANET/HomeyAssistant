@@ -3,7 +3,7 @@ dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
-import prayerEntity = require("./entities/prayers");
+import prayerEntity = require("./entities/prayer");
 import util = require('util');
 import * as loc from './entities/location';
 import * as Joi from 'joi';
