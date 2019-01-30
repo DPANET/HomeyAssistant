@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
-import { ILocationEntity } from './location';
+import { ILocationSettings } from './location';
 import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
 import { isNullOrUndefined } from 'util';
 
@@ -88,7 +88,7 @@ export interface IPrayerMethods {
 
 }
 export interface IPrayersTime {
-    location: ILocationEntity;
+    location: ILocationSettings;
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
 
@@ -211,11 +211,11 @@ class PrayersTime implements IPrayersTime {
         this._prayers = prayers;
         // this._prayersTimings = new Array();
     }
-    private _location: ILocationEntity;
-    public get location(): ILocationEntity {
+    private _location: ILocationSettings;
+    public get location(): ILocationSettings {
         return this._location;
     }
-    public set location(value: ILocationEntity) {
+    public set location(value: ILocationSettings) {
         this._location = value;
     }
     private _pareyerSettings: IPrayersSettings;
@@ -235,7 +235,7 @@ class PrayersTime implements IPrayersTime {
 
 
 }
-class PrayersSettings implements IPrayersSettings {
+export class PrayersSettings implements IPrayersSettings {
 
     private _startDate: Date;
     public get startDate(): Date {
@@ -295,14 +295,10 @@ class PrayersSettings implements IPrayersSettings {
             this._adjustments = new Array<PrayerAdjustment>();
             this._midnight = new PrayersMidnight();
             this._school = new PrayerSchools();
+            this._latitudeAdjustment= new PrayerLatitude();
         }
     }
 
 
 }
-class PrayerTimeBuilder {
-    private _prayerTime: IPrayersTime;
-    constructor(prayerConfig: IPrayersConfig, locationConfig: ILocationConfig) {
-    }
 
-}

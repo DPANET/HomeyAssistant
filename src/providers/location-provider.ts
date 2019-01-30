@@ -5,7 +5,7 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import { isNullOrUndefined } from 'util';
-import { ITimeZone, ILocation, ILocationEntity } from '../entities/location';
+import { ITimeZone, ILocation, ILocationSettings } from '../entities/location';
 
 export enum LocationProviderName {
     GOOGLE = "Google",

@@ -5,7 +5,8 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import { ILocation, ILocationEntity } from '../entities/location';
+import * as location from '../entities/location';
+import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
@@ -13,42 +14,43 @@ import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 export interface IPrayerSettingsBuilder {
-    setPrayerMethod(methodId: Methods): IPrayerSettingsBuilder;
-    setPrayerSchool(schoolId: Schools): IPrayerSettingsBuilder;
-    setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder;
-    setPrayerMidnight(midnightId: MidnightMode): IPrayerSettingsBuilder;
+    setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
+    setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
+    setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerSettingsBuilder;
+    setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerSettingsBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
-    createPrayerSettings(): Promise<IPrayersSettings>;
+    createPrayerSettings(): Promise<prayer.IPrayersSettings>;
 }
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
-    private _prayerSettings: IPrayersSettings;
+    private _prayerSettings: prayer.IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
-    private _validtor: validators.IValid<IPrayersSettings>;
-    private constructor(prayerProvider: pp.IPrayerProvider, validator: validators.IValid<IPrayersSettings>, prayerConfig?: IPrayersConfig, ) {
+    private _validtor: validators.IValid<prayer.IPrayersSettings>;
+    private constructor(prayerProvider: pp.IPrayerProvider, validator: validators.IValid<prayer.IPrayersSettings>, prayerConfig?: IPrayersConfig, ) {
         this._prayerProvider = prayerProvider;
         this._validtor = validator;
-        this._prayerSettings = new PrayersSettings();
-        this._prayerSettings.midnight.id = prayerConfig.midnight;
+        this._prayerSettings = new prayer.PrayersSettings();
+        this._prayerSettings.midnight.id = isNullOrUndefined(prayerConfig.midnight) ?prayer.MidnightMode.Standard:prayerConfig.midnight;
+        this._prayerSettings.method.id = isNullOrUndefined(prayerConfig.method)? prayer.Methods.Gulf : prayerConfig.method;
         this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
-        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? Schools.Hanafi : prayerConfig.school;
-        this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
+        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Hanafi : prayerConfig.school;
+        this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
         this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? this._prayerSettings.startDate : prayerConfig.startDate;
-        this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? this._prayerSettings.endDate : prayerConfig.startDate;
+        this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? this._prayerSettings.endDate : prayerConfig.endDate;
 
     }
-    public setPrayerMethod(methodId: Methods): IPrayerSettingsBuilder {
+    public setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder {
         this._prayerSettings.method.id = methodId;
         return this;
     }
-    public setPrayerSchool(schoolId: Schools): IPrayerSettingsBuilder {
+    public setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder {
         this._prayerSettings.school.id = schoolId;
         return this;
     }
-    public setPrayerAdjustments(adjustments: IPrayerAdjustments[]): IPrayerSettingsBuilder {
+    public setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerSettingsBuilder {
         this._prayerSettings.adjustments = adjustments;
         return this;
     }
-    public setPrayerMidnight(midnightId: MidnightMode): IPrayerSettingsBuilder {
+    public setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerSettingsBuilder {
         this._prayerSettings.midnight.id = midnightId;
         return this;
     }
@@ -57,7 +59,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerSettings.endDate = endDate;
         return this;
     }
-    public async createPrayerSettings(): Promise<IPrayersSettings> {
+    public async createPrayerSettings(): Promise<prayer.IPrayersSettings> {
         let validationErr: validators.IValidationError;
         let validationResult: boolean = false;
         [validationErr, validationResult] = await to(this._validtor.validate(this._prayerSettings));
@@ -65,7 +67,9 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
             return Promise.reject(validationErr);
         if (validationResult) {
             try {
+                console.log(this._prayerSettings.method.id);
                 this._prayerSettings.method = await this._prayerProvider.getPrayerMethodsById(this._prayerSettings.method.id);
+                
                 this._prayerSettings.latitudeAdjustment = await this._prayerProvider.getPrayerLatitudeById(this._prayerSettings.latitudeAdjustment.id);
                 this._prayerSettings.midnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
                 this._prayerSettings.school = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
@@ -88,17 +92,17 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
 export interface ILocationBuilder {
     setLocationCoordinates(lat: number, lng: number): ILocationBuilder
     setLocationAddress(address: string, countryCode: string): ILocationBuilder
-    createLocation(): Promise<ILocationEntity>
+    createLocation(): Promise<location.ILocationSettings>
 
 }
 export class LocationBuilder implements ILocationBuilder {
-    private _location: ILocationEntity
-    private _locationProvider: provider.ILocationProvider;
-    private _validtor: validators.IValid<ILocationEntity>;
-    private constructor(locationProvider: provider.ILocationProvider, validator: validators.IValid<ILocationEntity>) {
+    private _location: location.ILocationSettings
+    private _locationProvider: lp.ILocationProvider;
+    private _validtor: validators.IValid<location.ILocationSettings>;
+    private constructor(locationProvider: lp.ILocationProvider, validator: validators.IValid<location.ILocationSettings>) {
         this._locationProvider = locationProvider;
         this._validtor = validator;
-        this._location = new Location();
+        this._location = new location.Location();
     }
     public setLocationCoordinates(lat: number, lng: number): LocationBuilder {
         this._location.latitude = lat;
@@ -110,9 +114,9 @@ export class LocationBuilder implements ILocationBuilder {
         this._location.address = address;
         return this;
     }
-    public async createLocation(): Promise<ILocationEntity> {
+    public async createLocation(): Promise<location.ILocationSettings> {
         let validationErr: validators.IValidationError, validationResult: boolean = false;
-        let providerErr: Error, locationResult: ILocation, timezoneResult: ITimeZone;
+        let providerErr: Error, locationResult: location.ILocation, timezoneResult:location.ITimeZone;
         [validationErr, validationResult] = await to(this._validtor.validate(this._location));
         if (validationErr)
             return Promise.reject(validationErr);
@@ -134,9 +138,9 @@ export class LocationBuilder implements ILocationBuilder {
             }
         }
     }
-    public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: provider.ILocationProvider): LocationBuilder {
-        let providerName: provider.ILocationProvider = provider.LocationProviderFactory.
-            createLocationProviderFactory(provider.LocationProviderName.GOOGLE);
+    public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: lp.ILocationProvider): LocationBuilder {
+        let providerName: lp.ILocationProvider = lp.LocationProviderFactory.
+            createLocationProviderFactory(lp.LocationProviderName.GOOGLE);
         let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
         return new LocationBuilder(providerName, validate);
     }
