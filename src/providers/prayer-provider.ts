@@ -29,7 +29,7 @@ const prayerTimePaths =
     calculations: 'settings.calcuations',
     schools: 'apis.prayersAPI.schools',
     settings: 'apis.prayersAPI.settings.calculations',
-    midnight: 'apis.prayersAPI.schools'
+    midnight: 'apis.prayersAPI.midnight'
 
 
 }

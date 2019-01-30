@@ -5,8 +5,8 @@
         "timing": "monthly"
       },
       "calculations": {
-        "method": 2,
-        "school": 1,
+        "method":4,
+        "school": 0,
         "midnight": 0,
         "latitudeAdjustment": 3,
         "startDate": "2019-01-15T00:00:00.000Z",
@@ -22,7 +22,7 @@
           },
           {
             "prayerName": "Dhuhr",
-            "adjustments": 0
+            "adjustments": 3
           },
           {
             "prayerName": "Asr",

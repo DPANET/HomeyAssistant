@@ -40,11 +40,11 @@
       ],
       "midnight": [
         {
-          "id": 1,
+          "id": 0,
           "name": "Standard (Mid Sunset to Sunrise)"
         },
         {
-          "id": 2,
+          "id": 1,
           "name": "Jafari (Mid Sunset to Sunrise)"
         }
       ]
