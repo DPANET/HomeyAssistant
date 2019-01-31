@@ -8,19 +8,50 @@ import * as manager from './managers/manager';
 import util = require('util')
 import * as cron from 'cron';
 import {DateUtil} from './util/utility';
+import * as mom from'moment';
+import moment = require('moment');
+import { EventEmitter } from 'events';
+import { toASCII } from 'punycode';
+import { createInflate } from 'zlib';
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
-        let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
-        let prayerTime: prayer.IPrayersTime = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(null, prayerConfig)
-            .setPrayerMethod(prayer.Methods.Mecca)
-            .setPrayerPeriod(new Date('2019-12-01'), new Date('2019-12-28'))
-            .setLocationAddress('reem island marina square', 'AE')
-            .createPrayerTime();
-        console.log(util.inspect(prayerTime, false, null, true /* enable colors */));       // console.log(prayerSettings);   
+        // let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
+        // let prayerTime: prayer.IPrayersTime = await manager.PrayerTimeBuilder
+        //     .createPrayerTimeBuilder(null, prayerConfig)
+        //     .setPrayerMethod(prayer.Methods.Mecca)
+        //     .setPrayerPeriod(new Date('2019-01-31'), new Date('2019-01-31'))
+        //     .setLocationByAddress('reem island marina square', 'AE')
+        //     .createPrayerTime();
+        // console.log(util.inspect(prayerTime, false, null, true /* enable colors */));       // console.log(prayerSettings);   
+
+        // let  job:cron.CronJob = new cron.CronJob('10 * * * * *', function() {
+        //     const d = new Date();
+        //     console.log('At Ten Minutes:', d);
+        // },()=> console.log('completed'),true,'Asia/Dubai');
+        // job.start();
     }
     catch (err) {
         console.log(err);
     }
 }
+
+
+class PrayersEvent extends EventEmitter
+{
+
+    constructor(){
+        super();
+      //  let  job:cron.CronJob = new cron.CronJob('* * * * * *',()=> this.emit('prayer'),null,true,'Asia/Dubai');
+        let job: cron.CronTime = new cron.CronTime()
+
+
+        job.start();
+        
+    }
+
+}
+let myevent:PrayersEvent = new PrayersEvent();
+
+myevent.on('prayer',()=>console.log('somoeone woke me up'));
+

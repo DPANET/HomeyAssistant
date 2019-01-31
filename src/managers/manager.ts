@@ -160,8 +160,8 @@ export interface IPrayerTimeBuilder {
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerTimeBuilder;
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod):IPrayerTimeBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
-    setLocationCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
-    setLocationAddress(address: string, countryCode: string): IPrayerTimeBuilder;
+    setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
+    setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
     createPrayerTime(): Promise<prayer.IPrayersTime>;
 }
 
@@ -205,11 +205,11 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         this._prayerSettingsBuilder.setPrayerPeriod(startDate,endDate);
         return this;
     }
-    public setLocationCoordinates(lat: number, lng: number): IPrayerTimeBuilder {
+    public setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder {
         this._locationBuilder.setLocationCoordinates(lat,lng);
         return this;
     }
-    public setLocationAddress(address: string, countryCode: string): IPrayerTimeBuilder {
+    public setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder {
         this._locationBuilder.setLocationAddress(address,countryCode);
         return this;
     }
