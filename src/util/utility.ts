@@ -5,7 +5,7 @@ export class DateUtil
     private static readonly format:string = 'YYYY-MM-DD';
     static getTime(date:string, time:string):Date
     {
-        return moment(date + ' '+time +'Z').toDate();
+        return new Date(date + ' '+time + 'Z');
     }
 
     static getYear(date: Date): any {
