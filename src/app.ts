@@ -15,16 +15,10 @@ async function buildLocationObject() {
         let prayerTime: prayer.IPrayersTime = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
-            .setPrayerPeriod(new Date('2019-01-30'), new Date('2019-01-30'))
-            .setLocationAddress('Abu Dhabi', 'AE')
+            .setPrayerPeriod(new Date('2019-12-01'), new Date('2019-12-28'))
+            .setLocationAddress('reem island marina square', 'AE')
             .createPrayerTime();
-        // let CronJob = cron.CronJob;
-        // new CronJob('* * * * * *', function () {
-        //     console.log('You will see this message every second');
-        // }, null, true, 'America/Los_Angeles');
-        console.log(util.inspect(prayerTime, false, null, true /* enable colors */));       // console.log(prayerSettings);
-       // console.log(DateUtil.getTime('2019-01-01','03:04'));
-   
+        console.log(util.inspect(prayerTime, false, null, true /* enable colors */));       // console.log(prayerSettings);   
     }
     catch (err) {
         console.log(err);

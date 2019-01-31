@@ -193,7 +193,9 @@ export class Prayers implements IPrayers {
     public get prayerTime(): IPrayersTiming[] {
         return this._prayerTime;
     }
-    public set prayerTime(value: IPrayersTiming[]) {
+    public set prayerTime(value: IPrayersTiming[])
+    {
+        
         this._prayerTime = value;
     }
 
