@@ -13,6 +13,8 @@ import { ILocationConfig, IPrayersConfig } from "../configurators/configuration"
 import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
+import { EventEmitter } from 'events';
+import * as cron from 'cron';
 
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -246,3 +248,45 @@ export interface IPrayersTimingEvent
     startPrayersEvent():void;
     stopPrayerEvent():void;
 }
+export enum PrayerEvents
+{
+    IMSAK = "Imsak",
+    FAJR = "Fajr",
+    SUNRISE = "Sunrise",
+    DHUHR = "Dhuhr",
+    ASR = "Asr",
+    MAGHRIB = "Maghrib",
+    SUNSET = "Sunset",
+    ISHA = "Isha",
+    MIDNIGHT = "Midnight"
+}
+
+export class PrayersTimingEvent extends EventEmitter implements IPrayersTimingEvent
+{
+    private _prayersTiming: prayer.IPrayersTiming;
+    private _cron: cron.CronJob;
+    constructor(prayersTiming: prayer.IPrayersTiming) {
+        super();
+        this._prayersTiming  = prayersTiming;
+
+    }   
+    public getPrayerTiming(): prayer.IPrayersTiming {
+        return this._prayersTiming;
+    }
+    public  setPrayerTiming(prayersTiming: prayer.IPrayersTiming): void {
+        this._prayersTiming = prayersTiming;
+    }
+    public startPrayersEvent(): void {
+        if(!this._cron.running)
+        this._cron.start();
+    }
+   public stopPrayerEvent(): void {
+        if(this._cron.running)
+        this._cron.stop();
+    }
+    private onPrayer(prayerName:prayer.PrayersName)
+    {
+        this.emit(prayerName);
+    }
+
+} 
