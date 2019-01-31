@@ -45,7 +45,6 @@ class PrayersEvent extends EventEmitter
       //  let  job:cron.CronJob = new cron.CronJob('* * * * * *',()=> this.emit('prayer'),null,true,'Asia/Dubai');
         let job: cron.CronTime = new cron.CronTime()
 
-
         job.start();
         
     }
