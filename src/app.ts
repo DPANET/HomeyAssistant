@@ -11,8 +11,6 @@ import {DateUtil} from './util/utility';
 import * as mom from'moment';
 import moment = require('moment');
 import { EventEmitter } from 'events';
-import { toASCII } from 'punycode';
-import { createInflate } from 'zlib';
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
@@ -35,22 +33,4 @@ async function buildLocationObject() {
         console.log(err);
     }
 }
-
-
-class PrayersEvent extends EventEmitter
-{
-
-    constructor(){
-        super();
-      //  let  job:cron.CronJob = new cron.CronJob('* * * * * *',()=> this.emit('prayer'),null,true,'Asia/Dubai');
-        let job: cron.CronTime = new cron.CronTime()
-
-        job.start();
-        
-    }
-
-}
-let myevent:PrayersEvent = new PrayersEvent();
-
-myevent.on('prayer',()=>console.log('somoeone woke me up'));
 

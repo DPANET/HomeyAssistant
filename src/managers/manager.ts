@@ -237,3 +237,12 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     }
 
 }
+
+
+export interface IPrayersTimingEvent
+{
+    getPrayerTiming():prayer.IPrayersTiming;
+    setPrayerTiming(prayersTiming:prayer.IPrayersTiming):void;
+    startPrayersEvent():void;
+    stopPrayerEvent():void;
+}
