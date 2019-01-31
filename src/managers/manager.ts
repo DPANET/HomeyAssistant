@@ -15,6 +15,7 @@ import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 import { EventEmitter } from 'events';
 import * as cron from 'cron';
+import * as moment from 'moment';  
 
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -243,8 +244,8 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
 
 export interface IPrayersTimingEvent
 {
-    getPrayerTiming():prayer.IPrayersTiming;
-    setPrayerTiming(prayersTiming:prayer.IPrayersTiming):void;
+    getPrayers():Array<prayer.IPrayers>;
+    setPrayers(prayers:Array<prayer.IPrayers>):void;
     startPrayersEvent():void;
     stopPrayerEvent():void;
 }
@@ -263,18 +264,19 @@ export enum PrayerEvents
 
 export class PrayersTimingEvent extends EventEmitter implements IPrayersTimingEvent
 {
-    private _prayersTiming: prayer.IPrayersTiming;
+    private _prayers: Array<prayer.IPrayers>;
     private _cron: cron.CronJob;
-    constructor(prayersTiming: prayer.IPrayersTiming) {
+    constructor(prayers: Array<prayer.IPrayers>) {
         super();
-        this._prayersTiming  = prayersTiming;
+        this._prayers  = prayers;
+        this.schedulePrayer();
 
     }   
-    public getPrayerTiming(): prayer.IPrayersTiming {
-        return this._prayersTiming;
+    public getPrayers(): Array<prayer.IPrayers> {
+        return this._prayers;
     }
-    public  setPrayerTiming(prayersTiming: prayer.IPrayersTiming): void {
-        this._prayersTiming = prayersTiming;
+    public  setPrayers(prayers:Array<prayer.IPrayers>): void {
+        this._prayers = prayers;
     }
     public startPrayersEvent(): void {
         if(!this._cron.running)
@@ -284,9 +286,27 @@ export class PrayersTimingEvent extends EventEmitter implements IPrayersTimingEv
         if(this._cron.running)
         this._cron.stop();
     }
-    private onPrayer(prayerName:prayer.PrayersName)
+    private onPrayer(prayerName:prayer.PrayersName):void
     {
+        if(prayerName !==prayer.PrayersName.MIDNIGHT)
         this.emit(prayerName);
+    }
+    private schedulePrayer():void
+    { 
+        let prayerTime:prayer.IPrayersTiming = this.scheduleInit();
+        if(!isNullOrUndefined(prayerTime))
+        {
+        this._cron = new cron.CronJob(initDate)
+        }
+    }
+    private scheduleInit(): prayer.IPrayersTiming
+    {
+
+
+    }
+    private scheduleNext():Date
+    {
+
     }
 
 } 

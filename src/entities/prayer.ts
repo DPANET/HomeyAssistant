@@ -6,7 +6,6 @@ const debug = Debug("app:startup");
 import { ILocationSettings } from './location';
 import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
 import { isNullOrUndefined } from 'util';
-
 export enum PrayersName {
     IMSAK = "Imsak",
     FAJR = "Fajr",
@@ -38,8 +37,8 @@ export enum Methods {
     America,
     MuslimLeague,
     Mecca,
-    Egypt=5,
-    Iran=7,
+    Egypt = 5,
+    Iran = 7,
     Gulf,
     Kuwait,
     Qatar,
@@ -48,6 +47,29 @@ export enum Methods {
     Turkey,
     Custom = 99
 };
+export enum PrayerType {
+    Fardh = "Fardh",
+    Sunna = "Sunna"
+
+}
+export interface IPrayerType {
+    prayerName: PrayersName,
+    prayerType: PrayerType
+}
+const prayersTypes: Array<IPrayerType> = [
+    { prayerName: PrayersName.FAJR, prayerType: PrayerType.Fardh },
+    { prayerName: PrayersName.DHUHR, prayerType: PrayerType.Fardh },
+    { prayerName: PrayersName.ASR, prayerType: PrayerType.Fardh },
+    { prayerName: PrayersName.MAGHRIB, prayerType: PrayerType.Fardh },
+    { prayerName: PrayersName.ISHA, prayerType: PrayerType.Fardh },
+    { prayerName: PrayersName.SUNRISE, prayerType: PrayerType.Sunna },
+    { prayerName: PrayersName.SUNSET, prayerType: PrayerType.Sunna },
+    { prayerName: PrayersName.IMSAK, prayerType: PrayerType.Sunna },
+    { prayerName: PrayersName.MIDNIGHT, prayerType: PrayerType.Sunna },
+];
+
+
+
 export interface IPrayersTiming {
     prayerName: PrayersName;
     prayerTime: Date;
@@ -91,8 +113,12 @@ export interface IPrayersTime {
     location: ILocationSettings;
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
-
-
+    getUpcomingPrayer(prayerType?: PrayerType): IPrayersTiming;
+    getPreviousPrayer(prayerType?: PrayerType): IPrayersTiming;
+    getPrayerTime(prayerName: PrayersName, prayerDate?: Date): IPrayersTiming;
+    getUpcomingPrayerRemaining(prayerType?: PrayerType): Date;
+    getPrayerConfig(): IPrayersConfig;
+    getLocationConfig(): ILocationConfig;
 }
 class PrayerAdjustment implements IPrayerAdjustments {
     private _prayerName: PrayersName;
@@ -109,7 +135,6 @@ class PrayerAdjustment implements IPrayerAdjustments {
     public set adjustments(value: number) {
         this._adjustments = value;
     }
-
 
 }
 class PrayersMidnight implements IPrayerMidnight {
@@ -162,8 +187,6 @@ class PrayerSchools implements IPrayerSchools {
     public set school(value: string) {
         this._school = value;
     }
-
-
 }
 class PrayersMethods implements IPrayerMethods {
     private _id: Methods;
@@ -180,25 +203,18 @@ class PrayersMethods implements IPrayerMethods {
     public set methodName(value: string) {
         this._methodName = value;
     }
-
-
-
 }
 export class Prayers implements IPrayers {
     private _prayerTime: IPrayersTiming[];
-    public constructor()
-    {
+    public constructor() {
         this._prayerTime = new Array<IPrayersTiming>();
     }
     public get prayerTime(): IPrayersTiming[] {
         return this._prayerTime;
     }
-    public set prayerTime(value: IPrayersTiming[])
-    {
-        
+    public set prayerTime(value: IPrayersTiming[]) {
         this._prayerTime = value;
     }
-
     private _prayersDate: Date;
     public get prayersDate(): Date {
         return this._prayersDate;
@@ -206,17 +222,14 @@ export class Prayers implements IPrayers {
     public set prayersDate(value: Date) {
         this._prayersDate = value;
     }
-
-
 }
 export class PrayersTime implements IPrayersTime {
 
     //prayer constructors, with timing,
-    constructor(prayers: Array<IPrayers>,locationSettings:ILocationSettings,prayerConfig:IPrayersSettings) {
+    constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings) {
         this._location = locationSettings;
         this._prayers = prayers;
         this._pareyerSettings = prayerConfig;
-        // this._prayersTimings = new Array();
     }
     private _location: ILocationSettings;
     public get location(): ILocationSettings {
@@ -238,6 +251,35 @@ export class PrayersTime implements IPrayersTime {
     }
     public set prayers(value: IPrayers[]) {
         this._prayers = value;
+    }
+    public getUpcomingPrayer(prayerType?: PrayerType): IPrayersTiming {
+        let dateNow: Date = new Date();
+        let fn = (n: IPrayers) =>
+            (dateNow.getFullYear() == n.prayersDate.getFullYear()) &&
+            (dateNow.getMonth() === n.prayersDate.getMonth()) &&
+            (dateNow.getDay() === n.prayersDate.getDay());
+        let filterPrayer: Array<IPrayers> = this._prayers.filter(fn);
+        if (filterPrayer.length === 1) {
+            let todayPrayer: IPrayers = filterPrayer.pop();
+            todayPrayer.prayerTime.sort(n => n.prayerTime.getTime());
+            todayPrayer.prayerTime.forEach()
+        }
+        return;
+    }
+    public getPreviousPrayer(prayerType?: PrayerType): IPrayersTiming {
+        throw new Error("Method not implemented.");
+    }
+    public getPrayerTime(prayerName: PrayersName, prayerDate?: Date): IPrayersTiming {
+        throw new Error("Method not implemented.");
+    }
+    public getUpcomingPrayerRemaining(prayerType?: PrayerType): Date {
+        throw new Error("Method not implemented.");
+    }
+    public getPrayerConfig(): IPrayersConfig {
+        throw new Error("Method not implemented.");
+    }
+    public getLocationConfig(): ILocationConfig {
+        throw new Error("Method not implemented.");
     }
 }
 export class PrayersSettings implements IPrayersSettings {
@@ -300,7 +342,7 @@ export class PrayersSettings implements IPrayersSettings {
             this._adjustments = new Array<PrayerAdjustment>();
             this._midnight = new PrayersMidnight();
             this._school = new PrayerSchools();
-            this._latitudeAdjustment= new PrayerLatitude();
+            this._latitudeAdjustment = new PrayerLatitude();
         }
     }
 
