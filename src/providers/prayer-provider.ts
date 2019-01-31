@@ -30,8 +30,6 @@ const prayerTimePaths =
     schools: 'apis.prayersAPI.schools',
     settings: 'apis.prayersAPI.settings.calculations',
     midnight: 'apis.prayersAPI.midnight'
-
-
 }
 const PrayerErrorMessages =
 {
@@ -217,7 +215,6 @@ abstract class PrayerProvider implements IPrayerProvider {
                 timezonestring: prayerLocation.timeZoneId,
                 latitudeAdjustmentMethod: prayerSettings.latitudeAdjustment.id,
                 tune: prayerSettings.adjustments.map(n => n.adjustments).toString()
-
             },
             method: 'GET',
             json: true,
