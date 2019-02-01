@@ -254,15 +254,18 @@ export class PrayersTime implements IPrayersTime {
     }
     public getUpcomingPrayer(prayerType?: PrayerType): IPrayersTiming {
         let dateNow: Date = new Date();
-        let fn = (n: IPrayers) =>
+        let fnDay = (n: IPrayers) =>
             (dateNow.getFullYear() == n.prayersDate.getFullYear()) &&
             (dateNow.getMonth() === n.prayersDate.getMonth()) &&
             (dateNow.getDay() === n.prayersDate.getDay());
+
+        let time = (value:IPrayersTiming,index:number,array:IPrayersTiming[])=>
+        
         let filterPrayer: Array<IPrayers> = this._prayers.filter(fn);
         if (filterPrayer.length === 1) {
             let todayPrayer: IPrayers = filterPrayer.pop();
             todayPrayer.prayerTime.sort(n => n.prayerTime.getTime());
-            todayPrayer.prayerTime.forEach()
+            todayPrayer.prayerTime.forEach(
         }
         return;
     }
