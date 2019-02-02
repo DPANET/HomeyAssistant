@@ -17,6 +17,9 @@ import { EventEmitter } from 'events';
 import * as cron from 'cron';
 import { createSecureContext } from 'tls';
 import moment = require('moment');
+import { createReadStream } from 'fs';
+import { DateUtil } from '../util/utility';
+import { date } from 'joi';
 
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -40,8 +43,8 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
         this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Shafi : prayerConfig.school;
         this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
-        this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? this._prayerSettings.startDate : prayerConfig.startDate;
-        this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? this._prayerSettings.endDate : prayerConfig.endDate;
+        this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? new Date() : prayerConfig.startDate;
+        this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? DateUtil.addMonth(1,new Date()): prayerConfig.endDate;
 
     }
     public setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder {
@@ -302,7 +305,12 @@ export class PrayerManager implements IPrayerManager {
 
     }
     getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
-        return;
+        let prayersByDate: prayer.IPrayers = this.getPrayerByDate(prayerDate);
+        if(!isNullOrUndefined(prayersByDate))
+        {
+          return  ramda.find<prayer.IPrayersTiming>(n=>n.prayerName === prayerName,prayersByDate.prayerTime);
+        }
+        return null;
     }
     public startPrayerSchedule(): void {
         if (!this._cron.running)
@@ -312,45 +320,46 @@ export class PrayerManager implements IPrayerManager {
         if (this._cron.running)
             this._cron.stop();
     }
+    private getPrayerByDate(date:Date) :prayer.IPrayers
+    {
+        let fnDayMatch = (n: prayer.IPrayers) =>DateUtil.dayMatch(date,n.prayersDate);
+        return ramda.find(fnDayMatch,this._prayerTime.prayers);
 
+        
+    }
     public getUpcomingPrayer(prayerType?: prayer.PrayerType): prayer.IPrayersTiming {
-        let dateNow: Date = new Date();
-        let fnDayMatch = (n: prayer.IPrayers) =>
-            (dateNow.getFullYear() == n.prayersDate.getFullYear()) &&
-            (dateNow.getMonth() === n.prayersDate.getMonth()) &&
-            (dateNow.getDay() === n.prayersDate.getDay());
+        let dateNow: Date = DateUtil.getNowDate();
         let orderByFn = ramda.sortBy<prayer.IPrayersTiming>(ramda.prop('prayerTime'));
-        let upcomingPrayer:prayer.IPrayersTiming;
+        let upcomingPrayer:prayer.IPrayersTiming= null;
         let fardhPrayers:Array<prayer.IPrayerType> = prayer.PrayersTypes.filter((n)=>n.prayerType === prayer.PrayerType.Fardh );
-        let filterPrayer: Array<prayer.IPrayers> = this._prayerTime.prayers.filter(fnDayMatch);
-        if (filterPrayer.length === 1) {
-            let prayersToday: prayer.IPrayers = filterPrayer.pop();
-            let listOfPrayers:Array<prayer.IPrayersTiming> = orderByFn(prayersToday.prayerTime);
+        let todayPrayers: prayer.IPrayers= this.getPrayerByDate(dateNow);
+        if (!isNullOrUndefined(todayPrayers)) {
+            let listOfPrayers:Array<prayer.IPrayersTiming> = orderByFn(todayPrayers.prayerTime);
             listOfPrayers= ramda.innerJoin
             ((prayerLeft:prayer.IPrayersTiming,prayerRight:prayer.IPrayerType)=> prayerLeft.prayerName === prayerRight.prayerName
             ,listOfPrayers
             ,fardhPrayers);
-            upcomingPrayer = listOfPrayers.reduce((prev,curr,index,array)=> this.processPrayer(datNow,prev,curr,index,array));
-            //listOfPrayers.filter()
-            //ramda.find()
+            upcomingPrayer = listOfPrayers.reduce((prev,curr,index,array)=> this.processUpcomingPrayer(dateNow,prev,curr,index,array));
         }
         return upcomingPrayer;
     }
     private processUpcomingPrayer(dateNow:Date,prev:prayer.IPrayersTiming,curr:prayer.IPrayersTiming,index:number,array:Array<prayer.IPrayersTiming>): prayer.IPrayersTiming
     {
-        
+        console.log(dateNow.toLocaleDateString());
+        console.log("current Date: " +curr.prayerTime.toLocaleDateString());
         if(isNullOrUndefined(prev)&& curr.prayerTime >=dateNow)
         return array[index];
-        else if (prev.prayerTime<= dateNow && curr.prayerTime >= dateNow)
+        else if (!isNullOrUndefined(prev)&& prev.prayerTime<= dateNow && curr.prayerTime >= dateNow)
         return array[index];
-        else
+        else if ( !isNullOrUndefined(prev) && array.length === index+1)
         {
-            let nextDayFajrPrayer:prayer.IPrayersTiming;
-            let nextDay:Date = moment(dateNow).add(1,'d').toDate();
-            nextDayFajrPrayer = this.getPrayerTime(prayer.PrayersName.FAJR,nextDay);
-
+            let nextDay:Date = DateUtil.addDay(1,dateNow); 
+            if (this._prayerTime.pareyerSettings.endDate <nextDay)
+            return null;
+            return this.getPrayerTime(prayer.PrayersName.FAJR,nextDay);
         }
 
+        return null;
     }
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;

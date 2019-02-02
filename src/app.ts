@@ -15,7 +15,7 @@ import ramda = require('ramda');
 
 
 let prayers:Array<object>=
-        [ { prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
+    [ { prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
       { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
       { prayerName: 'Isha', prayerTime: "2019-01-31T19:27:00.000Z" },
       { prayerName: 'Dhuhr', prayerTime: "2019-01-31T12:38:00.000Z"},
@@ -27,25 +27,24 @@ let prayers:Array<object>=
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
-        let orderBy = ramda.sortBy(ramda.prop('prayerTime'));
+        // let orderBy = ramda.sortBy(ramda.prop('prayerTime'));
 
-        // let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
-        // let prayerTime: prayer.IPrayersTime = await manager.PrayerTimeBuilder
-        //     .createPrayerTimeBuilder(null, prayerConfig)
-        //     .setPrayerMethod(prayer.Methods.Mecca)
-        //     .setPrayerPeriod(new Date('2019-01-31'), new Date('2019-01-31'))
-        //     .setLocationByAddress('reem island marina square', 'AE')
-        //     .createPrayerTime();
+        let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
+        let prayerTime: prayer.IPrayersTime = await manager.PrayerTimeBuilder
+            .createPrayerTimeBuilder(null, prayerConfig)
+            .setPrayerMethod(prayer.Methods.Mecca)
+            .setPrayerPeriod(new Date('2019-02-02'), new Date('2019-02-02'))
+            .setLocationByAddress('reem island marina square', 'AE')
+            .createPrayerTime();
 
-        prayers= orderBy(prayers);
-        let fardhPrayers:Array<prayer.IPrayerType> = prayer.PrayersTypes.filter((n)=>n.prayerType === prayer.PrayerType.Fardh );
-        let objects = ramda.innerJoin((prayerLeft:prayer.IPrayersTiming,prayerRight:prayer.IPrayerType)=> prayerLeft.prayerName === prayerRight.prayerName
-        ,prayers
-        ,fardhPrayers);
-
-        console.log(util.inspect(objects, false, null, true /* enable colors */));       // console.log(prayerSettings);   
-
-        // console.log(util.inspect(orderBy(prayers), false, null, true /* enable colors */));       // console.log(prayerSettings);   
+        
+        //console.log(new Date('2019-02-02'));
+         let prayerManager: manager.IPrayerManager = new manager.PrayerManager(prayerTime);
+        let upcomingPrayer: prayer.IPrayersTiming = prayerManager.getUpcomingPrayer();
+         console.log(util.inspect(upcomingPrayer, false, null, true /* enable colors */));       // console.log(prayerSettings);   
+       // console.log(DateUtil.getNowDate('Asia/Dubai').toLocaleDateString());
+    
+      // console.log(util.inspect(prayerTime, false, null, true /* enable colors */));       // console.log(prayerSettings);   
         // let  job:cron.CronJob = new cron.CronJob('10 * * * * *', function() {
         //     const d = new Date();
         //     console.log('At Ten Minutes:', d);
