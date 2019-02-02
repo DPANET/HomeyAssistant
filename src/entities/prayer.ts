@@ -6,6 +6,7 @@ const debug = Debug("app:startup");
 import { ILocationSettings } from './location';
 import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
 import { isNullOrUndefined } from 'util';
+import { EventEmitter } from 'events';
 export enum PrayersName {
     IMSAK = "Imsak",
     FAJR = "Fajr",
@@ -252,26 +253,7 @@ export class PrayersTime implements IPrayersTime {
     public set prayers(value: IPrayers[]) {
         this._prayers = value;
     }
-    public getUpcomingPrayer(prayerType?: PrayerType): IPrayersTiming {
-        let dateNow: Date = new Date();
-        let fnDay = (n: IPrayers) =>
-            (dateNow.getFullYear() == n.prayersDate.getFullYear()) &&
-            (dateNow.getMonth() === n.prayersDate.getMonth()) &&
-            (dateNow.getDay() === n.prayersDate.getDay());
 
-        let time = (value:IPrayersTiming,index:number,array:IPrayersTiming[])=>
-        
-        let filterPrayer: Array<IPrayers> = this._prayers.filter(fn);
-        if (filterPrayer.length === 1) {
-            let todayPrayer: IPrayers = filterPrayer.pop();
-            todayPrayer.prayerTime.sort(n => n.prayerTime.getTime());
-            todayPrayer.prayerTime.forEach(
-        }
-        return;
-    }
-    public getPreviousPrayer(prayerType?: PrayerType): IPrayersTiming {
-        throw new Error("Method not implemented.");
-    }
     public getPrayerTime(prayerName: PrayersName, prayerDate?: Date): IPrayersTiming {
         throw new Error("Method not implemented.");
     }
@@ -351,4 +333,7 @@ export class PrayersSettings implements IPrayersSettings {
 
 
 }
-
+export class PrayerEvents extends EventEmitter
+{
+    
+}

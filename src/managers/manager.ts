@@ -261,13 +261,17 @@ export enum PrayerEvents
     ISHA = "Isha",
     MIDNIGHT = "Midnight"
 }
-
-export class PrayersTimingEvent extends EventEmitter implements IPrayersTimingEvent
+interface IPrayerManager
 {
-    private _prayers: Array<prayer.IPrayers>;
+
+}
+export class PrayerManager implements IPrayerManager
+{
+    private _prayerTime: prayer.IPrayersTime;
+    
     private _cron: cron.CronJob;
     constructor(prayers: Array<prayer.IPrayers>) {
-        super();
+  
         this._prayers  = prayers;
         this.schedulePrayer();
 
@@ -307,6 +311,26 @@ export class PrayersTimingEvent extends EventEmitter implements IPrayersTimingEv
     private scheduleNext():Date
     {
 
+    }
+    public getUpcomingPrayer(prayerType?: PrayerType): IPrayersTiming {
+        let dateNow: Date = new Date();
+        let fnDay = (n: IPrayers) =>
+            (dateNow.getFullYear() == n.prayersDate.getFullYear()) &&
+            (dateNow.getMonth() === n.prayersDate.getMonth()) &&
+            (dateNow.getDay() === n.prayersDate.getDay());
+
+        let time = (value:IPrayersTiming,index:number,array:IPrayersTiming[])=>
+        
+        let filterPrayer: Array<IPrayers> = this._prayers.filter(fn);
+        if (filterPrayer.length === 1) {
+            let todayPrayer: IPrayers = filterPrayer.pop();
+            todayPrayer.prayerTime.sort(n => n.prayerTime.getTime());
+            todayPrayer.prayerTime.forEach(
+        }
+        return;
+    }
+    public getPreviousPrayer(prayerType?: PrayerType): IPrayersTiming {
+        throw new Error("Method not implemented.");
     }
 
 } 
