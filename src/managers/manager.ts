@@ -335,31 +335,32 @@ export class PrayerManager implements IPrayerManager {
         let todayPrayers: prayer.IPrayers= this.getPrayerByDate(dateNow);
         if (!isNullOrUndefined(todayPrayers)) {
             let listOfPrayers:Array<prayer.IPrayersTiming> = orderByFn(todayPrayers.prayerTime);
+
             listOfPrayers= ramda.innerJoin
             ((prayerLeft:prayer.IPrayersTiming,prayerRight:prayer.IPrayerType)=> prayerLeft.prayerName === prayerRight.prayerName
             ,listOfPrayers
             ,fardhPrayers);
-            upcomingPrayer = listOfPrayers.reduce((prev,curr,index,array)=> this.processUpcomingPrayer(dateNow,prev,curr,index,array));
+            console.log(listOfPrayers);
+            console.log('---------------------')
+            upcomingPrayer = listOfPrayers.reduce((prev,curr,index,array)=> this.processUpcomingPrayer(prev,curr,index,array,dateNow,));
         }
         return upcomingPrayer;
     }
-    private processUpcomingPrayer(dateNow:Date,prev:prayer.IPrayersTiming,curr:prayer.IPrayersTiming,index:number,array:Array<prayer.IPrayersTiming>): prayer.IPrayersTiming
+    private processUpcomingPrayer(prev:prayer.IPrayersTiming,curr:prayer.IPrayersTiming,index:number,array:Array<prayer.IPrayersTiming>,dateNow:Date): prayer.IPrayersTiming
     {
-        console.log(dateNow.toLocaleDateString());
-        console.log("current Date: " +curr.prayerTime.toLocaleDateString());
-        if(isNullOrUndefined(prev)&& curr.prayerTime >=dateNow)
+
+        if(prev.prayerTime >=dateNow)
+        return array[index-1];
+        else if (!isNullOrUndefined(curr) && prev.prayerTime<= dateNow && curr.prayerTime >= dateNow)
         return array[index];
-        else if (!isNullOrUndefined(prev)&& prev.prayerTime<= dateNow && curr.prayerTime >= dateNow)
-        return array[index];
-        else if ( !isNullOrUndefined(prev) && array.length === index+1)
+        else if (isNullOrUndefined(curr) && array.length === index)
         {
             let nextDay:Date = DateUtil.addDay(1,dateNow); 
             if (this._prayerTime.pareyerSettings.endDate <nextDay)
             return null;
             return this.getPrayerTime(prayer.PrayersName.FAJR,nextDay);
         }
-
-        return null;
+        return prev= curr;
     }
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;

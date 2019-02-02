@@ -18,12 +18,12 @@ export class DateUtil
     }
 
     static getYear(date: Date): any {
-        return date.getFullYear();
+        return date.getUTCFullYear();
 
     }
     static getMonth(date: Date): number {
        // console.log('Date : '+ date);
-        return date.getMonth()+1;
+        return date.getUTCMonth()+1;
     
     }
     
@@ -33,9 +33,9 @@ export class DateUtil
     }
     static dayMatch(dateLeft:Date,dateRight:Date):boolean
     {
-       return  (dateLeft.getFullYear() == dateRight.getFullYear()) &&
-        (dateLeft.getMonth() === dateRight.getMonth()) &&
-        (dateLeft.getDay() === dateRight.getDay());
+       return  (dateLeft.getUTCFullYear() == dateRight.getUTCFullYear()) &&
+        (dateLeft.getUTCMonth() === dateRight.getUTCMonth()) &&
+        (dateLeft.getUTCDay() === dateRight.getUTCDay());
     }
     public static  formatDate(date:string) :Date
     {
