@@ -28,9 +28,7 @@ export interface IPrayersConfig {
     latitudeAdjustment: prayers.LatitudeMethod;
     startDate: Date;
     endDate: Date;
-    adjustments:
-    [{prayerName: prayers.PrayersName,
-    adjustments: number} ];
+    adjustments:prayers.IPrayerAdjustments[];
 }
 export interface ILocationConfig {
     location: {
