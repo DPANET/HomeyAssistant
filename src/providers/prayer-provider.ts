@@ -150,7 +150,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         return await this.getObjectById<IPrayerSchools>(index,()=>this.getPrayerSchools());
 
     }
-    public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings): Promise<IPrayers[]> {
+    public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation:ILocationSettings): Promise<IPrayers[]> {
         let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
         let err: Error, result: any, url: any, queryString: any;
         let date: Date = prayerSettings.startDate;
@@ -165,11 +165,11 @@ abstract class PrayerProvider implements IPrayerProvider {
             [err, result] = await to(request.get(queryString));
             if (err)
                 return Promise.reject(PrayerErrorMessages.TIME_OUT);
-            prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data']));//.concat(this.buildPrayersObject(result['data']))
+            prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation));//.concat(this.buildPrayersObject(result['data']))
         }
         return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));;
     }
-    private buildPrayersObject(result: any): Array<IPrayers> {
+    private buildPrayersObject(result: any,prayerLocation:ILocationSettings): Array<IPrayers> {
 
         let prayersTimingList: Array<IPrayersTiming> = new Array<IPrayersTiming>();
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
@@ -180,7 +180,7 @@ abstract class PrayerProvider implements IPrayerProvider {
             prayersTimingList.push({
                 prayerName: key as PrayersName,
                 prayerTime: 
-                DateUtil.getTime(dateString,value.substring(0,5)) 
+                DateUtil.getTime(dateString,value) 
             });
         };
         let fn = (n: any) => {
@@ -189,7 +189,7 @@ abstract class PrayerProvider implements IPrayerProvider {
             ramda.forEachObjIndexed(fnPrayer, n.timings);
             prayersList.push({
                 prayerTime: prayersTimingList,
-                prayersDate: DateUtil.formatDate(n.date.readable)
+                prayersDate:  DateUtil.formatDate(n.date.readable)
             });
         }
         ramda.forEach(fn, result);
