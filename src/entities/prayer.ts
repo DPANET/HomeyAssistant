@@ -57,7 +57,7 @@ export interface IPrayerType {
     prayerName: PrayersName,
     prayerType: PrayerType
 }
-const prayersTypes: Array<IPrayerType> = [
+export const PrayersTypes: Array<IPrayerType> = [
     { prayerName: PrayersName.FAJR, prayerType: PrayerType.Fardh },
     { prayerName: PrayersName.DHUHR, prayerType: PrayerType.Fardh },
     { prayerName: PrayersName.ASR, prayerType: PrayerType.Fardh },
@@ -114,12 +114,7 @@ export interface IPrayersTime {
     location: ILocationSettings;
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
-    getUpcomingPrayer(prayerType?: PrayerType): IPrayersTiming;
-    getPreviousPrayer(prayerType?: PrayerType): IPrayersTiming;
-    getPrayerTime(prayerName: PrayersName, prayerDate?: Date): IPrayersTiming;
-    getUpcomingPrayerRemaining(prayerType?: PrayerType): Date;
-    getPrayerConfig(): IPrayersConfig;
-    getLocationConfig(): ILocationConfig;
+
 }
 class PrayerAdjustment implements IPrayerAdjustments {
     private _prayerName: PrayersName;
@@ -254,18 +249,7 @@ export class PrayersTime implements IPrayersTime {
         this._prayers = value;
     }
 
-    public getPrayerTime(prayerName: PrayersName, prayerDate?: Date): IPrayersTiming {
-        throw new Error("Method not implemented.");
-    }
-    public getUpcomingPrayerRemaining(prayerType?: PrayerType): Date {
-        throw new Error("Method not implemented.");
-    }
-    public getPrayerConfig(): IPrayersConfig {
-        throw new Error("Method not implemented.");
-    }
-    public getLocationConfig(): ILocationConfig {
-        throw new Error("Method not implemented.");
-    }
+    
 }
 export class PrayersSettings implements IPrayersSettings {
 
