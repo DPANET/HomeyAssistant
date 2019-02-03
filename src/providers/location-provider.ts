@@ -97,22 +97,24 @@ class GoogleLocationProvider extends LocationProvider {
 
     }
     private parseLocation(googleLocation: any): ILocation {
-        let locationCoordinates:any, locationAddress:any, locationCountry:any;
+        let locationCoordinates:any, locationAddress:any, locationCountry:any,locationCity:any;
         let filterbycountry= (n:any) => ramda.contains('country', n.types);
         let filterbyaddress = (n:any) => ramda.contains('locality', n.types);
         if (!isNullOrUndefined(googleLocation) && googleLocation.json.results.length > 0) {
 
             locationCoordinates = ramda.path(['results', '0', 'geometry', 'location'], googleLocation.json);
-            locationAddress = ramda.find(filterbyaddress)(googleLocation.json.results[0].address_components);
+            locationCity = ramda.find(filterbyaddress)(googleLocation.json.results[0].address_components);
             locationCountry = ramda.find(filterbycountry)(googleLocation.json.results[0].address_components);
-            if (isNullOrUndefined(locationCoordinates)  || isNullOrUndefined(locationAddress) || isNullOrUndefined(locationCountry))
+            locationAddress = googleLocation.json.results[0].formatted_address;
+            if (isNullOrUndefined(locationCoordinates)  || isNullOrUndefined(locationAddress) || isNullOrUndefined(locationCountry) || isNullOrUndefined(locationCity))
                 throw new Error(LocationErrorMessages.BAD_RESULT);
             return {
-                address: locationAddress.long_name,
+                address: locationAddress,
                 countryCode: locationCountry.short_name,
                 countryName: locationCountry.long_name,
                 latitude: locationCoordinates.lat,
-                longtitude: locationCoordinates.lng
+                longtitude: locationCoordinates.lng,
+                city: locationCity.long_name
             };
         }
         else throw new Error(LocationErrorMessages.NOT_FOUND);

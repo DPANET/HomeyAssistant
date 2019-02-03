@@ -285,6 +285,17 @@ export enum PrayerEvents {
 }
 
 export class PrayerManager implements IPrayerManager {
+    private _prayerTime: prayer.IPrayersTime;
+    private _prayerTimeBuilder: IPrayerTimeBuilder;
+    private _cron: cron.CronJob;
+    private _prayerEvents: prayer.PrayerEvents;
+    private _autoRefresh: boolean;
+    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
+        this._prayerTime = prayerTime;
+        this._prayerEvents = new prayer.PrayerEvents();
+        this._autoRefresh = true;
+        this._prayerTimeBuilder = prayerTimeBuilder;
+    }
     public getPrayerTimeZone(): location.ITimeZone {
         return {
             timeZoneId: this._prayerTime.location.timeZoneId,
@@ -338,19 +349,6 @@ export class PrayerManager implements IPrayerManager {
     public getLocationConfig(): ILocationConfig {
         throw new Error("Method not implemented.");
     }
-    private _prayerTime: prayer.IPrayersTime;
-    private _prayerTimeBuilder: IPrayerTimeBuilder;
-    private _cron: cron.CronJob;
-    private _prayerEvents: prayer.PrayerEvents;
-    private _autoRefresh: boolean;
-    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
-
-        this._prayerTime = prayerTime;
-        this._prayerEvents = new prayer.PrayerEvents();
-        this._autoRefresh = true;
-        this._prayerTimeBuilder = prayerTimeBuilder;
-
-    }
     public getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
         let prayersByDate: prayer.IPrayers = this.getPrayerByDate(prayerDate);
         if (!isNullOrUndefined(prayersByDate)) {
@@ -385,11 +383,12 @@ export class PrayerManager implements IPrayerManager {
         let todayPrayers: prayer.IPrayers = this.getPrayerByDate(dateNow);
         if (!isNullOrUndefined(todayPrayers)) {
             let listOfPrayers: Array<prayer.IPrayersTiming> = orderByFn(todayPrayers.prayerTime);
-
+            //filter on fardh prayers.
             listOfPrayers = ramda.innerJoin
                 ((prayerLeft: prayer.IPrayersTiming, prayerRight: prayer.IPrayerType) => prayerLeft.prayerName === prayerRight.prayerName
                     , listOfPrayers
                     , fardhPrayers);
+            //find next prayer based on prayertype
             for (let i: number = 0, prev, curr; i < listOfPrayers.length; i++) {
                 prev = listOfPrayers[i], curr = listOfPrayers[i + 1];
                 upcomingPrayer = this.processUpcomingPrayer(prev, curr, i+1, listOfPrayers, dateNow);

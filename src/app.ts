@@ -31,12 +31,11 @@ async function buildLocationObject() {
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
-            .setPrayerPeriod(new Date('2019-02-02'), new Date('2019-02-03'))
-            .setLocationByAddress('reem island marina square', 'AE')
+            .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
+            .setLocationByAddress('reem island', 'AE')
             .createPrayerTimeManager()
         let upcomingPrayer: prayer.IPrayersTiming = prayerManager.getUpcomingPrayer();
-        console.log(upcomingPrayer);
-      //  console.log(util.inspect(upcomingPrayer.prayerName, false, null, true /* enable colors */));       // console.log(prayerSettings);   
+        console.log(prayerManager.getPrayerLocation());
     }
     catch (err) {
         console.log(err);
