@@ -312,10 +312,10 @@ export class PrayerManager implements IPrayerManager {
     public setAutoReferesh(autoRefresh: boolean): boolean {
         return this._autoRefresh = autoRefresh;
     }
-    getUpcomingPrayerTimeRemaining(): Date {
+    public getUpcomingPrayerTimeRemaining(): Date {
         throw new Error("Method not implemented.");
     }
-    getPrviouesPrayerTimeElapsed(): Date {
+    public getPrviouesPrayerTimeElapsed(): Date {
         throw new Error("Method not implemented.");
     }
     public registerListener(eventName: PrayerEvents): void {
@@ -379,7 +379,6 @@ export class PrayerManager implements IPrayerManager {
 
         if (dateNow > this.getPrayerEndPeriond() || dateNow < this.getPrayerStartPeriod())
             return null;
-        console.log(dateNow);
         let orderByFn = ramda.sortBy<prayer.IPrayersTiming>(ramda.prop('prayerTime'));
         let upcomingPrayer: prayer.IPrayersTiming = null;
         let fardhPrayers: Array<prayer.IPrayerType> = prayer.PrayersTypes.filter((n) => n.prayerType === prayer.PrayerType.Fardh);
@@ -393,7 +392,7 @@ export class PrayerManager implements IPrayerManager {
                     , fardhPrayers);
             for (let i: number = 0, prev, curr; i < listOfPrayers.length; i++) {
                 prev = listOfPrayers[i], curr = listOfPrayers[i + 1];
-                upcomingPrayer = this.processUpcomingPrayer(prev, curr, i, listOfPrayers, dateNow);
+                upcomingPrayer = this.processUpcomingPrayer(prev, curr, i+1, listOfPrayers, dateNow);
                 if (!isNullOrUndefined(upcomingPrayer))
                     return upcomingPrayer;
             }
