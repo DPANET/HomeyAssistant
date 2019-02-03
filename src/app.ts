@@ -35,7 +35,7 @@ async function buildLocationObject() {
             .setLocationByAddress('reem island', 'AE')
             .createPrayerTimeManager()
         let upcomingPrayer: prayer.IPrayersTiming = prayerManager.getUpcomingPrayer();
-        console.log(upcomingPrayer);
+        console.log(prayerManager.getPrayersByDate(new Date('2019-02-04')));
     }
     catch (err) {
         console.log(err);

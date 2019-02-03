@@ -358,10 +358,10 @@ export class PrayerManager implements IPrayerManager {
         }
         return null;
     }
-    public startPrayerSchedule(date:Date): void {
+    public startPrayerSchedule(): void {
         if (!this._cron.running)
             this._cron.start();
-        this._cron = new cron.CronJob(this.getUpcomingPrayer().prayerTime,
+       // this._cron = new cron.CronJob(this.getUpcomingPrayer().prayerTime,
     }
     public stopPrayerSchedule(): void {
         if (this._cron.running)
@@ -407,7 +407,7 @@ export class PrayerManager implements IPrayerManager {
             return array[index - 1];
         else if (!isNullOrUndefined(curr) && prev.prayerTime <= dateNow && curr.prayerTime >= dateNow)
             return array[index];
-        else if (isNullOrUndefined(curr) && array.length === index + 1) {
+        else if (isNullOrUndefined(curr) && array.length === index ) {
             let nextDay: Date = DateUtil.addDay(1, dateNow);
             if (nextDay > this.getPrayerEndPeriond())
                 return null;
