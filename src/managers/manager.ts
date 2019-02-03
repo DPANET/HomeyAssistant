@@ -277,6 +277,7 @@ export interface IPrayerManager {
     getPrayerLocation(): location.ILocation;
     getPrayerStartPeriod(): Date;
     getPrayerEndPeriond(): Date;
+    getPrayersByDate(date:Date): prayer.IPrayers;
     setAutoReferesh(autoRefresh: boolean): boolean;
     getLocationConfig(): ILocationConfig;
 }
@@ -350,7 +351,7 @@ export class PrayerManager implements IPrayerManager {
         throw new Error("Method not implemented.");
     }
     public getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
-        let prayersByDate: prayer.IPrayers = this.getPrayerByDate(prayerDate);
+        let prayersByDate: prayer.IPrayers = this.getPrayersByDate(prayerDate);
         if (!isNullOrUndefined(prayersByDate)) {
             return ramda.find<prayer.IPrayersTiming>(n => n.prayerName === prayerName, prayersByDate.prayerTime);
         }
@@ -364,7 +365,7 @@ export class PrayerManager implements IPrayerManager {
         if (this._cron.running)
             this._cron.stop();
     }
-    private getPrayerByDate(date: Date): prayer.IPrayers {
+    public getPrayersByDate(date: Date): prayer.IPrayers {
         let fnDayMatch = (n: prayer.IPrayers) => DateUtil.dayMatch(date, n.prayersDate);
         return ramda.find(fnDayMatch, this._prayerTime.prayers);
     }
@@ -380,7 +381,7 @@ export class PrayerManager implements IPrayerManager {
         let orderByFn = ramda.sortBy<prayer.IPrayersTiming>(ramda.prop('prayerTime'));
         let upcomingPrayer: prayer.IPrayersTiming = null;
         let fardhPrayers: Array<prayer.IPrayerType> = prayer.PrayersTypes.filter((n) => n.prayerType === prayer.PrayerType.Fardh);
-        let todayPrayers: prayer.IPrayers = this.getPrayerByDate(dateNow);
+        let todayPrayers: prayer.IPrayers = this.getPrayersByDate(dateNow);
         if (!isNullOrUndefined(todayPrayers)) {
             let listOfPrayers: Array<prayer.IPrayersTiming> = orderByFn(todayPrayers.prayerTime);
             //filter on fardh prayers.
