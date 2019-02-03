@@ -291,6 +291,7 @@ export class PrayerManager implements IPrayerManager {
     private _cron: cron.CronJob;
     private _prayerEvents: prayer.PrayerEvents;
     private _autoRefresh: boolean;
+    private _listeners: Array<object>; 
     constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
         this._prayerTime = prayerTime;
         this._prayerEvents = new prayer.PrayerEvents();
@@ -357,9 +358,10 @@ export class PrayerManager implements IPrayerManager {
         }
         return null;
     }
-    public startPrayerSchedule(): void {
+    public startPrayerSchedule(date:Date): void {
         if (!this._cron.running)
             this._cron.start();
+        this._cron = new cron.CronJob(this.getUpcomingPrayer().prayerTime,
     }
     public stopPrayerSchedule(): void {
         if (this._cron.running)
