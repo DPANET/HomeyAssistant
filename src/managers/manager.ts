@@ -17,7 +17,7 @@ import { EventEmitter } from 'events';
 import * as cron from 'cron';
 import { createSecureContext } from 'tls';
 import moment = require('moment');
-import { createReadStream } from 'fs';
+import { createReadStream, promises } from 'fs';
 import { DateUtil } from '../util/utility';
 import { date } from 'joi';
 
@@ -168,7 +168,7 @@ export interface IPrayerTimeBuilder {
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
     setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
-    createPrayerTime(): Promise<prayer.IPrayersTime>;
+    createPrayerTimeManager(): Promise<IPrayerManager>;
 };
 
 export class PrayerTimeBuilder implements IPrayerTimeBuilder {
@@ -230,6 +230,16 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
             return Promise.reject(err);
         }
     }
+    public async createPrayerTimeManager(): Promise<IPrayerManager> {
+        try {
+            let prayersTime: prayer.IPrayersTime = await this.createPrayerTime();
+            let prayerManager: IPrayerManager = new PrayerManager(prayersTime, this);
+            return Promise.resolve(prayerManager);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+    }
     public static createPrayerTimeBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder {
         let prayerProvider: pp.IPrayerProvider = pp.PrayerProviderFactory.createPrayerProviderFactory(pp.PrayerProviderName.PRAYER_TIME);
         let locationBuilder: ILocationBuilder = LocationBuilder
@@ -283,7 +293,7 @@ export class PrayerManager implements IPrayerManager {
             rawOffset: this._prayerTime.location.rawOffset
         };
     }
-   public getPrayerLocation(): location.ILocation {
+    public getPrayerLocation(): location.ILocation {
         return {
             latitude: this._prayerTime.location.latitude,
             longtitude: this._prayerTime.location.longtitude,
@@ -293,14 +303,14 @@ export class PrayerManager implements IPrayerManager {
             address: this._prayerTime.location.address
         };
     }
-    getPrayerStartPeriod(): Date {
+    public getPrayerStartPeriod(): Date {
         return this._prayerTime.pareyerSettings.startDate;
     }
-    getPrayerEndPeriond(): Date {
-        throw DateUtil.getEndofDate(this._prayerTime.pareyerSettings.endDate);
+    public getPrayerEndPeriond(): Date {
+        return DateUtil.getEndofDate(this._prayerTime.pareyerSettings.endDate);
     }
-    setAutoReferesh(autoRefresh: boolean): boolean {
-        throw this._autoRefresh = autoRefresh;
+    public setAutoReferesh(autoRefresh: boolean): boolean {
+        return this._autoRefresh = autoRefresh;
     }
     getUpcomingPrayerTimeRemaining(): Date {
         throw new Error("Method not implemented.");
@@ -308,24 +318,24 @@ export class PrayerManager implements IPrayerManager {
     getPrviouesPrayerTimeElapsed(): Date {
         throw new Error("Method not implemented.");
     }
-    registerListener(eventName: PrayerEvents): void {
+    public registerListener(eventName: PrayerEvents): void {
         throw new Error("Method not implemented.");
     }
-    removeListener(): void {
+    public removeListener(): void {
         throw new Error("Method not implemented.");
     }
-    getPrayerConfig(): IPrayersConfig {
+    public getPrayerConfig(): IPrayersConfig {
         return {
             method: this._prayerTime.pareyerSettings.method.id,
-            midnight:  this._prayerTime.pareyerSettings.midnight.id,
-            school: this._prayerTime.pareyerSettings.school.id ,
-            latitudeAdjustment:  this._prayerTime.pareyerSettings.latitudeAdjustment.id,
+            midnight: this._prayerTime.pareyerSettings.midnight.id,
+            school: this._prayerTime.pareyerSettings.school.id,
+            latitudeAdjustment: this._prayerTime.pareyerSettings.latitudeAdjustment.id,
             startDate: this.getPrayerStartPeriod(),
             endDate: this.getPrayerEndPeriond(),
             adjustments: this._prayerTime.pareyerSettings.adjustments
         };
     }
-    getLocationConfig(): ILocationConfig {
+    public getLocationConfig(): ILocationConfig {
         throw new Error("Method not implemented.");
     }
     private _prayerTime: prayer.IPrayersTime;
@@ -333,14 +343,15 @@ export class PrayerManager implements IPrayerManager {
     private _cron: cron.CronJob;
     private _prayerEvents: prayer.PrayerEvents;
     private _autoRefresh: boolean;
-    constructor(prayerTime: prayer.IPrayersTime) {
+    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
 
         this._prayerTime = prayerTime;
         this._prayerEvents = new prayer.PrayerEvents();
         this._autoRefresh = true;
+        this._prayerTimeBuilder = prayerTimeBuilder;
 
     }
-    getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
+    public getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
         let prayersByDate: prayer.IPrayers = this.getPrayerByDate(prayerDate);
         if (!isNullOrUndefined(prayersByDate)) {
             return ramda.find<prayer.IPrayersTiming>(n => n.prayerName === prayerName, prayersByDate.prayerTime);
@@ -368,6 +379,7 @@ export class PrayerManager implements IPrayerManager {
 
         if (dateNow > this.getPrayerEndPeriond() || dateNow < this.getPrayerStartPeriod())
             return null;
+        console.log(dateNow);
         let orderByFn = ramda.sortBy<prayer.IPrayersTiming>(ramda.prop('prayerTime'));
         let upcomingPrayer: prayer.IPrayersTiming = null;
         let fardhPrayers: Array<prayer.IPrayerType> = prayer.PrayersTypes.filter((n) => n.prayerType === prayer.PrayerType.Fardh);
@@ -396,7 +408,7 @@ export class PrayerManager implements IPrayerManager {
             return array[index];
         else if (isNullOrUndefined(curr) && array.length === index + 1) {
             let nextDay: Date = DateUtil.addDay(1, dateNow);
-            if (nextDay >  this.getPrayerEndPeriond() )
+            if (nextDay > this.getPrayerEndPeriond())
                 return null;
             return this.getPrayerTime(prayer.PrayersName.FAJR, nextDay);
         }

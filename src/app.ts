@@ -28,15 +28,15 @@ buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
         let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
-        let prayerTime: prayer.IPrayersTime = await manager.PrayerTimeBuilder
+        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
             .setPrayerPeriod(new Date('2019-02-02'), new Date('2019-02-03'))
             .setLocationByAddress('reem island marina square', 'AE')
-            .createPrayerTime();
-        let prayerManager: manager.IPrayerManager = new manager.PrayerManager(prayerTime);
+            .createPrayerTimeManager()
         let upcomingPrayer: prayer.IPrayersTiming = prayerManager.getUpcomingPrayer();
-        console.log(util.inspect(upcomingPrayer, false, null, true /* enable colors */));       // console.log(prayerSettings);   
+        console.log(upcomingPrayer);
+      //  console.log(util.inspect(upcomingPrayer.prayerName, false, null, true /* enable colors */));       // console.log(prayerSettings);   
     }
     catch (err) {
         console.log(err);
