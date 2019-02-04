@@ -22,7 +22,6 @@ import { DateUtil } from '../util/utility';
 import { date } from 'joi';
 import { removeListener } from 'cluster';
 
-
 export interface IObserver<T>
 {
     onCompleted():void;
@@ -34,7 +33,7 @@ export interface IObservable <T>
 {
     registerListener( observer: IObserver<T>):void;
     removeListener(observer:IObserver<T>):void;
-    notifyObservers():void;
+    notifyObservers(value:T):void;
 }
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -300,7 +299,6 @@ export enum PrayerEvents {
 
 export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayersTiming>
 {
-
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
     private _cron: cron.CronJob;
@@ -435,8 +433,9 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;
     }
-    public notifyObservers(): void {
-        throw new Error("Method not implemented.");
+    public notifyObservers(prayersTime:prayer.IPrayersTiming): void {
+        for(let i of this._observers)
+            i.onNext(prayersTime);
     }
 } 
 
