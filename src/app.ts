@@ -13,27 +13,26 @@ import * as mom from 'moment';
 import moment = require('moment');
 import { EventEmitter } from 'events';
 import ramda = require('ramda');
+import { timingSafeEqual } from 'crypto';
 
-let locationInput:location.ILocation=
-{latitude: 24.4942437,
+let locationInput: location.ILocation =
+{
+    latitude: 24.4942437,
     longtitude: 54.4068603,
     city: 'Abu Dhabi',
     countryCode: 'AE',
     countryName: 'United Arab Emirates',
     address: 'Al Reem Island - Abu Dhabi - United Arab Emirates'
 }
-interface IObserver<T>
-{
-    onCompleted():void;
-    onError():void;
-    onNext():void;
+interface IObserver<T> {
+    onCompleted(): void;
+    onError(): void;
+    onNext(): void;
 }
 
-interface IObservable <T>
-{
-    registerListener( observer: IObserver<T>):void;
-    removeListener(observer:IObserver<T>):void;
-    
+interface IObservable<T> {
+    registerListener(observer: IObserver<T>): void;
+    removeListener(observer: IObserver<T>): void;
 }
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
@@ -46,36 +45,6 @@ let prayers: Array<object> =
     { prayerName: 'Imsak', prayerTime: "2019-01-31T05:34:00.000Z" },
     { prayerName: 'Midnight', prayerTime: "2019-01-31T00:36:00.000Z" }];
 
-
-class Observer implements IObserver<location.ILocation>
-{
-    onCompleted(): void {
-        throw new Error("Method not implemented.");
-    }    onError(): void {
-        throw new Error("Method not implemented.");
-    }
-    onNext(): void {
-        throw new Error("Method not implemented.");
-    }
-}
-class Observable implements IObservable<location.ILocation>
-{   private  _observers: Array<IObserver<location.ILocation>>;
-    constructor()
-    {
-        this._observers = new Array<IObserver<location.ILocation>>();
-    }
-    
-   public registerListener(observer: IObserver<location.ILocation>): void {
-        this._observers.push(observer);
-    }    
-    removeListener(observer: IObserver<location.ILocation>): void 
-    {
-        this._observers.splice(this._observers.indexOf(observer,1));
-
-    }
-
-
-}
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
@@ -85,9 +54,8 @@ async function buildLocationObject() {
             .setPrayerMethod(prayer.Methods.Mecca)
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
             .setLocationByAddress('reem island', 'AE')
-            .createPrayerTimeManager()
-        let upcomingPrayer: prayer.IPrayersTiming = prayerManager.getUpcomingPrayer();
-        console.log(prayerManager.getPrayerLocation());
+            .createPrayerTimeManager();
+        
     }
     catch (err) {
         console.log(err);

@@ -22,18 +22,16 @@ import { DateUtil } from '../util/utility';
 import { date } from 'joi';
 import { removeListener } from 'cluster';
 
-export interface IObserver<T>
-{
-    onCompleted():void;
-    onError():void;
-    onNext(value:T):void;
+export interface IObserver<T> {
+    onCompleted(): void;
+    onError(): void;
+    onNext(value: T): void;
 }
 
-export interface IObservable <T>
-{
-    registerListener( observer: IObserver<T>):void;
-    removeListener(observer:IObserver<T>):void;
-    notifyObservers(value:T):void;
+export interface IObservable<T> {
+    registerListener(observer: IObserver<T>): void;
+    removeListener(observer: IObserver<T>): void;
+    notifyObservers(value: T): void;
 }
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -289,7 +287,7 @@ export interface IPrayerManager {
     getPrayerLocation(): location.ILocation;
     getPrayerStartPeriod(): Date;
     getPrayerEndPeriond(): Date;
-    getPrayersByDate(date:Date): prayer.IPrayers;
+    getPrayersByDate(date: Date): prayer.IPrayers;
     setAutoReferesh(autoRefresh: boolean): boolean;
     getLocationConfig(): ILocationConfig;
 }
@@ -297,14 +295,14 @@ export enum PrayerEvents {
     OnPrayerTime = 0
 }
 
-export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayersTiming>
+export class PrayerManager implements IPrayerManager, IObservable<prayer.IPrayersTiming>
 {
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
     private _cron: cron.CronJob;
     private _prayerEvents: prayer.PrayerEvents;
     private _autoRefresh: boolean;
-    private _observers: Array<IObserver<prayer.IPrayersTiming>>; 
+    private _observers: Array<IObserver<prayer.IPrayersTiming>>;
     constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
         this._prayerTime = prayerTime;
         this._prayerEvents = new prayer.PrayerEvents();
@@ -345,12 +343,11 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
     public getPrviouesPrayerTimeElapsed(): Date {
         throw new Error("Method not implemented.");
     }
-    public registerListener( observer: IObserver<prayer.IPrayersTiming>):void
-    {
+    public registerListener(observer: IObserver<prayer.IPrayersTiming>): void {
         this._observers.push(observer);
     }
     public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
-        this._observers.splice(this._observers.indexOf(observer,1));
+        this._observers.splice(this._observers.indexOf(observer, 1));
     }
     public getPrayerConfig(): IPrayersConfig {
         return {
@@ -374,9 +371,15 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
         return null;
     }
     public startPrayerSchedule(): void {
-        if (!this._cron.running)
-            this._cron.start();
-       // this._cron = new cron.CronJob(this.getUpcomingPrayer().prayerTime,
+        if (!this._cron.start) {
+            let prayerTiming: prayer.IPrayersTiming = this.getUpcomingPrayer();
+            this._cron = new cron.CronJob(prayerTiming.prayerTime, () => this.notifyObservers(prayerTiming),
+             () =>{
+                setTimeout(()=> {}, 1000);
+              this.startPrayerSchedule();
+             });
+            this._cron.start;
+        }
     }
     public stopPrayerSchedule(): void {
         if (this._cron.running)
@@ -409,7 +412,7 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
             //find next prayer based on prayertype
             for (let i: number = 0, prev, curr; i < listOfPrayers.length; i++) {
                 prev = listOfPrayers[i], curr = listOfPrayers[i + 1];
-                upcomingPrayer = this.processUpcomingPrayer(prev, curr, i+1, listOfPrayers, dateNow);
+                upcomingPrayer = this.processUpcomingPrayer(prev, curr, i + 1, listOfPrayers, dateNow);
                 if (!isNullOrUndefined(upcomingPrayer))
                     return upcomingPrayer;
             }
@@ -422,7 +425,7 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
             return array[index - 1];
         else if (!isNullOrUndefined(curr) && prev.prayerTime <= dateNow && curr.prayerTime >= dateNow)
             return array[index];
-        else if (isNullOrUndefined(curr) && array.length === index ) {
+        else if (isNullOrUndefined(curr) && array.length === index) {
             let nextDay: Date = DateUtil.addDay(1, dateNow);
             if (nextDay > this.getPrayerEndPeriond())
                 return null;
@@ -433,10 +436,10 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;
     }
-    public notifyObservers(prayersTime:prayer.IPrayersTiming): void {
-        for(let i of this._observers)
+    public notifyObservers(prayersTime: prayer.IPrayersTiming): void {
+        for (let i of this._observers)
             i.onNext(prayersTime);
     }
-} 
+}
 
 
