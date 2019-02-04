@@ -21,14 +21,12 @@ let locationInput:location.ILocation=
     countryCode: 'AE',
     countryName: 'United Arab Emirates',
     address: 'Al Reem Island - Abu Dhabi - United Arab Emirates'
-
 }
 interface IObserver<T>
 {
     onCompleted():void;
     onError():void;
     onNext():void;
-
 }
 
 interface IObservable <T>
@@ -59,8 +57,6 @@ class Observer implements IObserver<location.ILocation>
     onNext(): void {
         throw new Error("Method not implemented.");
     }
-
-
 }
 class Observable implements IObservable<location.ILocation>
 {   private  _observers: Array<IObserver<location.ILocation>>;
