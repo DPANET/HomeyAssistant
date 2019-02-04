@@ -20,6 +20,7 @@ import moment = require('moment');
 import { createReadStream, promises } from 'fs';
 import { DateUtil } from '../util/utility';
 import { date } from 'joi';
+import { removeListener } from 'cluster';
 
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -419,3 +420,18 @@ export class PrayerManager implements IPrayerManager {
         return;
     }
 } 
+
+interface IObserver<T>
+{
+    onCompleted():void;
+    onError():void;
+    onNext():void;
+
+}
+
+interface IObservable <T>
+{
+    registerListener( observer: IObserver<T>):void;
+    removeListener(observer:IObserver<T>):void;
+}
+class PrayerObservable
