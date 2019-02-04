@@ -22,6 +22,20 @@ import { DateUtil } from '../util/utility';
 import { date } from 'joi';
 import { removeListener } from 'cluster';
 
+
+export interface IObserver<T>
+{
+    onCompleted():void;
+    onError():void;
+    onNext(value:T):void;
+}
+
+export interface IObservable <T>
+{
+    registerListener( observer: IObserver<T>):void;
+    removeListener(observer:IObserver<T>):void;
+    notifyObserver():void;
+}
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
@@ -286,7 +300,8 @@ export enum PrayerEvents {
     OnPrayerTime = 0
 }
 
-export class PrayerManager implements IPrayerManager {
+export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayersTiming>
+{
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
     private _cron: cron.CronJob;
@@ -421,17 +436,4 @@ export class PrayerManager implements IPrayerManager {
     }
 } 
 
-interface IObserver<T>
-{
-    onCompleted():void;
-    onError():void;
-    onNext():void;
 
-}
-
-interface IObservable <T>
-{
-    registerListener( observer: IObserver<T>):void;
-    removeListener(observer:IObserver<T>):void;
-}
-class PrayerObservable

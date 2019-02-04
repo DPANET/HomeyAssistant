@@ -69,7 +69,7 @@ class Observable implements IObservable<location.ILocation>
         this._observers = new Array<IObserver<location.ILocation>>();
     }
     
-    registerListener(observer: IObserver<location.ILocation>): void {
+   public registerListener(observer: IObserver<location.ILocation>): void {
         this._observers.push(observer);
     }    
     removeListener(observer: IObserver<location.ILocation>): void 
