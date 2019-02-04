@@ -34,7 +34,7 @@ export interface IObservable <T>
 {
     registerListener( observer: IObserver<T>):void;
     removeListener(observer:IObserver<T>):void;
-    notifyObserver():void;
+    notifyObservers():void;
 }
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -283,8 +283,6 @@ export interface IPrayerManager {
     getUpcomingPrayerTimeRemaining(): Date;
     getPrviouesPrayerTimeElapsed(): Date;
     getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming;
-    registerListener(eventName: PrayerEvents): void;
-    removeListener(): void;
     startPrayerSchedule(): void;
     stopPrayerSchedule(): void;
     getPrayerConfig(): IPrayersConfig;
@@ -302,17 +300,19 @@ export enum PrayerEvents {
 
 export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayersTiming>
 {
+
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
     private _cron: cron.CronJob;
     private _prayerEvents: prayer.PrayerEvents;
     private _autoRefresh: boolean;
-    private _listeners: Array<object>; 
+    private _observers: Array<IObserver<prayer.IPrayersTiming>>; 
     constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
         this._prayerTime = prayerTime;
         this._prayerEvents = new prayer.PrayerEvents();
         this._autoRefresh = true;
         this._prayerTimeBuilder = prayerTimeBuilder;
+        this._observers = new Array<IObserver<prayer.IPrayersTiming>>();
     }
     public getPrayerTimeZone(): location.ITimeZone {
         return {
@@ -347,11 +347,12 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
     public getPrviouesPrayerTimeElapsed(): Date {
         throw new Error("Method not implemented.");
     }
-    public registerListener(eventName: PrayerEvents): void {
-        throw new Error("Method not implemented.");
+    public registerListener( observer: IObserver<prayer.IPrayersTiming>):void
+    {
+        this._observers.push(observer);
     }
-    public removeListener(): void {
-        throw new Error("Method not implemented.");
+    public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
+        this._observers.splice(this._observers.indexOf(observer,1));
     }
     public getPrayerConfig(): IPrayersConfig {
         return {
@@ -433,6 +434,9 @@ export class PrayerManager implements IPrayerManager ,IObservable<prayer.IPrayer
     }
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;
+    }
+    public notifyObservers(): void {
+        throw new Error("Method not implemented.");
     }
 } 
 
