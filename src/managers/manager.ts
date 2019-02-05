@@ -17,17 +17,16 @@ import * as cron from 'cron';
 import { DateUtil } from '../util/utility';
 
 
-export interface IObserver<T,K> {
-    eventType:K;
+export interface IObserver<T> {
     onCompleted(): void;
     onError(error: Error): void;
     onNext(value: T): void;
 }
 
-export interface IObservable<T,K> {
-    registerListener(observer: IObserver<T,K>): void;
-    removeListener(observer: IObserver<T,K>): void;
-    notifyObservers(value: T,eventType:K): void;
+export interface IObservable<T> {
+    registerListener(observer: IObserver<T>): void;
+    removeListener(observer: IObserver<T>): void;
+    notifyObservers(value: T): void;
 }
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -396,68 +395,52 @@ export enum PrayerEvents {
     UPCOMING_PRAYERS = 0,
     REFRESH_PRAYERS
 };
-export class PrayersEventManager implements IObservable<prayer.IPrayersTiming,PrayerEvents>
+export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
 {
-    private _observers: Array<IObserver<prayer.IPrayersTiming,PrayerEvents>>;
+    private _observers: Array<IObserver<prayer.IPrayersTiming>>;
     private _prayerManager: IPrayerManager;
     private _upcomingPrayerEvent: cron.CronJob;
     private _refreshPrayersEvent: cron.CronJob;
     constructor(prayerManager: IPrayerManager) {
-        this._observers = new Array<IObserver<prayer.IPrayersTiming,PrayerEvents>>();
+        this._observers = new Array<IObserver<prayer.IPrayersTiming>>();
         this._prayerManager = prayerManager;
     }
-    public registerListener(observer: IObserver<prayer.IPrayersTiming,PrayerEvents>): void {
+    public registerListener(observer: IObserver<prayer.IPrayersTiming>): void {
         this._observers.push(observer);
     }
-    public removeListener(observer: IObserver<prayer.IPrayersTiming,PrayerEvents>): void {
+    public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
         this._observers.splice(this._observers.indexOf(observer, 1));
     }
-    public notifyObservers(prayersTime: prayer.IPrayersTiming, eventType:PrayerEvents): void {
+    public notifyObservers(prayersTime: prayer.IPrayersTiming): void {
         for (let i of this._observers)
         {
-            if(i.eventType===eventType)
             i.onNext(prayersTime);
         }
     }
-    public startPrayerSchedule(eventName: PrayerEvents): void {
-        switch (eventName) {
-            case (PrayerEvents.UPCOMING_PRAYERS):
-                if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.start) {
-                    this.runNextPrayerSchedule();
-                }
-                break;
-            case (PrayerEvents.REFRESH_PRAYERS):
-                if (isNullOrUndefined(this._refreshPrayersEvent) || !this._refreshPrayersEvent.start) {
-                    this.runRefreshSchdeule();
-                }
-                break;
-        };
+    public startPrayerSchedule(): void 
+    {
+        if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.start) {
+            this.runNextPrayerSchedule();
+        }
+
     }
-    private runRefreshSchdeule(): any {
-        throw new Error("Method not implemented.");
-    }
-    public stopPrayerSchedule(eventName: PrayerEvents): void {
-        switch (eventName) {
-            case (PrayerEvents.UPCOMING_PRAYERS):
-                if (this._upcomingPrayerEvent.running)
-                    this._upcomingPrayerEvent.stop();
-                break;
-            case (PrayerEvents.REFRESH_PRAYERS):
-                if (this._refreshPrayersEvent.running)
-                    this._refreshPrayersEvent.stop();
-                break;
-        };
+
+    public stopPrayerSchedule(): void {
+
+        if (this._upcomingPrayerEvent.running)
+            this._upcomingPrayerEvent.stop();
+
     }
     private runNextPrayerSchedule(): void {
         let dateNow: Date = new Date();
         dateNow.setSeconds(dateNow.getUTCSeconds() + 10);
         this._upcomingPrayerEvent = new cron.CronJob(dateNow, () => { 
-            this.notifyObservers({ prayerName: prayer.PrayersName.FAJR, prayerTime: dateNow },PrayerEvents.UPCOMING_PRAYERS) },
+            this.notifyObservers({ prayerName: prayer.PrayersName.FAJR, prayerTime: dateNow }) },
             null, true);
         this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
     }
 }
-export class PrayerEventListener implements IObserver<prayer.IPrayersTiming,PrayerEvents>
+export class PrayerEventListener implements IObserver<prayer.IPrayersTiming>
 {
     readonly eventType: PrayerEvents;
     constructor(eventType:PrayerEvents)
