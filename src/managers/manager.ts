@@ -22,16 +22,17 @@ import { DateUtil } from '../util/utility';
 import { date } from 'joi';
 import { removeListener } from 'cluster';
 
-export interface IObserver<T> {
+export interface IObserver<T,K> {
+    eventType:K;
     onCompleted(): void;
     onError(error: Error): void;
     onNext(value: T): void;
 }
 
-export interface IObservable<T> {
-    registerListener(observer: IObserver<T>): void;
-    removeListener(observer: IObserver<T>): void;
-    notifyObservers(value: T): void;
+export interface IObservable<T,K> {
+    registerListener(observer: IObserver<T,K>): void;
+    removeListener(observer: IObserver<T,K>): void;
+    notifyObservers(value: T,eventType:K): void;
 }
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
@@ -400,25 +401,28 @@ export enum PrayerEvents {
     UPCOMING_PRAYERS = 0,
     REFRESH_PRAYERS
 };
-export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
+export class PrayersEventManager implements IObservable<prayer.IPrayersTiming,PrayerEvents>
 {
-    private _observers: Array<IObserver<prayer.IPrayersTiming>>;
+    private _observers: Array<IObserver<prayer.IPrayersTiming,PrayerEvents>>;
     private _prayerManager: IPrayerManager;
     private _upcomingPrayerEvent: cron.CronJob;
     private _refreshPrayersEvent: cron.CronJob;
     constructor(prayerManager: IPrayerManager) {
-        this._observers = new Array<IObserver<prayer.IPrayersTiming>>();
+        this._observers = new Array<IObserver<prayer.IPrayersTiming,PrayerEvents>>();
         this._prayerManager = prayerManager;
     }
-    public registerListener(observer: IObserver<prayer.IPrayersTiming>): void {
+    public registerListener(observer: IObserver<prayer.IPrayersTiming,PrayerEvents>): void {
         this._observers.push(observer);
     }
-    public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
+    public removeListener(observer: IObserver<prayer.IPrayersTiming,PrayerEvents>): void {
         this._observers.splice(this._observers.indexOf(observer, 1));
     }
-    public notifyObservers(prayersTime: prayer.IPrayersTiming): void {
+    public notifyObservers(prayersTime: prayer.IPrayersTiming, eventType:PrayerEvents): void {
         for (let i of this._observers)
+        {
+            if(i.eventType==eventType)
             i.onNext(prayersTime);
+        }
     }
     public startPrayerSchedule(eventName: PrayerEvents): void {
         switch (eventName) {
@@ -434,7 +438,7 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
                 break;
         };
     }
-    public runRefreshSchdeule(): any {
+    private runRefreshSchdeule(): any {
         throw new Error("Method not implemented.");
     }
     public stopPrayerSchedule(eventName: PrayerEvents): void {
@@ -452,13 +456,19 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
     private runNextPrayerSchedule(): void {
         let dateNow: Date = new Date();
         dateNow.setSeconds(dateNow.getUTCSeconds() + 10);
-        this._upcomingPrayerEvent = new cron.CronJob(dateNow, () => { this.notifyObservers({ prayerName: prayer.PrayersName.FAJR, prayerTime: dateNow }) },
+        this._upcomingPrayerEvent = new cron.CronJob(dateNow, () => { 
+            this.notifyObservers({ prayerName: prayer.PrayersName.FAJR, prayerTime: dateNow },PrayerEvents.UPCOMING_PRAYERS) },
             null, true);
         this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
     }
 }
-export class Observer implements IObserver<prayer.IPrayersTiming>
+export class PrayerEventListener implements IObserver<prayer.IPrayersTiming,PrayerEvents>
 {
+    readonly eventType: PrayerEvents;
+    constructor(eventType:PrayerEvents)
+    {
+        this.eventType = eventType;
+    }
     onCompleted(): void {
         throw new Error("Method not implemented.");
     }
