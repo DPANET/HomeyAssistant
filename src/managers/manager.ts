@@ -274,7 +274,7 @@ export enum PrayerEvents {
     ISHA = "Isha",
     MIDNIGHT = "Midnight"
 }
-export interface IPrayerManager {
+export interface IPrayerManager extends IObservable<prayer.IPrayersTiming>  {
     getUpcomingPrayer(date?: Date, prayerType?: prayer.PrayerType): prayer.IPrayersTiming;
     getPreviousPrayer(): prayer.IPrayersTime;
     getUpcomingPrayerTimeRemaining(): Date;
@@ -295,7 +295,7 @@ export enum PrayerEvents {
     OnPrayerTime = 0
 }
 
-export class PrayerManager implements IPrayerManager, IObservable<prayer.IPrayersTiming>
+export class PrayerManager implements IPrayerManager
 {
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
@@ -371,14 +371,17 @@ export class PrayerManager implements IPrayerManager, IObservable<prayer.IPrayer
         return null;
     }
     public startPrayerSchedule(): void {
-        if (!this._cron.start) {
-            let prayerTiming: prayer.IPrayersTiming = this.getUpcomingPrayer();
-            this._cron = new cron.CronJob(prayerTiming.prayerTime, () => this.notifyObservers(prayerTiming),
+        if (isNullOrUndefined(this._cron) || !this._cron.start) {
+            let dateNow: Date = new Date();
+            console.log(dateNow);
+            dateNow.setSeconds(dateNow.getUTCSeconds()+30);
+            console.log(dateNow);
+            this._cron = new cron.CronJob(dateNow, () => this.notifyObservers({prayerName:prayer.PrayersName.FAJR,prayerTime:dateNow}),
              () =>{
-                setTimeout(()=> {}, 1000);
+                setTimeout(()=> {}, 3000);
               this.startPrayerSchedule();
              });
-            this._cron.start;
+            this._cron.start();
         }
     }
     public stopPrayerSchedule(): void {
@@ -439,7 +442,22 @@ export class PrayerManager implements IPrayerManager, IObservable<prayer.IPrayer
     public notifyObservers(prayersTime: prayer.IPrayersTiming): void {
         for (let i of this._observers)
             i.onNext(prayersTime);
+  
     }
 }
 
+export class Observer implements IObserver<prayer.IPrayersTiming>
+{
+    onCompleted(): void {
+        throw new Error("Method not implemented.");
+    }   
+     onError(): void {
+        throw new Error("Method not implemented.");
+    }
+    onNext(value: prayer.IPrayersTiming): void {
+        console.log(value);
+    }
+
+
+}
 

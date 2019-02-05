@@ -15,25 +15,6 @@ import { EventEmitter } from 'events';
 import ramda = require('ramda');
 import { timingSafeEqual } from 'crypto';
 
-let locationInput: location.ILocation =
-{
-    latitude: 24.4942437,
-    longtitude: 54.4068603,
-    city: 'Abu Dhabi',
-    countryCode: 'AE',
-    countryName: 'United Arab Emirates',
-    address: 'Al Reem Island - Abu Dhabi - United Arab Emirates'
-}
-interface IObserver<T> {
-    onCompleted(): void;
-    onError(): void;
-    onNext(): void;
-}
-
-interface IObservable<T> {
-    registerListener(observer: IObserver<T>): void;
-    removeListener(observer: IObserver<T>): void;
-}
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -44,7 +25,6 @@ let prayers: Array<object> =
     { prayerName: 'Maghrib', prayerTime: "2019-01-31T18:09:00.000Z" },
     { prayerName: 'Imsak', prayerTime: "2019-01-31T05:34:00.000Z" },
     { prayerName: 'Midnight', prayerTime: "2019-01-31T00:36:00.000Z" }];
-
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
@@ -55,7 +35,9 @@ async function buildLocationObject() {
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
             .setLocationByAddress('reem island', 'AE')
             .createPrayerTimeManager();
-        
+        prayerManager.registerListener(new manager.Observer());
+        prayerManager.startPrayerSchedule();
+
     }
     catch (err) {
         console.log(err);
