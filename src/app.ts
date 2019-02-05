@@ -14,6 +14,7 @@ import moment = require('moment');
 import { EventEmitter } from 'events';
 import ramda = require('ramda');
 import { timingSafeEqual } from 'crypto';
+import * as event from './managers/event';
 
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
@@ -35,13 +36,13 @@ async function buildLocationObject() {
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
             .setLocationByAddress('reem island', 'AE')
             .createPrayerTimeManager();
-        let prayerEventManager: manager.PrayersEventManager = new manager.PrayersEventManager(prayerManager);
+        let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
 
-        prayerEventManager.registerListener(new manager.PrayerEventListener(manager.PrayerEvents.UPCOMING_PRAYERS));
-        prayerEventManager.startPrayerSchedule(manager.PrayerEvents.UPCOMING_PRAYERS);
+        prayerEventManager.registerListener(new event.PrayersEventListener());
+        prayerEventManager.startPrayerSchedule();
 
         setTimeout(()=>{
-            prayerEventManager.stopPrayerSchedule(manager.PrayerEvents.UPCOMING_PRAYERS);
+            prayerEventManager.stopPrayerSchedule();
             console.log('stop')},60000);
 
     }
