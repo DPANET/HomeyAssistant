@@ -13,14 +13,9 @@ import { ILocationConfig, IPrayersConfig } from "../configurators/configuration"
 import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
-import { EventEmitter } from 'events';
 import * as cron from 'cron';
-import { createSecureContext } from 'tls';
-import moment = require('moment');
-import { createReadStream, promises } from 'fs';
 import { DateUtil } from '../util/utility';
-import { date } from 'joi';
-import { removeListener } from 'cluster';
+
 
 export interface IObserver<T,K> {
     eventType:K;
