@@ -38,6 +38,10 @@ async function buildLocationObject() {
         prayerManager.registerListener(new manager.Observer());
         prayerManager.startPrayerSchedule();
 
+        setTimeout(()=>{
+            prayerManager.stopPrayerSchedule();
+            console.log('stop')},60000);
+
     }
     catch (err) {
         console.log(err);
