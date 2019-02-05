@@ -37,7 +37,6 @@ async function buildLocationObject() {
             .setLocationByAddress('reem island', 'AE')
             .createPrayerTimeManager();
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
-
         prayerEventManager.registerListener(new event.PrayersEventListener());
         prayerEventManager.startPrayerSchedule();
 

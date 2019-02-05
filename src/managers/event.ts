@@ -36,11 +36,10 @@ abstract class EventProvider<T> implements IObservable<T>
         this._observers =  new Array<IObserver<T>>();
     }
     registerListener(observer: IObserver<T>): void {
-        this._observers.splice(this._observers.indexOf(observer, 1));
-      
+      this._observers.push(observer);
     }   
      removeListener(observer: IObserver<T>): void {
-        throw new Error("Method not implemented.");
+        this._observers.splice(this._observers.indexOf(observer, 1));
     }
     notifyObservers(value: T): void {
 
@@ -58,8 +57,7 @@ export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
     private _upcomingPrayerEvent: cron.CronJob;
     constructor(prayerManager: manager.IPrayerManager) {
         super();
-        this._prayerManager = prayerManager;
-        
+        this._prayerManager = prayerManager; 
     }
     public registerListener(observer: IObserver<prayer.IPrayersTiming>): void {
         super.registerListener(observer);
@@ -81,12 +79,11 @@ export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
             this._upcomingPrayerEvent.stop();
     }
     private runNextPrayerSchedule(): void {
-        let dateNow: Date = new Date();
-        dateNow.setSeconds(dateNow.getUTCSeconds() + 10);
-        this._upcomingPrayerEvent = new cron.CronJob(dateNow, () => { 
-            this.notifyObservers({ prayerName: prayer.PrayersName.FAJR, prayerTime: dateNow }) },
+        let prayerTiming: prayer.IPrayersTiming = this._prayerManager.getUpcomingPrayer();
+        this._upcomingPrayerEvent = new cron.CronJob(prayerTiming.prayerTime, () => { 
+            this.notifyObservers(prayerTiming) },
             null, true);
-        this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
+        this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 60000); });
     }
 }
 
