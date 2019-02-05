@@ -420,7 +420,7 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming,Pr
     public notifyObservers(prayersTime: prayer.IPrayersTiming, eventType:PrayerEvents): void {
         for (let i of this._observers)
         {
-            if(i.eventType==eventType)
+            if(i.eventType===eventType)
             i.onNext(prayersTime);
         }
     }
