@@ -438,19 +438,16 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
         throw new Error("Method not implemented.");
     }
     public stopPrayerSchedule(eventName: PrayerEvents): void {
-
         switch (eventName) {
             case (PrayerEvents.UPCOMING_PRAYERS):
                 if (this._upcomingPrayerEvent.running)
                     this._upcomingPrayerEvent.stop();
                 break;
             case (PrayerEvents.REFRESH_PRAYERS):
-                if (this._upcomingPrayerEvent.running)
-                    this._upcomingPrayerEvent.stop();
+                if (this._refreshPrayersEvent.running)
+                    this._refreshPrayersEvent.stop();
                 break;
         };
-        if (this._upcomingPrayerEvent.running)
-            this._upcomingPrayerEvent.stop();
     }
     private runNextPrayerSchedule(): void {
         let dateNow: Date = new Date();
