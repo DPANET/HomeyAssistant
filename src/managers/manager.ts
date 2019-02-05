@@ -421,7 +421,6 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
             i.onNext(prayersTime);
     }
     public startPrayerSchedule(eventName: PrayerEvents): void {
-
         switch (eventName) {
             case (PrayerEvents.UPCOMING_PRAYERS):
                 if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.start) {
@@ -429,12 +428,27 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
                 }
                 break;
             case (PrayerEvents.REFRESH_PRAYERS):
-                if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.start) {
-                    this.runNextPrayerSchedule();
+                if (isNullOrUndefined(this._refreshPrayersEvent) || !this._refreshPrayersEvent.start) {
+                    this.runRefreshSchdeule();
                 }
+                break;
         };
     }
+    public runRefreshSchdeule(): any {
+        throw new Error("Method not implemented.");
+    }
     public stopPrayerSchedule(eventName: PrayerEvents): void {
+
+        switch (eventName) {
+            case (PrayerEvents.UPCOMING_PRAYERS):
+                if (this._upcomingPrayerEvent.running)
+                    this._upcomingPrayerEvent.stop();
+                break;
+            case (PrayerEvents.REFRESH_PRAYERS):
+                if (this._upcomingPrayerEvent.running)
+                    this._upcomingPrayerEvent.stop();
+                break;
+        };
         if (this._upcomingPrayerEvent.running)
             this._upcomingPrayerEvent.stop();
     }
@@ -443,8 +457,7 @@ export class PrayersEventManager implements IObservable<prayer.IPrayersTiming>
         dateNow.setSeconds(dateNow.getUTCSeconds() + 10);
         this._upcomingPrayerEvent = new cron.CronJob(dateNow, () => { this.notifyObservers({ prayerName: prayer.PrayersName.FAJR, prayerTime: dateNow }) },
             null, true);
-        this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); })
-
+        this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
     }
 }
 export class Observer implements IObserver<prayer.IPrayersTiming>
