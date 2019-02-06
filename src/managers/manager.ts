@@ -13,9 +13,7 @@ import { ILocationConfig, IPrayersConfig } from "../configurators/configuration"
 import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
-import * as cron from 'cron';
 import { DateUtil } from '../util/utility';
-import { promises } from 'fs';
 
 
 export interface IPrayerSettingsBuilder {
@@ -70,7 +68,6 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerSettings.latitudeAdjustment.id = latitudeAdjustment;
         return this;
     }
-
     public async createPrayerSettings(): Promise<prayer.IPrayersSettings> {
         let validationErr: validators.IValidationError;
         let validationResult: boolean = false;
@@ -79,16 +76,15 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
             return Promise.reject(validationErr);
         if (validationResult) {
             try {
-
                 this._prayerSettings.method = await this._prayerProvider.getPrayerMethodsById(this._prayerSettings.method.id);
                 this._prayerSettings.latitudeAdjustment = await this._prayerProvider.getPrayerLatitudeById(this._prayerSettings.latitudeAdjustment.id);
                 this._prayerSettings.midnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
                 this._prayerSettings.school = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
                 return this._prayerSettings;
-            } catch (error) {
+            } 
+            catch (error) {
                 return Promise.reject(error);
             }
-
         }
     }
     public static createPrayerSettingsBuilder(prayerConfig?: IPrayersConfig, prayerProvider?: pp.IPrayerProvider): IPrayerSettingsBuilder {
@@ -141,6 +137,7 @@ export class LocationBuilder implements ILocationBuilder {
                 if (providerErr)
                     return Promise.reject(providerErr);
                 this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
+                console
                 return Promise.resolve(this._location);
             }
             else {
@@ -181,7 +178,6 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         this._locationBuilder = locationBuilder;
         this._prayerProvider = prayerProvider;
         this._prayers = new Array<prayer.Prayers>();
-
     }
     public setPrayerMethod(methodId: prayer.Methods): IPrayerTimeBuilder {
         this._prayerSettingsBuilder.setPrayerMethod(methodId);
@@ -219,9 +215,9 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     public async createPrayerTime(): Promise<prayer.IPrayersTime> {
         let location: location.ILocationSettings, prayerSettings: prayer.IPrayersSettings;
         try {
-            
+           // console.log(this._locationBuilder);
             location = await this._locationBuilder.createLocation();
-           console.log(location);
+            console.log(location);
             prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings();
             console.log(prayerSettings)
             this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings, location);
@@ -249,7 +245,6 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
             .createPrayerSettingsBuilder(isNullOrUndefined(prayerConfig) ? null : prayerConfig);
         return new PrayerTimeBuilder(prayerProvider, locationBuilder, prayerSettingsBuilder);
     }
-
 };
 
 
