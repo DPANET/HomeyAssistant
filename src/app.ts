@@ -40,6 +40,7 @@ async function buildLocationObject() {
         prayerEventManager.registerListener(new event.PrayersEventListener());
         prayerEventManager.startPrayerSchedule();
         console.log(DateUtil.addMonth(1,prayerManager.getPrayerEndPeriond()));
+        prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'),new Date('2019-03-31'));
         setTimeout(()=>{
             prayerEventManager.stopPrayerSchedule();
             console.log('stop')},60000);
