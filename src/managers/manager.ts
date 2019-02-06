@@ -273,12 +273,9 @@ export class PrayerManager implements IPrayerManager {
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
     private _prayerEvents: prayer.PrayerEvents;
-
-
     constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
         this._prayerTime = prayerTime;
         this._prayerEvents = new prayer.PrayerEvents();
-
         this._prayerTimeBuilder = prayerTimeBuilder;
     }
     public getPrayerTimeZone(): location.ITimeZone {
