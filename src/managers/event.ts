@@ -164,6 +164,6 @@ export class PrayerRefreshEventListener implements IObserver<manager.IPrayerMana
         debug(error);
     }
     onNext(value: manager.IPrayerManager): void {
-
+        debug(value);
     }
 }

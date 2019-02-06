@@ -39,7 +39,7 @@ async function buildLocationObject() {
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
         prayerEventManager.registerListener(new event.PrayersEventListener());
         prayerEventManager.startPrayerSchedule();
-
+        console.log(DateUtil.addMonth(1,prayerManager.getPrayerEndPeriond()));
         setTimeout(()=>{
             prayerEventManager.stopPrayerSchedule();
             console.log('stop')},60000);
