@@ -24,7 +24,7 @@ export interface IPrayerSettingsBuilder {
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerSettingsBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
     createPrayerSettings(): Promise<prayer.IPrayersSettings>;
-    
+
 };
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerSettings: prayer.IPrayersSettings;
@@ -81,7 +81,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
                 this._prayerSettings.midnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
                 this._prayerSettings.school = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
                 return this._prayerSettings;
-            } 
+            }
             catch (error) {
                 return Promise.reject(error);
             }
@@ -123,28 +123,30 @@ export class LocationBuilder implements ILocationBuilder {
     public async createLocation(): Promise<location.ILocationSettings> {
         let validationErr: validators.IValidationError, validationResult: boolean = false;
         let providerErr: Error, locationResult: location.ILocation, timezoneResult: location.ITimeZone;
+
         [validationErr, validationResult] = await to(this._validtor.validate(this._location));
         if (validationErr)
             return Promise.reject(validationErr);
         if (validationResult) {
             if (!isNullOrUndefined(this._location.latitude))
                 [providerErr, locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude, this._location.longtitude));
+
             else if ((!isNullOrUndefined(this._location.address))) {
                 [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
                 if (providerErr)
                     return Promise.reject(providerErr);
-                [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
-                if (providerErr)
-                    return Promise.reject(providerErr);
-                this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
-                console
-                return Promise.resolve(this._location);
             }
-            else {
-                return Promise.reject();
-            }
+            [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
+            if (providerErr)
+                return Promise.reject(providerErr);
+            this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
+            return Promise.resolve(this._location);
+        }
+        else {
+            return Promise.reject();
         }
     }
+
     public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: lp.ILocationProvider): LocationBuilder {
         let providerName: lp.ILocationProvider = lp.LocationProviderFactory.
             createLocationProviderFactory(lp.LocationProviderName.GOOGLE);
@@ -215,11 +217,9 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     public async createPrayerTime(): Promise<prayer.IPrayersTime> {
         let location: location.ILocationSettings, prayerSettings: prayer.IPrayersSettings;
         try {
-           // console.log(this._locationBuilder);
+            // console.log(this._locationBuilder);
             location = await this._locationBuilder.createLocation();
-            console.log(location);
             prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings();
-            console.log(prayerSettings)
             this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings, location);
             return Promise.resolve(new prayer.PrayersTime(this._prayers, location, prayerSettings));
         }
@@ -247,7 +247,6 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     }
 };
 
-
 export interface IPrayerManager {
     getUpcomingPrayer(date?: Date, prayerType?: prayer.PrayerType): prayer.IPrayersTiming;
     getPreviousPrayer(): prayer.IPrayersTime;
@@ -260,7 +259,7 @@ export interface IPrayerManager {
     getPrayerStartPeriod(): Date;
     getPrayerEndPeriond(): Date;
     getPrayersByDate(date: Date): prayer.IPrayers;
-    updatePrayersDate(startDate:Date,endDate:Date):Promise<IPrayerManager>;
+    updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
     getLocationConfig(): ILocationConfig;
 }
 
@@ -377,14 +376,13 @@ export class PrayerManager implements IPrayerManager {
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;
     }
-    public async updatePrayersDate(startDate: Date, endDate: Date):Promise<IPrayerManager> {
-        try{
-        this._prayerTime= await this._prayerTimeBuilder
-        .setPrayerPeriod(startDate,endDate)
-        .createPrayerTime();
-        return this;
-        }catch(err)
-        {
+    public async updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager> {
+        try {
+            this._prayerTime = await this._prayerTimeBuilder
+                .setPrayerPeriod(startDate, endDate)
+                .createPrayerTime();
+            return this;
+        } catch (err) {
             return Promise.reject(err);
         }
     }

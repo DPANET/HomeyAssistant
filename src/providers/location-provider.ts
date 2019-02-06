@@ -46,6 +46,7 @@ export interface ILocationProvider {
 class GoogleLocationProvider extends LocationProvider {
     private _googleMapClient:any;
     private _location: ILocation;
+    private _timeZone:ITimeZone;
     constructor() {
         super(LocationProviderName.GOOGLE);
         this._googleMapClient = require('@google/maps').createClient({
@@ -62,7 +63,8 @@ class GoogleLocationProvider extends LocationProvider {
                 result_type: ['locality', 'country']
             }).asPromise());
             if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
-            return this.parseLocation(googleLocation);
+            this._location= this.parseLocation(googleLocation);
+            return this._location;
         }
         else throw new Error(LocationErrorMessages.BAD_INPUT);
     }
@@ -74,12 +76,13 @@ class GoogleLocationProvider extends LocationProvider {
                 .asPromise());
             if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
             timezoneObject = googleTimeZone.json;
-            return {
+            this._timeZone= {
                 timeZoneId: timezoneObject.timeZoneId,
                 timeZoneName: timezoneObject.timeZoneName,
                 dstOffset: timezoneObject.dstOffset,
                 rawOffset: timezoneObject.rawOffset
             };
+            return this._timeZone;
         }
         else throw new Error(LocationErrorMessages.BAD_INPUT);
     }
@@ -90,7 +93,8 @@ class GoogleLocationProvider extends LocationProvider {
                 geocode({ address: address, components: { country: countryCode } })
                 .asPromise());
             if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
-            return this.parseLocation(googleLocation);
+            this._location= this.parseLocation(googleLocation);
+            return this._location;
         }
         else throw new Error(LocationErrorMessages.BAD_INPUT);
 
@@ -101,7 +105,6 @@ class GoogleLocationProvider extends LocationProvider {
         let filterbycountry= (n:any) => ramda.contains('country', n.types);
         let filterbyaddress = (n:any) => ramda.contains('locality', n.types);
         if (!isNullOrUndefined(googleLocation) && googleLocation.json.results.length > 0) {
-
             locationCoordinates = ramda.path(['results', '0', 'geometry', 'location'], googleLocation.json);
             locationCity = ramda.find(filterbyaddress)(googleLocation.json.results[0].address_components);
             locationCountry = ramda.find(filterbycountry)(googleLocation.json.results[0].address_components);
