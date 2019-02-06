@@ -15,6 +15,7 @@ import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 import * as cron from 'cron';
 import { DateUtil } from '../util/utility';
+import { promises } from 'fs';
 
 
 export interface IPrayerSettingsBuilder {
@@ -25,6 +26,7 @@ export interface IPrayerSettingsBuilder {
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerSettingsBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
     createPrayerSettings(): Promise<prayer.IPrayersSettings>;
+    
 };
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerSettings: prayer.IPrayersSettings;
@@ -165,6 +167,7 @@ export interface IPrayerTimeBuilder {
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
     setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
     createPrayerTimeManager(): Promise<IPrayerManager>;
+    createPrayerTime(): Promise<prayer.IPrayersTime>;
 };
 
 export class PrayerTimeBuilder implements IPrayerTimeBuilder {
@@ -260,6 +263,7 @@ export interface IPrayerManager {
     getPrayerStartPeriod(): Date;
     getPrayerEndPeriond(): Date;
     getPrayersByDate(date: Date): prayer.IPrayers;
+    updatePrayersDate(startDate:Date,endDate:Date):Promise<IPrayerManager>;
     getLocationConfig(): ILocationConfig;
 }
 
@@ -379,6 +383,18 @@ export class PrayerManager implements IPrayerManager {
     public getPreviousPrayer(): prayer.IPrayersTime {
         return;
     }
+    public async updatePrayersDate(startDate: Date, endDate: Date):Promise<IPrayerManager> {
+        try{
+        this._prayerTime= await this._prayerTimeBuilder
+        .setPrayerPeriod(startDate,endDate)
+        .createPrayerTime();
+        return this;
+        }catch(err)
+        {
+            return Promise.reject(err);
+        }
+    }
+
 }
 
 

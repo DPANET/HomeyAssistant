@@ -13,17 +13,17 @@ import { isNullOrUndefined } from 'util';
 import * as cron from 'cron';
 import { DateUtil } from '../util/utility';
 import * as manager from './manager'
+import { start } from 'repl';
 
 export interface IObserver<T> {
     onCompleted(): void;
     onError(error: Error): void;
     onNext(value: T): void;
 }
-
 export interface IObservable<T> {
     registerListener(observer: IObserver<T>): void;
     removeListener(observer: IObserver<T>): void;
-    notifyObservers(value: T): void;
+    notifyObservers(value: T,error?:Error): void;
 }
 abstract class EventProvider<T> implements IObservable<T>
 {
@@ -32,22 +32,24 @@ abstract class EventProvider<T> implements IObservable<T>
     {
         this._observers =  new Array<IObserver<T>>();
     }
-    registerListener(observer: IObserver<T>): void {
+    public registerListener(observer: IObserver<T>): void {
       this._observers.push(observer);
     }   
-     removeListener(observer: IObserver<T>): void {
+    public removeListener(observer: IObserver<T>): void {
         this._observers.splice(this._observers.indexOf(observer, 1));
     }
-    notifyObservers(value: T): void {
-
+    public notifyObservers(value: T,error?:Error): void {
+        
         for (let i of this._observers)
         {
+            if(!isNullOrUndefined(error))
             i.onNext(value);
+            else 
+            i.onError(error);
         }    
     }
 
 }
-
 export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
 {
     private _prayerManager: manager.IPrayerManager;
@@ -62,8 +64,8 @@ export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
     public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
         super.removeListener(observer);
     }
-    public notifyObservers(prayersTime: prayer.IPrayersTiming): void {
-        super.notifyObservers(prayersTime);
+    public notifyObservers(prayersTime: prayer.IPrayersTiming,error?:Error): void {
+        super.notifyObservers(prayersTime,error);
     }
     public startPrayerSchedule(): void 
     {
@@ -77,13 +79,13 @@ export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
     }
     private runNextPrayerSchedule(): void {
         let prayerTiming: prayer.IPrayersTiming = this._prayerManager.getUpcomingPrayer();
+        debug(prayerTiming);
         this._upcomingPrayerEvent = new cron.CronJob(prayerTiming.prayerTime, () => { 
-            this.notifyObservers(prayerTiming) },
+            this.notifyObservers(prayerTiming,null) },
             null, true);
         this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 60000); });
     }
 }
-
 export class PrayersEventListener implements IObserver<prayer.IPrayersTiming>
 {
     constructor()
@@ -114,8 +116,8 @@ export class PrayersRefreshEventProvider extends  EventProvider<manager.IPrayerM
     public removeListener(observer: IObserver<manager.IPrayerManager>): void {
         super.removeListener(observer);
     }
-    public notifyObservers(prayersTime: manager.IPrayerManager): void {
-        super.notifyObservers(prayersTime);
+    public notifyObservers(prayersTime: manager.IPrayerManager,error?:Error): void {
+        super.notifyObservers(prayersTime,error);
     }
     public startPrayerSchedule(): void 
     {
@@ -127,13 +129,27 @@ export class PrayersRefreshEventProvider extends  EventProvider<manager.IPrayerM
         if (this._refreshPrayersEvent.running)
             this._refreshPrayersEvent.stop();
     }
-    private runNextPrayerSchedule(): void {
-        let dateNow: Date = new Date();
-        dateNow.setSeconds(dateNow.getUTCSeconds() + 10);
-        this._refreshPrayersEvent = new cron.CronJob(dateNow, () => { 
-            this.notifyObservers(this._prayerManager) },
+    private  runNextPrayerSchedule(): void {
+
+        this._refreshPrayersEvent = new cron.CronJob(this._prayerManager.getPrayerEndPeriond(), async () => { 
+           await this.scheduleRefresh() },
             null, true);
         this._refreshPrayersEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
+    }
+    private async scheduleRefresh():Promise<void>
+    {
+        let startDate:Date = this._prayerManager.getPrayerStartPeriod();
+        let endDate:Date = this._prayerManager.getPrayerEndPeriond();
+        startDate = DateUtil.addDay(1,startDate);
+        endDate = DateUtil.addMonth(1,endDate);
+        try{
+           this._prayerManager =  await this._prayerManager.updatePrayersDate(startDate,endDate);
+           this.notifyObservers(this._prayerManager);
+        }
+        catch(err)
+        {
+            this.notifyObservers(null,err);
+        }
     }
 }
 
@@ -145,8 +161,9 @@ export class PrayerRefreshEventListener implements IObserver<manager.IPrayerMana
     onCompleted(): void {
     }
     onError(error: Error): void {
+        debug(error);
     }
     onNext(value: manager.IPrayerManager): void {
-        console.log(value);
+
     }
 }
