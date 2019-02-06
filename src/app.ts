@@ -37,13 +37,11 @@ async function buildLocationObject() {
             .setLocationByAddress('reem island', 'AE')
             .createPrayerTimeManager();
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
-        prayerEventManager.registerListener(new event.PrayersEventListener());
-        prayerEventManager.startPrayerSchedule();
-        console.log(DateUtil.addMonth(1,prayerManager.getPrayerEndPeriond()));
+        //prayerEventManager.registerListener(new event.PrayersEventListener());
+       // prayerEventManager.startPrayerSchedule();
+      //  console.log(DateUtil.addMonth(1,prayerManager.getPrayerEndPeriond()));
         prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'),new Date('2019-03-31'));
-        setTimeout(()=>{
-            prayerEventManager.stopPrayerSchedule();
-            console.log('stop')},60000);
+        //setTimeout(()=>{  prayerEventManager.stopPrayerSchedule();console.log('stop')},60000);
 
     }
     catch (err) {
