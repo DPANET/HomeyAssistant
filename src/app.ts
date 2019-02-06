@@ -34,7 +34,7 @@ async function buildLocationObject() {
             .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
-            .setLocationByAddress('reem island', 'AE')
+            .setLocationByCoordinates(24.4942437,54.4068603 )
             .createPrayerTimeManager();
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
         //prayerEventManager.registerListener(new event.PrayersEventListener());
