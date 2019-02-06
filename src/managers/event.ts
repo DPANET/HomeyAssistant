@@ -102,7 +102,7 @@ export class PrayersEventListener implements IObserver<prayer.IPrayersTiming>
     }
 }
 
-export class PrayersRefreshEventProvider extends  EventProvider<manager.IPrayerManager>
+export class PrayersRefreshEventProvider extends EventProvider<manager.IPrayerManager>
 {
     private _prayerManager: manager.IPrayerManager;
     private _refreshPrayersEvent: cron.CronJob;
