@@ -5,10 +5,7 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
-import * as pp from '../providers/prayer-provider';
-import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
 import val = require('../validators/validator');
 import validators = val.validators;
@@ -146,10 +143,8 @@ export class PrayerRefreshEventListener implements IObserver<manager.IPrayerMana
     {
     }
     onCompleted(): void {
-        throw new Error("Method not implemented.");
     }
     onError(error: Error): void {
-        throw new Error("Method not implemented.");
     }
     onNext(value: manager.IPrayerManager): void {
         console.log(value);
