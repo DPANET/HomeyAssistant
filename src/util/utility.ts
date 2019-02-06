@@ -26,7 +26,6 @@ export class DateUtil
 
     }
     static getMonth(date: Date): number {
-       // console.log('Date : '+ date);
         return date.getUTCMonth()+1;
     
     }
