@@ -217,7 +217,6 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     public async createPrayerTime(): Promise<prayer.IPrayersTime> {
         let location: location.ILocationSettings, prayerSettings: prayer.IPrayersSettings;
         try {
-            // console.log(this._locationBuilder);
             location = await this._locationBuilder.createLocation();
             prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings();
             this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings, location);
