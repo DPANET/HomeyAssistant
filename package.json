@@ -1,6 +1,6 @@
 {
   "name": "@dpanet/prayers-lib",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": false,
   "main": "lib/index.js",
   "types": "lib/inde.d.ts",
@@ -44,11 +44,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "npm run compile",
-    "compile": "npm run clean && tsc -p .",
-    "watch": "tsc -w -p .",
-    "clean": "rm -rf lib"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
