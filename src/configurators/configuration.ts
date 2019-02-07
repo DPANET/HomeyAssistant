@@ -3,7 +3,6 @@ dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
-
 import { isNullOrUndefined } from 'util';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileASync";
