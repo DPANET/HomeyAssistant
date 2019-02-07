@@ -130,7 +130,6 @@ export class PrayersRefreshEventProvider extends EventProvider<manager.IPrayerMa
             this._refreshPrayersEvent.stop();
     }
     private  runNextPrayerSchedule(): void {
-
         this._refreshPrayersEvent = new cron.CronJob(this._prayerManager.getPrayerEndPeriond(), async () => { 
            await this.scheduleRefresh() },
             null, true);
