@@ -1,13 +1,11 @@
 {
-  "name": "prayers-lib",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@dpanet/prayers-lib",
+  "version": "1.0.0",
+  "private": false,
   "main": "lib/app",
   "types": "lib/app",
   "description": "prayers library",
-  "author": {
-    "name": ""
-  },
+  "author": "Dpanet",
   "unmockedModulePathPatterns": [
     "jasmine-expect"
   ],
@@ -41,5 +39,24 @@
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
     "typescript": "^3.2.4"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DPANET/HomeyAssistant.git"
+  },
+  "keywords": [
+    "prayer",
+    "lib"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DPANET/HomeyAssistant/issues"
+  },
+  "homepage": "https://github.com/DPANET/HomeyAssistant#readme"
 }
