@@ -4,16 +4,12 @@ dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
-import ramda = require('ramda');
 import * as prayer from '../entities/prayer';
-import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
 import val = require('../validators/validator');
-import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 import * as cron from 'cron';
 import { DateUtil } from '../util/utility';
 import * as manager from './manager'
-import { start } from 'repl';
 
 export interface IObserver<T> {
     onCompleted(): void;
