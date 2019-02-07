@@ -14,8 +14,6 @@ import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 import { DateUtil } from '../util/utility';
-
-
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
@@ -261,7 +259,6 @@ export interface IPrayerManager {
     updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
     getLocationConfig(): ILocationConfig;
 }
-
 
 export class PrayerManager implements IPrayerManager {
 
