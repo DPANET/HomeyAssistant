@@ -34,15 +34,14 @@ async function buildLocationObject() {
             .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
-            .setLocationByCoordinates(24.4942437,54.4068603 )
+            .setLocationByCoordinates(24.4942437, 54.4068603)
             .createPrayerTimeManager();
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
         prayerEventManager.registerListener(new event.PrayersEventListener());
-       prayerEventManager.startPrayerSchedule();
-       console.log(DateUtil.addMonth(1,prayerManager.getPrayerEndPeriond()));
-        prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'),new Date('2019-03-31'));
+        prayerEventManager.startPrayerSchedule();
+        console.log(DateUtil.addMonth(1, prayerManager.getPrayerEndPeriond()));
+        prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'), new Date('2019-03-31'));
         //setTimeout(()=>{  prayerEventManager.stopPrayerSchedule();console.log('stop')},60000);
-
     }
     catch (err) {
         console.log(err);
