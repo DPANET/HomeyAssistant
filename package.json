@@ -34,11 +34,11 @@
     "@types/joi": "^14.3.1",
     "@types/lowdb": "^1.0.6",
     "@types/moment-timezone": "^0.5.10",
-    "@types/node": "^10.12.21",
+    "@types/node": "^10.12.22",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.15",
-    "typescript": "^3.3.1"
+    "typescript": "^3.3.3"
   },
   "directories": {
     "lib": "lib"
