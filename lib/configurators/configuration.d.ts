@@ -30,7 +30,7 @@ export interface IConfig {
     getLocationConfig(): Promise<ILocationConfig>;
     saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
 }
-export default class Configurator implements IConfig {
+export declare class Configurator implements IConfig {
     private _db;
     private readonly _fileName;
     constructor();

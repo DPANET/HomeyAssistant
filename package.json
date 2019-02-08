@@ -1,9 +1,9 @@
 {
   "name": "@dpanet/prayers-lib",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": false,
-  "main": "lib/index.js",
-  "types": "lib/inde.d.ts",
+  "main": "lib/index",
+  "types": "lib/index",
   "description": "prayers library",
   "author": "Dpanet",
   "unmockedModulePathPatterns": [

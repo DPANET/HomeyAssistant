@@ -9,6 +9,7 @@ import { default as FileAsync } from "lowdb/adapters/FileASync";
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');
 import * as prayers from '../entities/prayer';
+import * as path from 'path';
 const configPaths =
 {
     prayerConfig: 'config.prayerConfig.calculations',
@@ -53,12 +54,14 @@ export interface IConfig {
 
 }
 
-export default class Configurator implements IConfig {
+export  class Configurator implements IConfig {
 
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;
     constructor() {
-        this._fileName = 'src/configurators/config.json';
+           
+       this._fileName= __dirname+'/config.json';
+      //  console.log(this._fileName);
     }
     saveLocationConfig(): Promise<boolean> {
         throw new Error("Method not implemented.");
