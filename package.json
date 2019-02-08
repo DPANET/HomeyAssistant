@@ -41,7 +41,8 @@
     "typescript": "^3.3.3"
   },
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "config": "config"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

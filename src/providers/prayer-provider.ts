@@ -13,6 +13,7 @@ import * as request from 'request-promise-native';
 import { DateUtil } from '../util/utility';
 import { start } from 'repl';
 import { ILocationSettings } from '../entities/location';
+import path = require('path');
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
    // APPLE = "Apple"
@@ -85,7 +86,8 @@ abstract class PrayerProvider implements IPrayerProvider {
     private readonly fileName: string
     constructor() {
         super(PrayerProviderName.PRAYER_TIME);
-        this.fileName = 'src/configurators/prayers.json';
+        this.fileName =require.resolve('../configurators/prayers.json')////''/configurators/prayers.json';
+        
     }
     private async  getDB(): Promise<lowdb.LowdbAsync<any>> {
         if (isNullOrUndefined(this._db))

@@ -15,7 +15,6 @@ import { EventEmitter } from 'events';
 import ramda = require('ramda');
 import { timingSafeEqual } from 'crypto';
 import * as event from './managers/event';
-
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
