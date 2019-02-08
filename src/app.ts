@@ -29,7 +29,7 @@ let prayers: Array<object> =
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
-        let prayerConfig: cg.IPrayersConfig = await new cg.default().getPrayerConfig();
+        let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
@@ -39,9 +39,9 @@ async function buildLocationObject() {
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
         prayerEventManager.registerListener(new event.PrayersEventListener());
         prayerEventManager.startPrayerSchedule();
-        console.log(DateUtil.addMonth(1, prayerManager.getPrayerEndPeriond()));
-        prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'), new Date('2019-03-31'));
-        //setTimeout(()=>{  prayerEventManager.stopPrayerSchedule();console.log('stop')},60000);
+        // console.log(DateUtil.addMonth(1, prayerManager.getPrayerEndPeriond()));
+        // prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'), new Date('2019-03-31'));
+        // //setTimeout(()=>{  prayerEventManager.stopPrayerSchedule();console.log('stop')},60000);
     }
     catch (err) {
         console.log(err);
