@@ -121,7 +121,6 @@ export class LocationBuilder implements ILocationBuilder {
     public async createLocation(): Promise<location.ILocationSettings> {
         let validationErr: validators.IValidationError, validationResult: boolean = false;
         let providerErr: Error, locationResult: location.ILocation, timezoneResult: location.ITimeZone;
-
         [validationErr, validationResult] = await to(this._validtor.validate(this._location));
         if (validationErr)
             return Promise.reject(validationErr);

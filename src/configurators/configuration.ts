@@ -60,8 +60,7 @@ export  class Configurator implements IConfig {
     private readonly _fileName: string;
     constructor() {
            
-       this._fileName= __dirname+'/config.json';
-      console.log(this._fileName);
+       this._fileName= 'config/config.json';
     }
     saveLocationConfig(): Promise<boolean> {
         throw new Error("Method not implemented.");
