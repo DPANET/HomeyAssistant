@@ -51,7 +51,6 @@ export interface IConfig {
     savePrayerConfig(prayerConfigs:IPrayersConfig): Promise<boolean>;
     getLocationConfig(): Promise<ILocationConfig>;
     saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
-
 }
 
 export  class Configurator implements IConfig {
