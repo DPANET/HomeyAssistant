@@ -58,8 +58,10 @@ export  class Configurator implements IConfig {
 
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;
-    constructor() {
-           
+    constructor(fileName?:string) {
+        if(!isNullOrUndefined(fileName))
+        this._fileName = fileName;
+        else
        this._fileName= 'config/config.json';
     }
     saveLocationConfig(): Promise<boolean> {

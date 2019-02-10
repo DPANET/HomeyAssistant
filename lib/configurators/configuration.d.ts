@@ -33,7 +33,7 @@ export interface IConfig {
 export declare class Configurator implements IConfig {
     private _db;
     private readonly _fileName;
-    constructor();
+    constructor(fileName?: string);
     saveLocationConfig(): Promise<boolean>;
     getLocationConfig(): Promise<ILocationConfig>;
     savePrayerConfig(prayerConfigs: IPrayersConfig): Promise<boolean>;
