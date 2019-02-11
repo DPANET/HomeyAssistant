@@ -30,7 +30,7 @@ async function buildLocationObject() {
     try {
         let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(null, prayerConfig)
+            .createPrayerTimeBuilder(null, null)
             .setPrayerMethod(prayer.Methods.Mecca)
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
             .setLocationByCoordinates(24.4942437, 54.4068603)
