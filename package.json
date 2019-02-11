@@ -1,6 +1,6 @@
 {
   "name": "@dpanet/prayers-lib",
-  "version": "1.0.14",
+  "version": "1.0.16",
   "private": false,
   "main": "lib/index",
   "types": "lib/index",
@@ -45,7 +45,8 @@
     "config": "config"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
