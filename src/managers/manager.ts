@@ -144,6 +144,9 @@ export class LocationBuilder implements ILocationBuilder {
                 if (providerErr)
                     return Promise.reject(providerErr);
             }
+            if(isNullOrUndefined(locationResult))
+            return Promise.reject('Location Provider Error');
+            
             [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
             if (providerErr)
                 return Promise.reject(providerErr);
