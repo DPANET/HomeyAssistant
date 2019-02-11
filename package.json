@@ -1,6 +1,6 @@
 {
   "name": "@dpanet/prayers-lib",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "private": false,
   "main": "lib/index",
   "types": "lib/index",
@@ -22,8 +22,7 @@
     "moment-timezone": "^0.5.23",
     "ramda": "^0.26.1",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.5",
-    "ts-node": "^7.0.1"
+    "request-promise-native": "^1.0.5"
   },
   "devDependencies": {
     "@types/config": "0.0.34",
@@ -37,8 +36,7 @@
     "@types/node": "^10.12.24",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
-    "@types/request-promise-native": "^1.0.15",
-    "typescript": "^3.3.3"
+    "@types/request-promise-native": "^1.0.15"
   },
   "directories": {
     "lib": "lib",
