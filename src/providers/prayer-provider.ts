@@ -8,7 +8,7 @@ import config = require('config');
 import { isNullOrUndefined } from 'util';
 import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight } from '../entities/prayer';
 import lowdb from "lowdb";
-import { default as FileAsync } from "lowdb/adapters/FileASync";
+import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import * as request from 'request-promise-native';
 import { DateUtil } from '../util/utility';
 import { start } from 'repl';
