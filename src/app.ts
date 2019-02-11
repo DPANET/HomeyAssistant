@@ -30,14 +30,16 @@ async function buildLocationObject() {
     try {
         let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(null, null)
+            .createPrayerTimeBuilder(null, prayerConfig)
             .setPrayerMethod(prayer.Methods.Mecca)
             .setPrayerPeriod(new Date('2019-02-01'), new Date('2019-02-28'))
             .setLocationByCoordinates(24.4942437, 54.4068603)
             .createPrayerTimeManager();
+        console.log(prayerManager.getUpcomingPrayer());
         let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
         prayerEventManager.registerListener(new event.PrayersEventListener());
         prayerEventManager.startPrayerSchedule();
+
         // console.log(DateUtil.addMonth(1, prayerManager.getPrayerEndPeriond()));
         // prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'), new Date('2019-03-31'));
         // //setTimeout(()=>{  prayerEventManager.stopPrayerSchedule();console.log('stop')},60000);

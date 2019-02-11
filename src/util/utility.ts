@@ -37,9 +37,9 @@ export class DateUtil
     static dayMatch(dateLeft:Date,dateRight:Date):boolean
     {
         let value:boolean =  
-          (dateLeft.getUTCFullYear() == dateRight.getUTCFullYear()) &&
+          (dateLeft.getUTCFullYear() === dateRight.getUTCFullYear()) &&
          (dateLeft.getUTCMonth() === dateRight.getUTCMonth()) &&
-         (dateLeft.getUTCDay() === dateRight.getUTCDay());
+         (dateLeft.getUTCDate() === dateRight.getUTCDate());
        return value
     }
     public static  formatDate(date:string) :Date

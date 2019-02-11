@@ -65,7 +65,7 @@ export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
     }
     public startPrayerSchedule(): void 
     {
-        if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.start) {
+        if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.running) {
             this.runNextPrayerSchedule();
         }
     }
