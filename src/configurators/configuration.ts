@@ -5,7 +5,7 @@ const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import { isNullOrUndefined } from 'util';
 import lowdb from "lowdb";
-import { default as FileAsync } from "lowdb/adapters/FileASync";
+import * as lowdbfile from "lowdb/adapters/FileASync";
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');
 import * as prayers from '../entities/prayer';
@@ -105,7 +105,7 @@ export  class Configurator implements IConfig {
     }
     private async  getDB(): Promise<lowdb.LowdbAsync<any>> {
         if (isNullOrUndefined(this._db))
-            return this._db = await lowdb(new FileAsync(this._fileName));
+            return this._db = await lowdb(new lowdbfile.default(this._fileName));
         else
             return this._db;
 
