@@ -32,13 +32,24 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         this._prayerProvider = prayerProvider;
         this._validtor = validator;
         this._prayerSettings = new prayer.PrayersSettings();
-        this._prayerSettings.midnight.id = isNullOrUndefined(prayerConfig.midnight) ? prayer.MidnightMode.Standard : prayerConfig.midnight;
-        this._prayerSettings.method.id = isNullOrUndefined(prayerConfig.method) ? prayer.Methods.Mecca : prayerConfig.method;
-        this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
-        this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Shafi : prayerConfig.school;
-        this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
-        this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? DateUtil.getNowDate() : prayerConfig.startDate;
-        this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? DateUtil.addMonth(1, DateUtil.getNowDate()) : prayerConfig.endDate;
+        if (!isNullOrUndefined(prayerConfig)) {
+            this._prayerSettings.midnight.id = isNullOrUndefined(prayerConfig.midnight) ? prayer.MidnightMode.Standard : prayerConfig.midnight;
+            this._prayerSettings.method.id = isNullOrUndefined(prayerConfig.method) ? prayer.Methods.Mecca : prayerConfig.method;
+            this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
+            this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Shafi : prayerConfig.school;
+            this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
+            this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? DateUtil.getNowDate() : prayerConfig.startDate;
+            this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? DateUtil.addMonth(1, DateUtil.getNowDate()) : prayerConfig.endDate;
+        }
+        else {
+            this._prayerSettings.midnight.id = prayer.MidnightMode.Standard;
+            this._prayerSettings.method.id = prayer.Methods.Mecca;
+            this._prayerSettings.adjustments = this._prayerSettings.adjustments;
+            this._prayerSettings.school.id = prayer.Schools.Shafi;
+            this._prayerSettings.latitudeAdjustment.id = prayer.LatitudeMethod.Angle;
+            this._prayerSettings.startDate = DateUtil.getNowDate();
+            this._prayerSettings.endDate = DateUtil.addMonth(1, DateUtil.getNowDate());
+        }
 
     }
     public setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder {
