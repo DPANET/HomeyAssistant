@@ -1,6 +1,7 @@
 import moment = require('moment');
 import momentTZ= require('moment-timezone');
 import { boolean } from 'joi';
+import { deepStrictEqual } from 'assert';
 
 export class DateUtil
 {
@@ -16,6 +17,11 @@ export class DateUtil
         return new Date(date + ' '+time);
     }
     static getNowDate():Date
+    {
+        return moment.utc(new Date(),this.format).startOf('day').toDate();
+
+    }
+    static getNowTime():Date
     {
         return new Date();
 
@@ -46,6 +52,10 @@ export class DateUtil
     {
         return moment.utc(date,'DD MMM YYYY').toDate();
 
+    }
+    public static getStartOfDay(date:Date):Date
+    {
+        return moment.utc(date,this.format).startOf('day').toDate();
     }
     public static getMonthsDifference(startDate: Date, endDate: Date): number {
         let startMoment: moment.Moment = moment.utc(startDate,this.format).startOf('month');

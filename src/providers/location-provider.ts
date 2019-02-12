@@ -53,7 +53,7 @@ class GoogleLocationProvider extends LocationProvider {
             key: process.env.GOOGLE_API_KEY,
             Promise: Promise
         });
-        debug(process.env.GOOGLE_API_KEY);
+
 
     }
     public async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation> {
