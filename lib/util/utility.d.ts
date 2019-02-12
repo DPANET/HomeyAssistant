@@ -4,6 +4,7 @@ export declare class DateUtil {
     private static readonly format;
     static getTime(date: string, time: string): Date;
     static getNowDate(): Date;
+    static getNowTime(): Date;
     static getYear(date: Date): any;
     static getMonth(date: Date): number;
     static addMonth(months: number, date: Date): Date;
