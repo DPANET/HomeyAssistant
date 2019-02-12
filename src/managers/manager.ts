@@ -14,6 +14,8 @@ import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 import { DateUtil } from '../util/utility';
+import util = require('util')
+
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
@@ -38,7 +40,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
             this._prayerSettings.adjustments = isNullOrUndefined(prayerConfig.adjustments) ? this._prayerSettings.adjustments : prayerConfig.adjustments;
             this._prayerSettings.school.id = isNullOrUndefined(prayerConfig.school) ? prayer.Schools.Shafi : prayerConfig.school;
             this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
-            this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ? DateUtil.getNowDate() : prayerConfig.startDate;
+            this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ?  DateUtil.getNowDate() : prayerConfig.startDate;
             this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? DateUtil.addMonth(1, DateUtil.getNowDate()) : prayerConfig.endDate;
         }
         else {
@@ -68,7 +70,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
         return this;
     }
     public setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder {
-        this._prayerSettings.startDate = startDate;
+        this._prayerSettings.startDate = DateUtil.getStartOfDay(startDate);
         this._prayerSettings.endDate = endDate;
         return this;
     }
@@ -89,6 +91,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
                 this._prayerSettings.midnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
                 this._prayerSettings.school = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
                 return this._prayerSettings;
+
             }
             catch (error) {
                 return Promise.reject(error);
@@ -239,6 +242,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     public async createPrayerTimeManager(): Promise<IPrayerManager> {
         try {
             let prayersTime: prayer.IPrayersTime = await this.createPrayerTime();
+
             let prayerManager: IPrayerManager = new PrayerManager(prayersTime, this);
             return Promise.resolve(prayerManager);
         }
@@ -340,7 +344,7 @@ export class PrayerManager implements IPrayerManager {
     public getUpcomingPrayer(date?: Date, prayerType?: prayer.PrayerType): prayer.IPrayersTiming {
         let dateNow: Date;
         if (isNullOrUndefined(date))
-            dateNow = DateUtil.getNowDate();
+            dateNow = DateUtil.getNowTime();
         else
             dateNow = date;
 

@@ -14,6 +14,7 @@ import { DateUtil } from '../util/utility';
 import { start } from 'repl';
 import { ILocationSettings } from '../entities/location';
 import path = require('path');
+import util = require('util')
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
    // APPLE = "Apple"
@@ -157,7 +158,6 @@ abstract class PrayerProvider implements IPrayerProvider {
         let err: Error, result: any, url: any, queryString: any;
         let date: Date = prayerSettings.startDate;
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
-
         for (let i: number = 0; i <= duration; i++) {
             [err, url] = await to(this.getPrayerTimeUrl());
             if (err)
@@ -165,11 +165,11 @@ abstract class PrayerProvider implements IPrayerProvider {
             queryString = this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date);
             date = DateUtil.addMonth(1, date);
             [err, result] = await to(request.get(queryString));
-            if (err)
+            if (err|| isNullOrUndefined(result))
                 return Promise.reject(PrayerErrorMessages.TIME_OUT);
             prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation));//.concat(this.buildPrayersObject(result['data']))
         }
-        return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));;
+        return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));
     }
     private buildPrayersObject(result: any,prayerLocation:ILocationSettings): Array<IPrayers> {
 
