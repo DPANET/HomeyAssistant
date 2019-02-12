@@ -38,7 +38,7 @@ abstract class EventProvider<T> implements IObservable<T>
         
         for (let i of this._observers)
         {
-            if(!isNullOrUndefined(error))
+            if(isNullOrUndefined(error))
             i.onNext(value);
             else 
             i.onError(error);
@@ -75,7 +75,6 @@ export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
     }
     private runNextPrayerSchedule(): void {
         let prayerTiming: prayer.IPrayersTiming = this._prayerManager.getUpcomingPrayer();
-        debug(prayerTiming);
         this._upcomingPrayerEvent = new cron.CronJob(prayerTiming.prayerTime, () => { 
             this.notifyObservers(prayerTiming,null) },
             null, true);
