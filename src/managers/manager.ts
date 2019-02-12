@@ -50,7 +50,6 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
             this._prayerSettings.startDate = DateUtil.getNowDate();
             this._prayerSettings.endDate = DateUtil.addMonth(1, DateUtil.getNowDate());
         }
-
     }
     public setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder {
         this._prayerSettings.method.id = methodId;

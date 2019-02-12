@@ -97,11 +97,10 @@ export  class Configurator implements IConfig {
             midnight: result.midnight,
             school: result.school,
             latitudeAdjustment: result.latitudeAdjustment,
-            startDate: DateUtil.formatDate(result.startDate as string),
-            endDate: DateUtil.formatDate(result.endDate as string),
+            startDate:isNullOrUndefined(result.startDate) ? DateUtil.getNowDate() : DateUtil.formatDate(result.startDate as string),
+            endDate: isNullOrUndefined(result.endDate) ?  DateUtil.addMonth(1, DateUtil.getNowDate()): DateUtil.formatDate(result.endDate as string),
             adjustments: result.adjustments
         };
-
     }
     private async  getDB(): Promise<lowdb.LowdbAsync<any>> {
         if (isNullOrUndefined(this._db))
