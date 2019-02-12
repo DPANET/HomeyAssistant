@@ -9,8 +9,6 @@
         "school": 0,
         "midnight": 0,
         "latitudeAdjustment": 3,
-        "startDate": "2019-01-15T00:00:00.000Z",
-        "endDate": "2019-01-28T00:00:00.000Z",
         "adjustments": [
           {
             "prayerName": "Imsak",

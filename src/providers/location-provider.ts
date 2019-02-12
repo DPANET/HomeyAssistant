@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.load();
+dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
