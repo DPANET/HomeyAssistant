@@ -36,7 +36,8 @@
     "@types/node": "^10.12.24",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
-    "@types/request-promise-native": "^1.0.15"
+    "@types/request-promise-native": "^1.0.15",
+    "typescript": "^3.3.3"
   },
   "directories": {
     "lib": "lib",
