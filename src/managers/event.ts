@@ -97,67 +97,67 @@ export class PrayersEventListener implements IObserver<prayer.IPrayersTiming>
     }
 }
 
-export class PrayersRefreshEventProvider extends EventProvider<manager.IPrayerManager>
-{
-    private _prayerManager: manager.IPrayerManager;
-    private _refreshPrayersEvent: cron.CronJob;
-    constructor(prayerManager: manager.IPrayerManager) {
-        super();
-        this._prayerManager = prayerManager;
-    }
-    public registerListener(observer: IObserver<manager.IPrayerManager>): void {
-        super.registerListener(observer);
-    }
-    public removeListener(observer: IObserver<manager.IPrayerManager>): void {
-        super.removeListener(observer);
-    }
-    public notifyObservers(prayersTime: manager.IPrayerManager,error?:Error): void {
-        super.notifyObservers(prayersTime,error);
-    }
-    public startPrayerSchedule(): void 
-    {
-        if (isNullOrUndefined(this._refreshPrayersEvent) || !this._refreshPrayersEvent.start) {
-            this.runNextPrayerSchedule();
-        }
-    }
-    public stopPrayerSchedule(): void {
-        if (this._refreshPrayersEvent.running)
-            this._refreshPrayersEvent.stop();
-    }
-    private  runNextPrayerSchedule(): void {
-        this._refreshPrayersEvent = new cron.CronJob(this._prayerManager.getPrayerEndPeriond(), async () => { 
-           await this.scheduleRefresh() },
-            null, true);
-        this._refreshPrayersEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
-    }
-    private async scheduleRefresh():Promise<void>
-    {
-        let startDate:Date = this._prayerManager.getPrayerStartPeriod();
-        let endDate:Date = this._prayerManager.getPrayerEndPeriond();
-        startDate = DateUtil.addDay(1,startDate);
-        endDate = DateUtil.addMonth(1,endDate);
-        try{
-           this._prayerManager =  await this._prayerManager.updatePrayersDate(startDate,endDate);
-           this.notifyObservers(this._prayerManager);
-        }
-        catch(err)
-        {
-            this.notifyObservers(null,err);
-        }
-    }
-}
+// export class PrayersRefreshEventProvider extends EventProvider<manager.IPrayerManager>
+// {
+//     private _prayerManager: manager.IPrayerManager;
+//     private _refreshPrayersEvent: cron.CronJob;
+//     constructor(prayerManager: manager.IPrayerManager) {
+//         super();
+//         this._prayerManager = prayerManager;
+//     }
+//     public registerListener(observer: IObserver<manager.IPrayerManager>): void {
+//         super.registerListener(observer);
+//     }
+//     public removeListener(observer: IObserver<manager.IPrayerManager>): void {
+//         super.removeListener(observer);
+//     }
+//     public notifyObservers(prayersTime: manager.IPrayerManager,error?:Error): void {
+//         super.notifyObservers(prayersTime,error);
+//     }
+//     public startPrayerSchedule(): void 
+//     {
+//         if (isNullOrUndefined(this._refreshPrayersEvent) || !this._refreshPrayersEvent.start) {
+//             this.runNextPrayerSchedule();
+//         }
+//     }
+//     public stopPrayerSchedule(): void {
+//         if (this._refreshPrayersEvent.running)
+//             this._refreshPrayersEvent.stop();
+//     }
+//     private  runNextPrayerSchedule(): void {
+//         this._refreshPrayersEvent = new cron.CronJob(this._prayerManager.getPrayerEndPeriond(), async () => { 
+//            await this.scheduleRefresh() },
+//             null, true);
+//         this._refreshPrayersEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 3000); });
+//     }
+//     private async scheduleRefresh():Promise<void>
+//     {
+//         let startDate:Date = this._prayerManager.getPrayerStartPeriod();
+//         let endDate:Date = this._prayerManager.getPrayerEndPeriond();
+//         startDate = DateUtil.addDay(1,startDate);
+//         endDate = DateUtil.addMonth(1,endDate);
+//         try{
+//            this._prayerManager =  await this._prayerManager.updatePrayersDate(startDate,endDate);
+//            this.notifyObservers(this._prayerManager);
+//         }
+//         catch(err)
+//         {
+//             this.notifyObservers(null,err);
+//         }
+//     }
+// }
 
-export class PrayerRefreshEventListener implements IObserver<manager.IPrayerManager>
-{
-    constructor()
-    {
-    }
-    onCompleted(): void {
-    }
-    onError(error: Error): void {
-        debug(error);
-    }
-    onNext(value: manager.IPrayerManager): void {
-        debug(value);
-    }
-}
+// export class PrayerRefreshEventListener implements IObserver<manager.IPrayerManager>
+// {
+//     constructor()
+//     {
+//     }
+//     onCompleted(): void {
+//     }
+//     onError(error: Error): void {
+//         debug(error);
+//     }
+//     onNext(value: manager.IPrayerManager): void {
+//         debug(value);
+//     }
+// }

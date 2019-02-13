@@ -34,22 +34,4 @@ export declare class PrayersEventListener implements IObserver<prayer.IPrayersTi
     onError(error: Error): void;
     onNext(value: prayer.IPrayersTiming): void;
 }
-export declare class PrayersRefreshEventProvider extends EventProvider<manager.IPrayerManager> {
-    private _prayerManager;
-    private _refreshPrayersEvent;
-    constructor(prayerManager: manager.IPrayerManager);
-    registerListener(observer: IObserver<manager.IPrayerManager>): void;
-    removeListener(observer: IObserver<manager.IPrayerManager>): void;
-    notifyObservers(prayersTime: manager.IPrayerManager, error?: Error): void;
-    startPrayerSchedule(): void;
-    stopPrayerSchedule(): void;
-    private runNextPrayerSchedule;
-    private scheduleRefresh;
-}
-export declare class PrayerRefreshEventListener implements IObserver<manager.IPrayerManager> {
-    constructor();
-    onCompleted(): void;
-    onError(error: Error): void;
-    onNext(value: manager.IPrayerManager): void;
-}
 export {};
