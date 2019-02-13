@@ -10,7 +10,7 @@ export interface IObservable<T> {
     removeListener(observer: IObserver<T>): void;
     notifyObservers(value: T, error?: Error): void;
 }
-declare abstract class EventProvider<T> implements IObservable<T> {
+export declare abstract class EventProvider<T> implements IObservable<T> {
     protected _observers: Array<IObserver<T>>;
     constructor();
     registerListener(observer: IObserver<T>): void;
@@ -34,4 +34,3 @@ export declare class PrayersEventListener implements IObserver<prayer.IPrayersTi
     onError(error: Error): void;
     onNext(value: prayer.IPrayersTiming): void;
 }
-export {};

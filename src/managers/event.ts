@@ -21,7 +21,7 @@ export interface IObservable<T> {
     removeListener(observer: IObserver<T>): void;
     notifyObservers(value: T,error?:Error): void;
 }
-abstract class EventProvider<T> implements IObservable<T>
+export abstract class EventProvider<T> implements IObservable<T>
 {
     protected _observers: Array<IObserver<T>>;
     constructor()
