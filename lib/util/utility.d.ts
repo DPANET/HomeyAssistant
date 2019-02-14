@@ -10,6 +10,7 @@ export declare class DateUtil {
     static addMonth(months: number, date: Date): Date;
     static dayMatch(dateLeft: Date, dateRight: Date): boolean;
     static formatDate(date: string): Date;
+    static getDateByTimeZone(date: Date, timeZone: string): string;
     static getStartOfDay(date: Date): Date;
     static getMonthsDifference(startDate: Date, endDate: Date): number;
 }

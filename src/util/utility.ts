@@ -1,7 +1,6 @@
 import moment = require('moment');
 import momentTZ= require('moment-timezone');
-import { boolean } from 'joi';
-import { deepStrictEqual } from 'assert';
+
 
 export class DateUtil
 {
@@ -51,6 +50,11 @@ export class DateUtil
     public static  formatDate(date:string) :Date
     {
         return moment.utc(date,'DD MMM YYYY').toDate();
+
+    }
+    public static getDateByTimeZone(date:Date, timeZone:string): string
+    {
+        return momentTZ(date).tz(timeZone).format();
 
     }
     public static getStartOfDay(date:Date):Date
