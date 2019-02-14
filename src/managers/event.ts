@@ -19,8 +19,15 @@ export interface IObserver<T> {
 export interface IObservable<T> {
     registerListener(observer: IObserver<T>): void;
     removeListener(observer: IObserver<T>): void;
-    notifyObservers(value: T,error?:Error): void;
+    notifyObservers(eventType:EventsType,value: T,error?:Error): void;
 }
+export enum EventsType 
+{
+    OnError =0,
+    OnCompleted,
+    OnNext
+
+} 
 export abstract class EventProvider<T> implements IObservable<T>
 {
     protected _observers: Array<IObserver<T>>;
@@ -34,68 +41,75 @@ export abstract class EventProvider<T> implements IObservable<T>
     public removeListener(observer: IObserver<T>): void {
         this._observers.splice(this._observers.indexOf(observer, 1));
     }
-    public notifyObservers(value: T,error?:Error): void {
-        
+    public notifyObservers(eventsType:EventsType,value: T,error?:Error): void {       
         for (let i of this._observers)
         {
-            if(isNullOrUndefined(error))
-            i.onNext(value);
-            else 
-            i.onError(error);
+            switch(eventsType)
+            {
+                case EventsType.OnNext:
+                i.onNext(value);
+                break;
+                case EventsType.OnError:
+                i.onError(error);
+                break;
+                case EventsType.OnCompleted:
+                i.onCompleted();
+                break;
+
+            }
         }    
     }
-
 }
-export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
-{
-    private _prayerManager: manager.IPrayerManager;
-    private _upcomingPrayerEvent: cron.CronJob;
-    constructor(prayerManager: manager.IPrayerManager) {
-        super();
-        this._prayerManager = prayerManager; 
-    }
-    public registerListener(observer: IObserver<prayer.IPrayersTiming>): void {
-        super.registerListener(observer);
-    }
-    public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
-        super.removeListener(observer);
-    }
-    public notifyObservers(prayersTime: prayer.IPrayersTiming,error?:Error): void {
-        super.notifyObservers(prayersTime,error);
-    }
-    public startPrayerSchedule(): void 
-    {
-        if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.running) {
-            this.runNextPrayerSchedule();
-        }
-    }
-    public stopPrayerSchedule(): void {
-        if (this._upcomingPrayerEvent.running)
-            this._upcomingPrayerEvent.stop();
-    }
-    private runNextPrayerSchedule(): void {
-        let prayerTiming: prayer.IPrayersTiming = this._prayerManager.getUpcomingPrayer();
-        this._upcomingPrayerEvent = new cron.CronJob(prayerTiming.prayerTime, () => { 
-            this.notifyObservers(prayerTiming,null) },
-            null, true);
-        this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 60000); });
-    }
-}
-export class PrayersEventListener implements IObserver<prayer.IPrayersTiming>
-{
-    constructor()
-    {
-    }
-    onCompleted(): void {
-        throw new Error("Method not implemented.");
-    }
-    onError(error: Error): void {
-        throw new Error("Method not implemented.");
-    }
-    onNext(value: prayer.IPrayersTiming): void {
-        console.log(value);
-    }
-}
+// export class PrayersEventProvider extends EventProvider<prayer.IPrayersTiming>
+// {
+//     private _prayerManager: manager.IPrayerManager;
+//     private _upcomingPrayerEvent: cron.CronJob;
+//     constructor(prayerManager: manager.IPrayerManager) {
+//         super();
+//         this._prayerManager = prayerManager; 
+//     }
+//     public registerListener(observer: IObserver<prayer.IPrayersTiming>): void {
+//         super.registerListener(observer);
+//     }
+//     public removeListener(observer: IObserver<prayer.IPrayersTiming>): void {
+//         super.removeListener(observer);
+//     }
+//     public notifyObservers(prayersTime: prayer.IPrayersTiming,error?:Error): void {
+//         super.notifyObservers(prayersTime,error);
+//     }
+//     public startPrayerSchedule(): void 
+//     {
+//         if (isNullOrUndefined(this._upcomingPrayerEvent) || !this._upcomingPrayerEvent.running) {
+//             this.runNextPrayerSchedule();
+//         }
+//     }
+//     public stopPrayerSchedule(): void {
+//         if (this._upcomingPrayerEvent.running)
+//             this._upcomingPrayerEvent.stop();
+//     }
+//     private runNextPrayerSchedule(): void {
+//         let prayerTiming: prayer.IPrayersTiming = this._prayerManager.getUpcomingPrayer();
+//         this._upcomingPrayerEvent = new cron.CronJob(prayerTiming.prayerTime, () => { 
+//             this.notifyObservers(prayerTiming,null) },
+//             null, true);
+//         this._upcomingPrayerEvent.addCallback(() => { setTimeout(() => this.runNextPrayerSchedule(), 60000); });
+//     }
+// }
+// export class PrayersEventListener implements IObserver<prayer.IPrayersTiming>
+// {
+//     constructor()
+//     {
+//     }
+//     onCompleted(): void {
+//         throw new Error("Method not implemented.");
+//     }
+//     onError(error: Error): void {
+//         throw new Error("Method not implemented.");
+//     }
+//     onNext(value: prayer.IPrayersTiming): void {
+//         console.log(value);
+//     }
+// }
 
 // export class PrayersRefreshEventProvider extends EventProvider<manager.IPrayerManager>
 // {

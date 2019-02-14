@@ -38,9 +38,9 @@ async function buildLocationObject() {
    //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));
     //    console.log(prayerManager.getPrayersByDate(new Date()));
         // console.log(prayerManager.getPrayerEndPeriond());
-        let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
-        prayerEventManager.registerListener(new event.PrayersEventListener());
-        prayerEventManager.startPrayerSchedule();
+        // let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
+        // prayerEventManager.registerListener(new event.PrayersEventListener());
+        // prayerEventManager.startPrayerSchedule();
 
         // console.log(DateUtil.addMonth(1, prayerManager.getPrayerEndPeriond()));
         // prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'), new Date('2019-03-31'));
