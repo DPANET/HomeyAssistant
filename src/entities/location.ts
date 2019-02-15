@@ -1,5 +1,3 @@
-const dotenv = require('dotenv');
-dotenv.config();
 import Debug = require('debug');
 const debug = Debug("app:startup");
 import { isNullOrUndefined } from 'util';

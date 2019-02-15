@@ -1,5 +1,7 @@
-const dotenv = require('dotenv');
-dotenv.config();
+// const dotenv = require('dotenv');
+// dotenv.config();
+import config =require('config');
+
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
@@ -50,11 +52,9 @@ class GoogleLocationProvider extends LocationProvider {
     constructor() {
         super(LocationProviderName.GOOGLE);
         this._googleMapClient = require('@google/maps').createClient({
-            key: process.env.GOOGLE_API_KEY,
+            key: config.get('GOOGLE_API_KEY'),
             Promise: Promise
         });
-
-
     }
     public async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation> {
         let googleLocation, err;
