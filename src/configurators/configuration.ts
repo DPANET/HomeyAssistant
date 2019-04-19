@@ -66,8 +66,29 @@ export  class Configurator implements IConfig {
     saveLocationConfig(): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
-    getLocationConfig(): Promise<ILocationConfig> {
-        throw new Error("Method not implemented.");
+    public async getLocationConfig(): Promise<ILocationConfig> {
+        let err: Error, result: any;
+        [err, result] = await to(this.getDB().then(result => result.get(configPaths.locationConfig).value()));
+        if (err || isNullOrUndefined(result))
+            return Promise.reject(ConfigErrorMessages.BAD_INPUT);
+        return {
+            location:
+            {
+            latitude: result.location.latitude,
+            longtitude: result.location.longtitude,
+            city: result.location.city,
+            countryCode: result.location.countryCode,
+            countryName:result.location.countryName,
+            address: result.location.address
+            },
+            timezone:{
+                timeZoneId:result.timezone.timeZoneId,
+                timeZoneName: result.timezone.timeZoneName,
+                dstOffset: result.timezone.dstOffset,
+                rawOffset: result.timezone.rawOffset
+            }
+
+        };    
     }
     public async savePrayerConfig(prayerConfigs: IPrayersConfig): Promise<boolean> {
         try {

@@ -28,14 +28,13 @@ let prayers: Array<object> =
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
-        // let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
-        // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-        //     .createPrayerTimeBuilder(null, prayerConfig)
-        //     .setPrayerMethod(prayer.Methods.Mecca)
-        //     .setLocationByCoordinates(24.4942437, 54.4068603)
-        //     .createPrayerTimeManager();
-        // console.log(prayerManager.getUpcomingPrayer());
-        console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
+        let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
+        let locationConfig: cg.ILocationConfig = await new cg.Configurator().getLocationConfig();
+        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager();
+        console.log(prayerManager.getLocationConfig());
+     //   console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
    //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));
     //    console.log(prayerManager.getPrayersByDate(new Date()));
         // console.log(prayerManager.getPrayerEndPeriond());
