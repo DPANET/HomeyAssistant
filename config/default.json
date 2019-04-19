@@ -1,5 +1,10 @@
 {
+<<<<<<< HEAD
     "NODE_ENV": "production",
     "GOOGLE_API_KEY":"AIzaSyC8tUrknYWcCPQ6WTrxXjYL8-6MqDtCRQk"
 
+=======
+
+    "GOOGLE_API_KEY":"AIzaSyC8tUrknYWcCPQ6WTrxXjYL8-6MqDtCRQk"
+>>>>>>> 50c86ae4ed7ce423f09056b85d9405429a15d147
 }
