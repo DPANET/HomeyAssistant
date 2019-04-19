@@ -28,7 +28,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerSettings: prayer.IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
     private _validtor: validators.IValid<prayer.IPrayersSettings>;
-    private constructor(prayerProvider: pp.IPrayerProvider, validator: validators.IValid<prayer.IPrayersSettings>, prayerConfig?: IPrayersConfig, ) {
+    private constructor(prayerProvider: pp.IPrayerProvider, validator: validators.IValid<prayer.IPrayersSettings>, prayerConfig?: IPrayersConfig ) {
         this._prayerProvider = prayerProvider;
         this._validtor = validator;
         this._prayerSettings = new prayer.PrayersSettings();
@@ -114,10 +114,23 @@ export class LocationBuilder implements ILocationBuilder {
     private _location: location.ILocationSettings
     private _locationProvider: lp.ILocationProvider;
     private _validtor: validators.IValid<location.ILocationSettings>;
-    private constructor(locationProvider: lp.ILocationProvider, validator: validators.IValid<location.ILocationSettings>) {
+    private constructor(locationProvider: lp.ILocationProvider, validator: validators.IValid<location.ILocationSettings>,locationConfig?: ILocationConfig ) {
         this._locationProvider = locationProvider;
         this._validtor = validator;
         this._location = new location.Location();
+        if (!isNullOrUndefined(locationConfig)) {
+            this._location.latitude = isNullOrUndefined(locationConfig.location.latitude) ? null: locationConfig.location.latitude;
+            this._location.longtitude = isNullOrUndefined(locationConfig.location.longtitude) ? null : locationConfig.location.longtitude;
+            this._location.countryCode = isNullOrUndefined(locationConfig.location.countryCode) ? null : locationConfig.location.countryCode;
+            this._location.countryName = isNullOrUndefined(locationConfig.location.countryName) ? null :locationConfig.location.countryName;
+            this._location.address = isNullOrUndefined(locationConfig.location.address) ? null : locationConfig.location.address;
+            this._location.city = isNullOrUndefined(locationConfig.location.city) ? null : locationConfig.location.city;
+            this._location.timeZoneId = isNullOrUndefined(locationConfig.timezone.timeZoneId) ? null :locationConfig.timezone.timeZoneId;
+            this._location.timeZoneName = isNullOrUndefined(locationConfig.timezone.timeZoneName) ? null : locationConfig.timezone.timeZoneName;
+            this._location.rawOffset = isNullOrUndefined(locationConfig.timezone.rawOffset) ? null : locationConfig.timezone.rawOffset;
+            this._location.dstOffset = isNullOrUndefined(locationConfig.timezone.dstOffset) ? null :locationConfig.timezone.dstOffset;
+        }
+        
     }
     public setLocationCoordinates(lat: number, lng: number): ILocationBuilder {
         this._location.latitude = lat;
@@ -162,7 +175,7 @@ export class LocationBuilder implements ILocationBuilder {
         let providerName: lp.ILocationProvider = lp.LocationProviderFactory.
             createLocationProviderFactory(lp.LocationProviderName.GOOGLE);
         let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
-        return new LocationBuilder(providerName, validate);
+        return new LocationBuilder(providerName, validate,locationConfig);
     }
 
 };
@@ -326,7 +339,25 @@ export class PrayerManager implements IPrayerManager {
         };
     }
     public getLocationConfig(): ILocationConfig {
-        throw new Error("Method not implemented.");
+        return {
+
+            location:
+            {
+            latitude: this._prayerTime.location.latitude,
+            longtitude: this._prayerTime.location.longtitude,
+            city: this._prayerTime.location.city,
+            countryCode: this._prayerTime.location.countryCode,
+            countryName:this._prayerTime.location.countryName,
+            address: this._prayerTime.location.address
+            },
+            timezone:{
+                timeZoneId:this._prayerTime.location.timeZoneId,
+                timeZoneName: this._prayerTime.location.timeZoneName,
+                dstOffset: this._prayerTime.location.dstOffset,
+                rawOffset: this._prayerTime.location.rawOffset
+            }
+
+        }
     }
     public getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
         let prayersByDate: prayer.IPrayers = this.getPrayersByDate(prayerDate);

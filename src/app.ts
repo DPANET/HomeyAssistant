@@ -29,9 +29,11 @@ async function buildLocationObject() {
     try {
         let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await new cg.Configurator().getLocationConfig();
+        console.log(locationConfig);
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager();
+
         console.log(prayerManager.getLocationConfig());
      //   console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
    //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));

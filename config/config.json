@@ -53,12 +53,12 @@
     },
     "locationConfig": {
       "location": {
-        "latitude": 25.2048493,
-        "longtitude": 55.2707828,
-        "city": "Dubai",
+        "latitude": 24.4897878,
+        "longtitude": 54.3936568,
+        "city": "Abu Dhabi",
         "countryCode": "AE",
         "countryName": "United Arab Emirates",
-        "address": "Dubai"
+        "address": "Abu Dhabi"
       },
       "timezone": {
         "timeZoneId": "Asia/Dubai",
