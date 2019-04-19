@@ -5,7 +5,7 @@
         "timing": "monthly"
       },
       "calculations": {
-        "method":4,
+        "method": 4,
         "school": 0,
         "midnight": 0,
         "latitudeAdjustment": 3,
@@ -38,12 +38,10 @@
             "prayerName": "Sunset",
             "adjustments": 0
           },
-
           {
             "prayerName": "Isha",
             "adjustments": -10
           },
-
           {
             "prayerName": "Midnight",
             "adjustments": 0
@@ -53,12 +51,12 @@
     },
     "locationConfig": {
       "location": {
-        "latitude": 24.4897878,
+        "latitude": 24.453884,
         "longtitude": 54.3936568,
         "city": "Abu Dhabi",
         "countryCode": "AE",
         "countryName": "United Arab Emirates",
-        "address": "Abu Dhabi"
+        "address": "Abu Dhabi - United Arab Emirates"
       },
       "timezone": {
         "timeZoneId": "Asia/Dubai",

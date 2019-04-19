@@ -61,8 +61,21 @@ export  class Configurator implements IConfig {
         else
        this._fileName= 'config/config.json';
     }
-    saveLocationConfig(): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    public async saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean> {
+        try {
+            let original: ILocationConfig = await this.getLocationConfig();
+            let updated:ILocationConfig;
+            updated= _.merge<ILocationConfig,ILocationConfig>(original,locationConfig);
+            console.log(updated);
+            await this.getDB()
+            .then(result=> result.get(configPaths.locationConfig)
+            .assign(updated)
+            .write()
+            );
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
     public async getLocationConfig(): Promise<ILocationConfig> {
         let err: Error, result: any;

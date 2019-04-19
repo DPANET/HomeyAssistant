@@ -34,7 +34,13 @@ async function buildLocationObject() {
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager();
 
-        console.log(prayerManager.getLocationConfig());
+        locationConfig = prayerManager.getLocationConfig();
+        locationConfig.location.longtitude = 54.3936567;
+
+
+        let config:cg.IConfig   = new cg.Configurator();
+        config.saveLocationConfig(locationConfig);
+
      //   console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
    //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));
     //    console.log(prayerManager.getPrayersByDate(new Date()));
