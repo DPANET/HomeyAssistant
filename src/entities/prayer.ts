@@ -31,7 +31,7 @@ export enum LatitudeMethod {
 };
 export enum Methods {
     Shia = 0,
-    Karchi,
+    Karachi,
     America,
     MuslimLeague,
     Mecca,

@@ -27,7 +27,7 @@ export declare enum LatitudeMethod {
 }
 export declare enum Methods {
     Shia = 0,
-    Karchi = 1,
+    Karachi = 1,
     America = 2,
     MuslimLeague = 3,
     Mecca = 4,
