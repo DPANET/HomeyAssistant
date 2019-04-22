@@ -285,6 +285,9 @@ export interface IPrayerManager {
     getPrayersByDate(date: Date): prayer.IPrayers;
     updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
     getLocationConfig(): ILocationConfig;
+    getPrayerSettings(): prayer.IPrayersSettings;
+    getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
+    getPrayerAdjustmentsByPrayer(prayerName:prayer.PrayersName):prayer.IPrayerAdjustments;
 }
 
 export class PrayerManager implements IPrayerManager {
@@ -426,6 +429,15 @@ export class PrayerManager implements IPrayerManager {
         } catch (err) {
             return Promise.reject(err);
         }
+    }
+    getPrayerSettings(): prayer.IPrayersSettings {
+        return this._prayerTime.pareyerSettings;
+    }
+    getPrayerAdjsutments(): prayer.IPrayerAdjustments[] {
+        return this._prayerTime.pareyerSettings.adjustments;
+    }
+    getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments {
+         return ramda.find<prayer.IPrayerAdjustments>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());
     }
 
 }

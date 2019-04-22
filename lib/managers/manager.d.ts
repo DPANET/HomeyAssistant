@@ -85,6 +85,9 @@ export interface IPrayerManager {
     getPrayersByDate(date: Date): prayer.IPrayers;
     updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
     getLocationConfig(): ILocationConfig;
+    getPrayerSettings(): prayer.IPrayersSettings;
+    getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
+    getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
 }
 export declare class PrayerManager implements IPrayerManager {
     private _prayerTime;
@@ -105,4 +108,7 @@ export declare class PrayerManager implements IPrayerManager {
     private processUpcomingPrayer;
     getPreviousPrayer(): prayer.IPrayersTime;
     updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
+    getPrayerSettings(): prayer.IPrayersSettings;
+    getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
+    getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
 }
