@@ -1,19 +1,7 @@
-import config = require('config');
-import Debug = require('debug');
-const debug = Debug("app:startup");
+
 import prayer = require("./entities/prayer");
-import location = require("./entities/location");
 import cg = require("./configurators/configuration");
 import * as manager from './managers/manager';
-import util = require('util')
-import * as cron from 'cron';
-import { DateUtil } from './util/utility';
-import * as mom from 'moment';
-import moment = require('moment');
-import { EventEmitter } from 'events';
-import ramda = require('ramda');
-import { timingSafeEqual } from 'crypto';
-import * as event from './managers/event';
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },

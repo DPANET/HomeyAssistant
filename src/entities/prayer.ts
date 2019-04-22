@@ -1,7 +1,5 @@
-import Debug = require('debug');
-const debug = Debug("app:startup");
+
 import { ILocationSettings } from './location';
-import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
 import { isNullOrUndefined } from 'util';
 import { EventEmitter } from 'events';
 export enum PrayersName {

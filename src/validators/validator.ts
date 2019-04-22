@@ -1,5 +1,3 @@
-import Debug = require('debug');
-const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import Joi = require('joi');
 import * as location from '../entities/location';

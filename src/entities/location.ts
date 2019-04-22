@@ -1,5 +1,4 @@
-import Debug = require('debug');
-const debug = Debug("app:startup");
+
 import { isNullOrUndefined } from 'util';
 export enum LocationTypeName {
   LocationBuilder = "Location Builder"

@@ -1,18 +1,14 @@
-import Debug = require('debug');
-const debug = Debug("app:startup");
+
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import config = require('config');
+
 import { isNullOrUndefined } from 'util';
 import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight } from '../entities/prayer';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import * as request from 'request-promise-native';
 import { DateUtil } from '../util/utility';
-import { start } from 'repl';
 import { ILocationSettings } from '../entities/location';
-import path = require('path');
-import util = require('util')
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
    // APPLE = "Apple"

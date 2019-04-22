@@ -1,6 +1,4 @@
 
-import Debug = require('debug');
-const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 import * as location from '../entities/location';
@@ -12,7 +10,7 @@ import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
 import { DateUtil } from '../util/utility';
-import util = require('util')
+import util = require('util');
 
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;

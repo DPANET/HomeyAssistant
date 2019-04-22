@@ -1,7 +1,6 @@
 import moment = require('moment');
 import momentTZ= require('moment-timezone');
 
-
 export class DateUtil
 {
     static getEndofDate(endDate: Date): Date {
