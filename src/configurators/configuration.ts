@@ -2,7 +2,7 @@ import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import { isNullOrUndefined } from 'util';
-import  lowdb=  require("lowdb");
+import lowdb=  require("lowdb");
 import lowdbfile = require( "lowdb/adapters/FileAsync");
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');

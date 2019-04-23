@@ -15,14 +15,19 @@ let prayers: Array<object> =
 buildLocationObject().catch((err) => console.log(err));
 async function buildLocationObject() {
     try {
-        let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
-        let locationConfig: cg.ILocationConfig = await new cg.Configurator().getLocationConfig();
-        console.log(locationConfig);
+        // let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
+        // let locationConfig: cg.ILocationConfig = await new cg.Configurator().getLocationConfig();
+        // console.log(locationConfig);
+        // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
+        //     .createPrayerTimeManager();
+        // console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeBuilder(null, null)
+            .setLocationByAddress("Abu Dhabi","AE")
             .createPrayerTimeManager();
-        console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
-
+            console.log(prayerManager.getPrayerLocation());
+            console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
      //   console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
    //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));
     //    console.log(prayerManager.getPrayersByDate(new Date()));
