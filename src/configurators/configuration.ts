@@ -10,6 +10,7 @@ import * as prayers from '../entities/prayer';
 import * as path from 'path';
 const configPaths =
 {
+    
     prayerConfig: 'config.prayerConfig.calculations',
     locationConfig: 'config.locationConfig'
 }
