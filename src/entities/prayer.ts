@@ -111,7 +111,7 @@ export interface IPrayersTime {
     prayers: Array<IPrayers>;
 
 }
-class PrayerAdjustment implements IPrayerAdjustments {
+export class PrayerAdjustment implements IPrayerAdjustments {
     private _prayerName: PrayersName;
     public get prayerName(): PrayersName {
         return this._prayerName;

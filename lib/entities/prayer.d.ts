@@ -92,6 +92,12 @@ export interface IPrayersTime {
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
 }
+export declare class PrayerAdjustment implements IPrayerAdjustments {
+    private _prayerName;
+    prayerName: PrayersName;
+    private _adjustments;
+    adjustments: number;
+}
 export declare class Prayers implements IPrayers {
     private _prayerTime;
     constructor();
