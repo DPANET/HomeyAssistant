@@ -89,26 +89,3 @@ export interface IPrayerManager {
     getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
 }
-export declare class PrayerManager implements IPrayerManager {
-    private _prayerTime;
-    private _prayerTimeBuilder;
-    private _prayerEvents;
-    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder);
-    getPrayerTimeZone(): location.ITimeZone;
-    getPrayerLocation(): location.ILocation;
-    getPrayerStartPeriod(): Date;
-    getPrayerEndPeriond(): Date;
-    getUpcomingPrayerTimeRemaining(): Date;
-    getPrviouesPrayerTimeElapsed(): Date;
-    getPrayerConfig(): IPrayersConfig;
-    getLocationConfig(): ILocationConfig;
-    getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming;
-    getPrayersByDate(date: Date): prayer.IPrayers;
-    getUpcomingPrayer(date?: Date, prayerType?: prayer.PrayerType): prayer.IPrayersTiming;
-    private processUpcomingPrayer;
-    getPreviousPrayer(): prayer.IPrayersTime;
-    updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
-    getPrayerSettings(): prayer.IPrayersSettings;
-    getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
-    getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
-}
