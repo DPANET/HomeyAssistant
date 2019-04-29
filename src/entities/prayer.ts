@@ -95,7 +95,6 @@ export interface IPrayersSettings {
     latitudeAdjustment: IPrayerLatitude;
     startDate: Date;
     endDate: Date;
-    toJSON():IPrayersSettings;
 }
 export interface IPrayerSchools {
     id: Schools;
@@ -300,15 +299,14 @@ export class PrayersSettings implements IPrayersSettings {
     }
     public toJSON():IPrayersSettings
     {
-        return
-        {
-            midnight: this._midnight;
-            school: this._school;
-            latitudeAdjustment: this._latitudeAdjustment;
-            method:this._method;
-            startDate: this._startDate;
-            endDate: this._endDate;
-            adjustments: this._adjustments;
+        return {
+            midnight: this._midnight,
+            school: this._school,
+            latitudeAdjustment: this._latitudeAdjustment,
+            method:this._method,
+            startDate: this._startDate,
+            endDate: this._endDate,
+            adjustments: this._adjustments
         };
     }
     private _prayersSettings: IPrayersSettings;

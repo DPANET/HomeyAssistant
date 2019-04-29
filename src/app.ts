@@ -28,6 +28,9 @@ async function buildLocationObject() {
             .createPrayerTimeManager();
             console.log(prayerManager.getPrayerLocation());
             console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
+
+            console.log((prayerManager.getPrayerSettings()as prayer.PrayersSettings).toJSON());
+            console.log(prayerManager.getPrayerSettings());
      //   console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
    //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));
     //    console.log(prayerManager.getPrayersByDate(new Date()));
