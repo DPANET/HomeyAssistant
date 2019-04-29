@@ -78,6 +78,7 @@ export interface IPrayersSettings {
     latitudeAdjustment: IPrayerLatitude;
     startDate: Date;
     endDate: Date;
+    toJson(): IPrayersSettings;
 }
 export interface IPrayerSchools {
     id: Schools;
