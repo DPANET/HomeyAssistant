@@ -78,7 +78,7 @@ export interface IPrayersSettings {
     latitudeAdjustment: IPrayerLatitude;
     startDate: Date;
     endDate: Date;
-    toJson(): IPrayersSettings;
+    toJSON(): IPrayersSettings;
 }
 export interface IPrayerSchools {
     id: Schools;
@@ -130,7 +130,7 @@ export declare class PrayersSettings implements IPrayersSettings {
     midnight: IPrayerMidnight;
     private _latitudeAdjustment;
     latitudeAdjustment: IPrayerLatitude;
-    toJson(): IPrayersSettings;
+    toJSON(): IPrayersSettings;
     private _prayersSettings;
     constructor(prayersSettings?: IPrayersSettings);
 }

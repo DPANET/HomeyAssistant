@@ -95,7 +95,7 @@ export interface IPrayersSettings {
     latitudeAdjustment: IPrayerLatitude;
     startDate: Date;
     endDate: Date;
-    toJson():IPrayersSettings;
+    toJSON():IPrayersSettings;
 }
 export interface IPrayerSchools {
     id: Schools;
@@ -298,7 +298,7 @@ export class PrayersSettings implements IPrayersSettings {
     public set latitudeAdjustment(value: IPrayerLatitude) {
         this._latitudeAdjustment = value;
     }
-    public toJson():IPrayersSettings
+    public toJSON():IPrayersSettings
     {
         return
         {
