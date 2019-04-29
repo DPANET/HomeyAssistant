@@ -129,6 +129,7 @@ export declare class PrayersSettings implements IPrayersSettings {
     midnight: IPrayerMidnight;
     private _latitudeAdjustment;
     latitudeAdjustment: IPrayerLatitude;
+    toJson(): IPrayersSettings;
     private _prayersSettings;
     constructor(prayersSettings?: IPrayersSettings);
 }

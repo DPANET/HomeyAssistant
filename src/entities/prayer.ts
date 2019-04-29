@@ -297,6 +297,19 @@ export class PrayersSettings implements IPrayersSettings {
     public set latitudeAdjustment(value: IPrayerLatitude) {
         this._latitudeAdjustment = value;
     }
+    public toJson():IPrayersSettings
+    {
+        return
+        {
+            midnight: this._midnight;
+            school: this._school;
+            latitudeAdjustment: this._latitudeAdjustment;
+            method:this._method;
+            startDate: this._startDate;
+            endDate: this._endDate;
+            adjustments: this._adjustments;
+        };
+    }
     private _prayersSettings: IPrayersSettings;
     constructor(prayersSettings?: IPrayersSettings) {
         if (!isNullOrUndefined(prayersSettings))
