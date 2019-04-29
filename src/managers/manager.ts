@@ -288,7 +288,7 @@ export interface IPrayerManager {
     getPrayerAdjustmentsByPrayer(prayerName:prayer.PrayersName):prayer.IPrayerAdjustments;
 }
 
-export class PrayerManager implements IPrayerManager {
+ class PrayerManager implements IPrayerManager {
 
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
