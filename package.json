@@ -1,6 +1,6 @@
 {
   "name": "@dpanet/prayers-lib",
-  "version": "1.0.47",
+  "version": "1.0.48",
   "private": false,
   "main": "lib/index",
   "types": "lib/index",
