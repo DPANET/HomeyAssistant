@@ -275,6 +275,7 @@ export interface IPrayerManager {
     getUpcomingPrayerTimeRemaining(): Date;
     getPrviouesPrayerTimeElapsed(): Date;
     getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming;
+    getPrayers():prayer.IPrayers[];
     getPrayerConfig(): IPrayersConfig;
     getPrayerTimeZone(): location.ITimeZone;
     getPrayerLocation(): location.ILocation;
@@ -289,6 +290,7 @@ export interface IPrayerManager {
 }
 
  class PrayerManager implements IPrayerManager {
+
 
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
@@ -437,7 +439,9 @@ export interface IPrayerManager {
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments {
          return ramda.find<prayer.IPrayerAdjustments>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());
     }
-
+    getPrayers(): prayer.IPrayers[] {
+        return this._prayerTime.prayers;
+    }
 }
 
 

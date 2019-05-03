@@ -213,6 +213,13 @@ export class Prayers implements IPrayers {
     public set prayersDate(value: Date) {
         this._prayersDate = value;
     }
+    public toJSON():IPrayers
+    {
+        return {
+            prayerTime: this._prayerTime,
+            prayersDate: this._prayersDate
+        };
+    }
 }
 export class PrayersTime implements IPrayersTime {
 

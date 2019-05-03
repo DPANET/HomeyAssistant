@@ -104,6 +104,7 @@ export declare class Prayers implements IPrayers {
     prayerTime: IPrayersTiming[];
     private _prayersDate;
     prayersDate: Date;
+    toJSON(): IPrayers;
 }
 export declare class PrayersTime implements IPrayersTime {
     constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings);

@@ -77,6 +77,7 @@ export interface IPrayerManager {
     getUpcomingPrayerTimeRemaining(): Date;
     getPrviouesPrayerTimeElapsed(): Date;
     getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming;
+    getPrayers(): prayer.IPrayers[];
     getPrayerConfig(): IPrayersConfig;
     getPrayerTimeZone(): location.ITimeZone;
     getPrayerLocation(): location.ILocation;
