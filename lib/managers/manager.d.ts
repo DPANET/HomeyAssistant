@@ -2,7 +2,7 @@ import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
-import { ILocationConfig, IPrayersConfig } from "../configurators/configuration";
+import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;

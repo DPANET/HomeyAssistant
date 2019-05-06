@@ -6,7 +6,8 @@ import lowdb from "lowdb";
 import lowdbfile from "lowdb/adapters/FileAsync";
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');
-import * as prayers from '../entities/prayer';
+//import * as prayers from '../entities/prayer';
+import {IPrayersConfig,ILocationConfig,IConfig} from "./inteface.configuration";
 import * as path from 'path';
 const configPaths =
 {
@@ -19,37 +20,6 @@ const ConfigErrorMessages =
     BAD_INPUT: 'Prayer setting recond is not found, please try again',
     TIME_OUT: 'Connection cannot be made to prayer provider, please try again after a while',
     FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try ensure internet connectivity'
-}
-export interface IPrayersConfig {
-    method: prayers.Methods;
-    midnight: prayers.MidnightMode;
-    school: prayers.Schools;
-    latitudeAdjustment: prayers.LatitudeMethod;
-    startDate: Date;
-    endDate: Date;
-    adjustments:prayers.IPrayerAdjustments[];
-}
-export interface ILocationConfig {
-    location: {
-        latitude?: number,
-        longtitude?: number,
-        city?: string,
-        countryCode?: string,
-        countryName?: string,
-        address?: string
-    };
-    timezone: {
-        timeZoneId?: string,
-        timeZoneName?: string,
-        dstOffset?: number,
-        rawOffset?: number
-    };
-}
-export interface IConfig {
-    getPrayerConfig(): Promise<IPrayersConfig>;
-    savePrayerConfig(prayerConfigs:IPrayersConfig): Promise<boolean>;
-    getLocationConfig(): Promise<ILocationConfig>;
-    saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
 }
 
 export  class Configurator implements IConfig {
