@@ -22,7 +22,7 @@ const ConfigErrorMessages =
     FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try ensure internet connectivity'
 }
 
-export  class Configurator implements IConfig {
+export default class Configurator implements IConfig {
 
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;

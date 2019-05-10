@@ -1,6 +1,7 @@
 
 import prayer = require("./entities/prayer");
-import cg = require("./configurators/configuration");
+import cg = require("./configurators/inteface.configuration");
+import configurator from "./configurators/configuration";
 import * as manager from './managers/manager';
 import ramda from "ramda";
 import moment from "moment";
@@ -76,25 +77,26 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 }
 async function buildLocationObject() {
     try {
-        // let prayerConfig: cg.IPrayersConfig = await new cg.Configurator().getPrayerConfig();
-        // let locationConfig: cg.ILocationConfig = await new cg.Configurator().getLocationConfig();
+         let prayerConfig: cg.IPrayersConfig = await new configurator().getPrayerConfig();
+        let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
         // console.log(locationConfig);
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
         //     .createPrayerTimeManager();
-        // console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
         let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(null, null)
+            .createPrayerTimeBuilder(null, prayerConfig)
             .setLocationByAddress("Abu Dhabi","AE")
             .createPrayerTimeManager();
+            console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
+
             // console.log(prayerManager.getPrayerLocation());
             // console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
-
+            console.log(prayerManager.getPrayersByDate(new Date('2019-05-10')));
             // console.log((prayerManager.getPrayerSettings()as prayer.PrayersSettings).toJSON());
             // console.log(prayerManager.getPrayerSettings());
-            let prayersDataTable: IPrayersView[] = getPrayerView(prayerManager.getPrayers());
-            let prayerDataTableMobile: IPrayersViewRow[] = getPrayerViewRow(prayersDataTable);
-            console.log(prayerDataTableMobile);
+            // let prayersDataTable: IPrayersView[] = getPrayerView(prayerManager.getPrayers());
+            // let prayerDataTableMobile: IPrayersViewRow[] = getPrayerViewRow(prayersDataTable);
+            // console.log(prayerDataTableMobile);
            // const func = (val:prayer.IPrayersTiming)=>{ }
             //console.log(ramda.project(['prayersDate','prayerTime'],prayerManager.getPrayers()));
 

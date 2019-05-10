@@ -1,5 +1,5 @@
 import { IPrayersConfig, ILocationConfig, IConfig } from "./inteface.configuration";
-export declare class Configurator implements IConfig {
+export default class Configurator implements IConfig {
     private _db;
     private readonly _fileName;
     constructor(fileName?: string);

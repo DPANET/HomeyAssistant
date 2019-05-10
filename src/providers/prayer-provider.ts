@@ -152,10 +152,10 @@ abstract class PrayerProvider implements IPrayerProvider {
         let err: Error, result: any, url: any, queryString: any;
         let date: Date = prayerSettings.startDate;
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
+        [err, url] = await to(this.getPrayerTimeUrl());
+        if (err)
+            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
         for (let i: number = 0; i <= duration; i++) {
-            [err, url] = await to(this.getPrayerTimeUrl());
-            if (err)
-                return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
             queryString = this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date);
             date = DateUtil.addMonth(1, date);
             [err, result] = await to(request.get(queryString));
@@ -201,6 +201,9 @@ abstract class PrayerProvider implements IPrayerProvider {
             uri: url,
             qs: {
                 uri: url,
+                headers:{
+                    'User-Agent':'Homey-Assistant'
+                },
                 latitude: prayerLocation.latitude,
                 longitude: prayerLocation.longtitude,
                 month: DateUtil.getMonth(date),
