@@ -123,7 +123,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         let err:Error, result: any, url: any;
         [err, url] = await to(this.getPrayerMethodUrl());
         if (err)
-            return Promise.reject(err.message =PrayerErrorMessages.FILE_NOT_FOUND);
+            return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
         let queryString: any =
         {
             uri: url.methods,
@@ -154,13 +154,13 @@ abstract class PrayerProvider implements IPrayerProvider {
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         [err, url] = await to(this.getPrayerTimeUrl());
         if (err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+            return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
         for (let i: number = 0; i <= duration; i++) {
             queryString = this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date);
             date = DateUtil.addMonth(1, date);
             [err, result] = await to(request.get(queryString));
             if (err|| isNullOrUndefined(result))
-                return Promise.reject(PrayerErrorMessages.TIME_OUT);
+                return Promise.reject(new Error(PrayerErrorMessages.TIME_OUT));
             prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation));//.concat(this.buildPrayersObject(result['data']))
         }
         return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));
@@ -238,12 +238,12 @@ abstract class PrayerProvider implements IPrayerProvider {
         [err,list] = await to(fn());
     
         if (err)
-            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND);
+            return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
         listObject = ramda.filter<T>(filterById, list).pop();
         if (!isNullOrUndefined(listObject))
             return listObject;
         else
-            return Promise.reject(PrayerErrorMessages.BAD_INPUT);
+        return Promise.reject(new Error(PrayerErrorMessages.BAD_INPUT));
 
     }
 
