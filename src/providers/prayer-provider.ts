@@ -3,7 +3,7 @@ const to = require('await-to-js').default;
 import ramda = require('ramda');
 
 import { isNullOrUndefined } from 'util';
-import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight } from '../entities/prayer';
+import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight, IPrayerAdjustmentMethod } from '../entities/prayer';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import * as request from 'request-promise-native';
@@ -22,6 +22,7 @@ const prayerTimePaths =
     methodsUrl: 'apis.prayersAPI.urls.prayerMethodsUrl',
     prayerTimeUrl: 'apis.prayersAPI.urls.prayersByCoordinatesUrl.monthly',
     adjustment: 'apis.prayersAPI.settings.calcuations.adjustments',
+    adjustmentMethod:'api.prayersAPI.methods.adjustmentMethod',
     calculations: 'settings.calcuations',
     schools: 'apis.prayersAPI.schools',
     settings: 'apis.prayersAPI.settings.calculations',
@@ -47,9 +48,12 @@ export interface IPrayerProvider {
     getPrayerSchoolsById(index: number): Promise<IPrayerSchools>;
     getPrayerMidnight(): Promise<Array<IPrayerMidnight>>;
     getPrayerMidnightById(index: number): Promise<IPrayerMidnight>;
+    getPrayerAdjustmentMethod():Promise<IPrayerAdjustmentMethod[]>;
+    getPrayerAdjustmentMethodById(index:number):Promise<IPrayerAdjustmentMethod>;
     getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings): Promise<Array<IPrayers>>;
 }
 abstract class PrayerProvider implements IPrayerProvider {
+
     private _providerName: PrayerProviderName;
     constructor(providerName: PrayerProviderName) {
         this._providerName = providerName;
@@ -58,6 +62,8 @@ abstract class PrayerProvider implements IPrayerProvider {
     getProviderName(): PrayerProviderName {
         return this._providerName;
     }
+    abstract getPrayerAdjustmentMethod(): Promise<IPrayerAdjustmentMethod[]>;
+    abstract getPrayerAdjustmentMethodById(index:number): Promise<IPrayerAdjustmentMethod>;
     abstract getPrayerLatitude(): Promise<Array<IPrayerLatitude>>;
     abstract getPrayerLatitudeById(index: number): Promise<IPrayerLatitude>;
     abstract getPrayerMethods(): Promise<IPrayerMethods[]>;
@@ -70,27 +76,31 @@ abstract class PrayerProvider implements IPrayerProvider {
 }
 
  class PrayerTimeProvider extends PrayerProvider {
-
     private _prayerLatitude: IPrayerLatitude;
     private _prayerMethod: IPrayerMethods;
     private _prayerSchools: IPrayerSchools;
     private _prayerSettings: IPrayersSettings;
     private _prayerTime: IPrayersTime;
     private _prayers: IPrayers;
+    private _prayerAdjustmentMethod:IPrayerAdjustmentMethod;
     private _db: lowdb.LowdbAsync<any>;
     private readonly fileName: string
     constructor() {
         super(PrayerProviderName.PRAYER_TIME);
         this.fileName =require.resolve('../configurators/prayers.json')////''/configurators/prayers.json';
-        
+    }
+    public async getPrayerAdjustmentMethod(): Promise<IPrayerAdjustmentMethod[]> {
+        return await this.getDB().then(result => result.get(prayerTimePaths.adjustmentMethod).value());
+    }
+    public async getPrayerAdjustmentMethodById(index:number): Promise<IPrayerAdjustmentMethod>
+    {
+        return await this.getObjectById<IPrayerAdjustmentMethod>(index,()=>this.getPrayerAdjustmentMethod());
     }
     private async  getDB(): Promise<lowdb.LowdbAsync<any>> {
         if (isNullOrUndefined(this._db))
             return this._db = await lowdb(new FileAsync(this.fileName));
         else
             return this._db;
-
-
     }
     async getPrayerLatitude(): Promise<Array<IPrayerLatitude>> {
 

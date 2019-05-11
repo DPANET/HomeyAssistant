@@ -100,6 +100,7 @@ export default class Configurator implements IConfig {
             midnight: result.midnight,
             school: result.school,
             latitudeAdjustment: result.latitudeAdjustment,
+            dynamicAdjustment:result.dynamicAdjustment,
             startDate:isNullOrUndefined(result.startDate) ? DateUtil.getNowDate() : DateUtil.formatDate(result.startDate as string),
             endDate: isNullOrUndefined(result.endDate) ?  DateUtil.addMonth(1, DateUtil.getNowDate()): DateUtil.formatDate(result.endDate as string),
             adjustments: result.adjustments
