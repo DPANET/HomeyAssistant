@@ -8,6 +8,7 @@ export interface IPrayerSettingsBuilder {
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerSettingsBuilder;
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerSettingsBuilder;
+    setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerSettingsBuilder;
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerSettingsBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
     createPrayerSettings(): Promise<prayer.IPrayersSettings>;
@@ -17,6 +18,7 @@ export declare class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerProvider;
     private _validtor;
     private constructor();
+    setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerSettingsBuilder;
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerSettingsBuilder;

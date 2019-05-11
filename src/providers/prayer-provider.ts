@@ -3,7 +3,7 @@ const to = require('await-to-js').default;
 import ramda = require('ramda');
 
 import { isNullOrUndefined } from 'util';
-import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight, IPrayerAdjustmentMethod } from '../entities/prayer';
+import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight, IPrayerAdjustmentMethod,AdjsutmentMethod } from '../entities/prayer';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
 import * as request from 'request-promise-native';
@@ -223,7 +223,7 @@ abstract class PrayerProvider implements IPrayerProvider {
                 midnightMode: prayerSettings.midnight.id,
                 timezonestring: prayerLocation.timeZoneId,
                 latitudeAdjustmentMethod: prayerSettings.latitudeAdjustment.id,
-                tune: prayerSettings.adjustments.map(n => n.adjustments).toString()
+                tune: this.getPrayersTune(prayerSettings)
             },
             method: 'GET',
             json: true,
@@ -232,6 +232,21 @@ abstract class PrayerProvider implements IPrayerProvider {
         };
 
         return queryString;
+    }
+    private getPrayersTune(prayerSettings:IPrayersSettings):string
+    {
+        let tune:string;
+        switch (prayerSettings.adjustmentMethod.id)
+        {
+            case AdjsutmentMethod.Provider:
+                tune= prayerSettings.adjustments.map(n => n.adjustments).toString();
+            break;
+            case AdjsutmentMethod.Server:
+            case AdjsutmentMethod.Client:
+            tune = "0,0,0,0,0,0,0,0,0";
+            break;
+        }
+        return tune;
     }
     public async getPrayerMidnight(): Promise<Array<IPrayerMidnight>> {
         return await this.getDB().then(result => result.get(prayerTimePaths.midnight).value());

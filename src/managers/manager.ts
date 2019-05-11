@@ -17,12 +17,14 @@ export interface IPrayerSettingsBuilder {
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerSettingsBuilder;
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerSettingsBuilder;
+    setPrayerAdjustmentMethod(adjustmentMethodId:prayer.AdjsutmentMethod):IPrayerSettingsBuilder;
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerSettingsBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerSettingsBuilder;
     createPrayerSettings(): Promise<prayer.IPrayersSettings>;
 
 };
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
+
     private _prayerSettings: prayer.IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
     private _validtor: validators.IValid<prayer.IPrayersSettings>;
@@ -38,16 +40,22 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
             this._prayerSettings.latitudeAdjustment.id = isNullOrUndefined(prayerConfig.latitudeAdjustment) ? prayer.LatitudeMethod.Angle : prayerConfig.latitudeAdjustment;
             this._prayerSettings.startDate = isNullOrUndefined(prayerConfig.startDate) ?  DateUtil.getNowDate() : prayerConfig.startDate;
             this._prayerSettings.endDate = isNullOrUndefined(prayerConfig.endDate) ? DateUtil.addMonth(1, DateUtil.getNowDate()) : prayerConfig.endDate;
+            this._prayerSettings.adjustmentMethod.id= isNullOrUndefined(prayerConfig.adjustmentMethod)? prayer.AdjsutmentMethod.Server : prayerConfig.adjustmentMethod;
         }
         else {
             this._prayerSettings.midnight.id = prayer.MidnightMode.Standard;
             this._prayerSettings.method.id = prayer.Methods.Mecca;
             this._prayerSettings.adjustments = this._prayerSettings.adjustments;
             this._prayerSettings.school.id = prayer.Schools.Shafi;
+            this._prayerSettings.adjustmentMethod.id= prayer.AdjsutmentMethod.Server;
             this._prayerSettings.latitudeAdjustment.id = prayer.LatitudeMethod.Angle;
             this._prayerSettings.startDate = DateUtil.getNowDate();
             this._prayerSettings.endDate = DateUtil.addMonth(1, DateUtil.getNowDate());
         }
+    }
+    public setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerSettingsBuilder {
+        this._prayerSettings.adjustmentMethod.id = adjustmentMethodId;
+        return this;
     }
     public setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder {
         this._prayerSettings.method.id = methodId;
@@ -86,6 +94,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
                 this._prayerSettings.latitudeAdjustment = await this._prayerProvider.getPrayerLatitudeById(this._prayerSettings.latitudeAdjustment.id);
                 this._prayerSettings.midnight = await this._prayerProvider.getPrayerMidnightById(this._prayerSettings.midnight.id);
                 this._prayerSettings.school = await this._prayerProvider.getPrayerSchoolsById(this._prayerSettings.school.id);
+                this._prayerSettings.adjustmentMethod = await this._prayerProvider.getPrayerAdjustmentMethodById(this._prayerSettings.adjustmentMethod.id);
                 return this._prayerSettings;
 
             }
@@ -336,6 +345,7 @@ export interface IPrayerManager {
             midnight: this._prayerTime.pareyerSettings.midnight.id,
             school: this._prayerTime.pareyerSettings.school.id,
             latitudeAdjustment: this._prayerTime.pareyerSettings.latitudeAdjustment.id,
+            adjustmentMethod:this._prayerTime.pareyerSettings.adjustmentMethod.id,
             startDate: this.getPrayerStartPeriod(),
             endDate: this.getPrayerEndPeriond(),
             adjustments: this._prayerTime.pareyerSettings.adjustments

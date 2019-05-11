@@ -20,6 +20,11 @@ export declare enum MidnightMode {
     Standard = 0,
     Jafari = 1
 }
+export declare enum AdjsutmentMethod {
+    Provider = 0,
+    Server = 1,
+    Client = 2
+}
 export declare enum LatitudeMethod {
     MidNight = 1,
     Seventh = 2,
@@ -62,6 +67,10 @@ export interface IPrayerAdjustments {
     prayerName: PrayersName;
     adjustments: number;
 }
+export interface IPrayerAdjustmentMethod {
+    id: AdjsutmentMethod;
+    adjustmentMethod: string;
+}
 export interface IPrayerMidnight {
     id: MidnightMode;
     midnight: string;
@@ -76,6 +85,7 @@ export interface IPrayersSettings {
     school: IPrayerSchools;
     midnight: IPrayerMidnight;
     latitudeAdjustment: IPrayerLatitude;
+    adjustmentMethod: IPrayerAdjustmentMethod;
     startDate: Date;
     endDate: Date;
 }
@@ -116,6 +126,8 @@ export declare class PrayersTime implements IPrayersTime {
     prayers: IPrayers[];
 }
 export declare class PrayersSettings implements IPrayersSettings {
+    private _adjustmentMethod;
+    adjustmentMethod: IPrayerAdjustmentMethod;
     private _startDate;
     startDate: Date;
     private _endDate;

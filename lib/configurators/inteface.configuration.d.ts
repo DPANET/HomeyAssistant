@@ -4,6 +4,7 @@ export interface IPrayersConfig {
     midnight: prayers.MidnightMode;
     school: prayers.Schools;
     latitudeAdjustment: prayers.LatitudeMethod;
+    adjustmentMethod: prayers.AdjsutmentMethod;
     startDate: Date;
     endDate: Date;
     adjustments: prayers.IPrayerAdjustments[];

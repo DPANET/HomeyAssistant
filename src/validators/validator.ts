@@ -170,7 +170,8 @@ export namespace validators {
                 startDate: Joi.date().max(Joi.ref('endDate')).required(),
                 endDate: Joi.date().required(),
                 method: Joi.object().required(),
-                school: Joi.object().required()
+                school: Joi.object().required(),
+                adjustmentMethod: Joi.object().required()
             });
 
         }

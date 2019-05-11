@@ -105,7 +105,7 @@ export interface IPrayersSettings {
     school: IPrayerSchools;
     midnight: IPrayerMidnight;
     latitudeAdjustment: IPrayerLatitude;
-    prayerAdjustmentMethod:IPrayerAdjustmentMethod,
+    adjustmentMethod:IPrayerAdjustmentMethod,
     startDate: Date;
     endDate: Date;
 }
@@ -286,12 +286,12 @@ export class PrayersTime implements IPrayersTime {
     
 }
 export class PrayersSettings implements IPrayersSettings {
-    private _prayerAdjustmentMethod: IPrayerAdjustmentMethod;
-    public get prayerAdjustmentMethod(): IPrayerAdjustmentMethod {
-        return this._prayerAdjustmentMethod;
+    private _adjustmentMethod: IPrayerAdjustmentMethod;
+    public get adjustmentMethod(): IPrayerAdjustmentMethod {
+        return this._adjustmentMethod;
     }
-    public set prayerAdjustmentMethod(value: IPrayerAdjustmentMethod) {
-        this._prayerAdjustmentMethod = value;
+    public set adjustmentMethod(value: IPrayerAdjustmentMethod) {
+        this._adjustmentMethod = value;
     }
 
     private _startDate: Date;
@@ -351,7 +351,7 @@ export class PrayersSettings implements IPrayersSettings {
             latitudeAdjustment: this._latitudeAdjustment,
             method:this._method,
             startDate: this._startDate,
-            prayerAdjustmentMethod: this._prayerAdjustmentMethod,
+            adjustmentMethod: this._adjustmentMethod,
             endDate: this._endDate,
             adjustments: this._adjustments
         };
@@ -365,7 +365,7 @@ export class PrayersSettings implements IPrayersSettings {
             this._adjustments = new Array<PrayerAdjustment>();
             this._midnight = new PrayersMidnight();
             this._school = new PrayerSchools();
-            this._prayerAdjustmentMethod= new PrayerAdjustmentMethod();
+            this._adjustmentMethod= new PrayerAdjustmentMethod();
             this._latitudeAdjustment = new PrayerLatitude();
         }
     }
