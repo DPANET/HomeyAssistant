@@ -193,6 +193,7 @@ export interface IPrayerTimeBuilder {
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerTimeBuilder;
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerTimeBuilder;
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerTimeBuilder;
+    setPrayerAdjustmentMethod(adjustmentMethodId:prayer.AdjsutmentMethod):IPrayerTimeBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
     setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
@@ -245,17 +246,38 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         this._locationBuilder.setLocationAddress(address, countryCode);
         return this;
     }
+    setPrayerAdjustmentMethod(adjustmentMethodId:prayer.AdjsutmentMethod):IPrayerTimeBuilder
+    {
+        this._prayerSettingsBuilder.setPrayerAdjustmentMethod(adjustmentMethodId);
+        return this;
+    }
     public async createPrayerTime(): Promise<prayer.IPrayersTime> {
         let location: location.ILocationSettings, prayerSettings: prayer.IPrayersSettings;
         try {
             location = await this._locationBuilder.createLocation();
             prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings();
             this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings, location);
+            this._prayers = this.adjustPrayers(this._prayers,prayerSettings);
             return Promise.resolve(new prayer.PrayersTime(this._prayers, location, prayerSettings));
         }
         catch (err) {
             return Promise.reject(err);
         }
+    }
+   private adjustPrayers(prayers: prayer.IPrayers[],prayerSettings:prayer.IPrayersSettings): prayer.IPrayers[] {
+    let adjustTimingFN = ramda.find<>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());
+
+    switch(prayerSettings.adjustmentMethod.id)
+       {
+           case prayer.AdjsutmentMethod.Server:
+           ramda.forEachObjIndexed()
+           prayers.forEach((prayer,index)=>{
+               prayer.prayerTime.forEach((prayersTiming,index)=>{
+                   adjustTimingFN(prayersTiming,prayerSettings);
+               })
+           })
+       }
+        
     }
     public async createPrayerTimeManager(): Promise<IPrayerManager> {
         try {
