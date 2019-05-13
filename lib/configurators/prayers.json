@@ -24,6 +24,20 @@
                     "name": "Hanafi"
                 }
             ],
+            "adjustmentMethod": [
+                {
+                    "id": 0,
+                    "name": "Provider"
+                },
+                {
+                    "id": 1,
+                    "name": "Server"
+                },
+                {
+                    "id": 2,
+                    "name": "Client"
+                }
+            ],
             "latitude": [
                 {
                     "id": 1,

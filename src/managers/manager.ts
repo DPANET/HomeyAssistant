@@ -265,19 +265,20 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         }
     }
    private adjustPrayers(prayers: prayer.IPrayers[],prayerSettings:prayer.IPrayersSettings): prayer.IPrayers[] {
-    let adjustTimingFN = ramda.find<>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());
-
+  //  let adjustTimingFN = ramda.find<>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());
+    console.log(prayers);
     switch(prayerSettings.adjustmentMethod.id)
        {
            case prayer.AdjsutmentMethod.Server:
-           ramda.forEachObjIndexed()
-           prayers.forEach((prayer,index)=>{
-               prayer.prayerTime.forEach((prayersTiming,index)=>{
-                   adjustTimingFN(prayersTiming,prayerSettings);
-               })
-           })
+            break;
+        //    ramda.forEachObjIndexed()
+        //    prayers.forEach((prayer,index)=>{
+        //        prayer.prayerTime.forEach((prayersTiming,index)=>{
+        //            adjustTimingFN(prayersTiming,prayerSettings);
+        //        })
+        //    })
        }
-        
+        return prayers
     }
     public async createPrayerTimeManager(): Promise<IPrayerManager> {
         try {

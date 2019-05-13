@@ -49,6 +49,7 @@ export interface IPrayerTimeBuilder {
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerTimeBuilder;
     setPrayerMidnight(midnightId: prayer.MidnightMode): IPrayerTimeBuilder;
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerTimeBuilder;
+    setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerTimeBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
     setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
@@ -69,7 +70,9 @@ export declare class PrayerTimeBuilder implements IPrayerTimeBuilder {
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
     setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
+    setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerTimeBuilder;
     createPrayerTime(): Promise<prayer.IPrayersTime>;
+    private adjustPrayers;
     createPrayerTimeManager(): Promise<IPrayerManager>;
     static createPrayerTimeBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder;
 }

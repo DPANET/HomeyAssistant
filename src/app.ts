@@ -88,10 +88,10 @@ async function buildLocationObject() {
             .setLocationByAddress("Abu Dhabi","AE")
             .createPrayerTimeManager();
             console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
-
+            console.log(prayerManager.getPrayerAdjsutments());
             // console.log(prayerManager.getPrayerLocation());
             // console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
-            console.log(prayerManager.getPrayersByDate(new Date('2019-05-12')));
+            console.log(prayerManager.getPrayersByDate(new Date('2019-05-14')));
             // console.log((prayerManager.getPrayerSettings()as prayer.PrayersSettings).toJSON());
             // console.log(prayerManager.getPrayerSettings());
             // let prayersDataTable: IPrayersView[] = getPrayerView(prayerManager.getPrayers());

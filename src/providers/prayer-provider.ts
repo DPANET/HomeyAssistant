@@ -22,7 +22,7 @@ const prayerTimePaths =
     methodsUrl: 'apis.prayersAPI.urls.prayerMethodsUrl',
     prayerTimeUrl: 'apis.prayersAPI.urls.prayersByCoordinatesUrl.monthly',
     adjustment: 'apis.prayersAPI.settings.calcuations.adjustments',
-    adjustmentMethod:'api.prayersAPI.methods.adjustmentMethod',
+    adjustmentMethod:'apis.prayersAPI.adjustmentMethod',
     calculations: 'settings.calcuations',
     schools: 'apis.prayersAPI.schools',
     settings: 'apis.prayersAPI.settings.calculations',
@@ -262,8 +262,8 @@ abstract class PrayerProvider implements IPrayerProvider {
         const filterById = ramda.where({ id: ramda.equals(index) });
         [err,list] = await to(fn());
     
-        if (err)
-            return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
+        if (err || isNullOrUndefined(list))
+            return Promise.reject(new Error(PrayerErrorMessages.BAD_INPUT));
         listObject = ramda.filter<T>(filterById, list).pop();
         if (!isNullOrUndefined(listObject))
             return listObject;
