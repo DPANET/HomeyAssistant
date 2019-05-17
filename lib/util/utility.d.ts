@@ -1,6 +1,7 @@
 export declare class DateUtil {
     static getEndofDate(endDate: Date): Date;
     static addDay(days: number, dateNow: Date): Date;
+    static addMinutes(date: Date, minutes: number): Date;
     private static readonly format;
     static getTime(date: string, time: string): Date;
     static getNowDate(): Date;

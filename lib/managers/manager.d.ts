@@ -73,6 +73,7 @@ export declare class PrayerTimeBuilder implements IPrayerTimeBuilder {
     setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerTimeBuilder;
     createPrayerTime(): Promise<prayer.IPrayersTime>;
     private adjustPrayers;
+    private adjustServerPrayers;
     createPrayerTimeManager(): Promise<IPrayerManager>;
     static createPrayerTimeBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder;
 }

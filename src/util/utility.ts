@@ -9,6 +9,10 @@ export class DateUtil
     static addDay(days: number, dateNow: Date): Date {
      return   moment.utc(dateNow).add(1,'d').toDate();
     }
+    static addMinutes(date:Date,minutes:number)
+    {
+        return moment.utc(date).add(minutes,'minute').toDate()
+    }
     private static readonly format:string = 'YYYY-MM-DD';
     static getTime(date:string, time:string):Date
     {

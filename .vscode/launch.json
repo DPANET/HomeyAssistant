@@ -11,7 +11,12 @@
             "program": "${workspaceFolder}\\lib\\app",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
-            ]
+            ],
+            "skipFiles": [
+                "node_modules/**/*.js"],
+            "smartStep": true,
+
+            "trace": true
         }
     ]
 }
