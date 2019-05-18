@@ -77,8 +77,10 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 }
 async function buildLocationObject() {
     try {
+        console.time('Prayer_Manager');
          let prayerConfig: cg.IPrayersConfig = await new configurator().getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
+
         // console.log(locationConfig);
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
@@ -87,6 +89,7 @@ async function buildLocationObject() {
             .createPrayerTimeBuilder(null, prayerConfig)
             .setLocationByAddress("Abu Dhabi","AE")
             .createPrayerTimeManager();
+            console.timeEnd('Prayer_Manager');
             //console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
             console.log(prayerManager.getPrayerAdjsutments());
             // console.log(prayerManager.getPrayerLocation());

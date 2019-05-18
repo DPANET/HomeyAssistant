@@ -251,10 +251,19 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         return this;
     }
     public async createPrayerTime(): Promise<prayer.IPrayersTime> {
+       
         let location: location.ILocationSettings, prayerSettings: prayer.IPrayersSettings;
         try {
-            location = await this._locationBuilder.createLocation();
-            prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings();
+            // location = await this._locationBuilder.createLocation();
+            // prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings()
+            await Promise.all([ this._locationBuilder.createLocation(), this._prayerSettingsBuilder.createPrayerSettings()])
+             .then((result:any)=>
+             {   
+                 location= result[0];
+                 prayerSettings= result[1];
+
+             });
+
             this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings, location);
             this._prayers = await this.adjustPrayers(this._prayers, prayerSettings);
             return Promise.resolve(new prayer.PrayersTime(this._prayers, location, prayerSettings));
@@ -262,6 +271,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         catch (err) {
             return Promise.reject(err);
         }
+        
     }
     private adjustPrayers(prayers: prayer.IPrayers[], prayerSettings: prayer.IPrayersSettings): prayer.IPrayers[] {
         //  let adjustTimingFN = ramda.find<>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());

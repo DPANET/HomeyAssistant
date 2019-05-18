@@ -2,7 +2,8 @@
 const to = require('await-to-js').default;
 import ramda = require('ramda');
 
-import { isNullOrUndefined } from 'util';
+
+import { isNullOrUndefined ,inspect} from 'util';
 import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight, IPrayerAdjustmentMethod,AdjsutmentMethod } from '../entities/prayer';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
@@ -158,25 +159,39 @@ abstract class PrayerProvider implements IPrayerProvider {
 
     }
     public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation:ILocationSettings): Promise<IPrayers[]> {
-        let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
-        let err: Error, result: any, url: any, queryString: any;
+       let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
+        let err: Error, result: any, url: any, queryString:string[]= new Array<string>() ;
         let date: Date = prayerSettings.startDate;
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         [err, url] = await to(this.getPrayerTimeUrl());
         if (err)
             return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
-        for (let i: number = 0; i <= duration; i++) {
-            queryString = this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date);
-            date = DateUtil.addMonth(1, date);
-            [err, result] = await to(request.get(queryString));
-            if (err|| isNullOrUndefined(result))
-                return Promise.reject(new Error(PrayerErrorMessages.TIME_OUT));
-            prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation));//.concat(this.buildPrayersObject(result['data']))
-        }
+        prayersList= await this.queryPrayerProvider(duration, queryString, url, prayerSettings, prayerLocation, date, prayersList);
+
         return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));
     }
-    private buildPrayersObject(result: any,prayerLocation:ILocationSettings): Array<IPrayers> {
+     private async queryPrayerProvider(duration: number, queryString: string[], url: any, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date, prayersList: IPrayers[]):  Promise<IPrayers[]>{
+        let err: Error, result: any; 
+        for (let i: number = 0; i <= duration; i++) {
+             queryString.push(  this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date));
+             date = DateUtil.addMonth(1, date);
+         }  
+        var fn =  queryString.map((value)=> request.get(value).promise());          
+        await Promise.all(fn)
+        .then((value:any[])=>
+         value.forEach((result)=> prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation)))
 
+         )
+        .catch((err)=> new Error(PrayerErrorMessages.TIME_OUT));
+        //  [err, result] = await to(request.get(queryString));
+        //      if (err|| isNullOrUndefined(result))
+        //          return Promise.reject(new Error(PrayerErrorMessages.TIME_OUT));
+             //.concat(this.buildPrayersObject(result['data']))       
+
+        return Promise.resolve(prayersList);
+     }
+
+    private buildPrayersObject(result: any,prayerLocation:ILocationSettings): Array<IPrayers> {
         let prayersTimingList: Array<IPrayersTiming> = new Array<IPrayersTiming>();
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         let i: number = 0;
@@ -199,6 +214,7 @@ abstract class PrayerProvider implements IPrayerProvider {
             });
         }
         ramda.forEach(fn, result);
+        
         return prayersList;
     }
     private async getPrayerTimeUrl(): Promise<any> {
