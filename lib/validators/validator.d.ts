@@ -1,10 +1,12 @@
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
+import * as config from '../configurators/inteface.configuration';
 export declare namespace validators {
-    type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings;
+    type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig;
     enum ValidatorProviders {
         LocationValidator = "Validate Location",
-        PrayerSettingsValidator = "Validate Prayer Settings"
+        PrayerSettingsValidator = "Validate Prayer Settings",
+        ConfigValidator = "Config Settings Validators"
     }
     interface IError {
         message: string;
@@ -46,5 +48,11 @@ export declare namespace validators {
         private constructor();
         validate(validateObject: prayer.IPrayersSettings): Promise<boolean>;
         static createValidator(): IValid<prayer.IPrayersSettings>;
+    }
+    class ConfigValidator extends Validator<config.IPrayersConfig> {
+        private _joiSchema;
+        private constructor();
+        validate(validateObject: config.IPrayersConfig): Promise<boolean>;
+        static createValidator(): IValid<config.IPrayersConfig>;
     }
 }

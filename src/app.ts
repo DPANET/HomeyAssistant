@@ -5,6 +5,10 @@ import configurator from "./configurators/configuration";
 import * as manager from './managers/manager';
 import ramda from "ramda";
 import moment from "moment";
+import validators =require("./validators/validator");
+import validator= validators.validators;
+
+
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -75,12 +79,61 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
     return prayerViewRow;
 
 }
+
+var prayerConfigFE:cg.IPrayersConfig= {
+    method: 4,
+    school: 0,
+    midnight: 0,
+    adjustmentMethod:1,
+    latitudeAdjustment: 3,
+    startDate: new Date(),
+    endDate: new Date('2019-05-22'),
+    adjustments: [
+      {
+        prayerName: prayer.PrayersName.IMSAK,
+        adjustments: 0
+      },
+      {
+        prayerName: prayer.PrayersName.FAJR,
+        adjustments: 2
+      },
+      {
+        prayerName: prayer.PrayersName.SUNRISE,
+        adjustments: -3
+      },
+      {
+        prayerName: prayer.PrayersName.DHUHR,
+        adjustments: 2
+      },
+      {
+        prayerName: prayer.PrayersName.ASR,
+        adjustments: 3
+      },
+      {
+        prayerName: prayer.PrayersName.MAGHRIB,
+        adjustments: 2
+      },
+      {
+        prayerName: prayer.PrayersName.SUNSET,
+        adjustments: 0
+      },
+      {
+        prayerName: prayer.PrayersName.ISHA,
+        adjustments: -10
+      },
+      {
+        prayerName: prayer.PrayersName.MIDNIGHT,
+        adjustments: 0
+      }
+    ]
+  };
+
 async function buildLocationObject() {
     try {
         console.time('Prayer_Manager');
          let prayerConfig: cg.IPrayersConfig = await new configurator().getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
-
+        prayerConfigFE
         // console.log(locationConfig);
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
@@ -90,31 +143,11 @@ async function buildLocationObject() {
             .setLocationByAddress("Abu Dhabi","AE")
             .createPrayerTimeManager();
             console.timeEnd('Prayer_Manager');
-            //console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
+
             console.log(prayerManager.getPrayerAdjsutments());
-            // console.log(prayerManager.getPrayerLocation());
-            // console.log(prayerManager.getPrayerAdjustmentsByPrayer(prayer.PrayersName.FAJR));
+
             console.log(prayerManager.getPrayersByDate(new Date('2019-05-20')));
-            // console.log((prayerManager.getPrayerSettings()as prayer.PrayersSettings).toJSON());
-            // console.log(prayerManager.getPrayerSettings());
-            // let prayersDataTable: IPrayersView[] = getPrayerView(prayerManager.getPrayers());
-            // let prayerDataTableMobile: IPrayersViewRow[] = getPrayerViewRow(prayersDataTable);
-            // console.log(prayerDataTableMobile);
-           // const func = (val:prayer.IPrayersTiming)=>{ }
-            //console.log(ramda.project(['prayersDate','prayerTime'],prayerManager.getPrayers()));
 
-            // console.log(prayerView);
-     //   console.log(DateUtil.getDateByTimeZone(new Date(),'Asia/Dubai'));
-   //     console.log(prayerManager.getPrayersByDate(DateUtil.getNowDate()));
-    //    console.log(prayerManager.getPrayersByDate(new Date()));
-        // console.log(prayerManager.getPrayerEndPeriond());
-        // let prayerEventManager: event.PrayersEventProvider = new event.PrayersEventProvider(prayerManager);
-        // prayerEventManager.registerListener(new event.PrayersEventListener());
-        // prayerEventManager.startPrayerSchedule();
-
-        // console.log(DateUtil.addMonth(1, prayerManager.getPrayerEndPeriond()));
-        // prayerManager = await prayerManager.updatePrayersDate(new Date('2019-03-01'), new Date('2019-03-31'));
-        // //setTimeout(()=>{  prayerEventManager.stopPrayerSchedule();console.log('stop')},60000);
     }
     catch (err) {
         console.log(err);

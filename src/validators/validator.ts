@@ -1,14 +1,15 @@
 const to = require('await-to-js').default;
-import Joi = require('joi');
+import * as Joi from 'joi';
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
 import * as prayer from '../entities/prayer';
-
+import * as config from '../configurators/inteface.configuration';
 export namespace validators {
-    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings;
+    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig;
     export enum ValidatorProviders {
         LocationValidator = "Validate Location",
-        PrayerSettingsValidator = "Validate Prayer Settings"
+        PrayerSettingsValidator = "Validate Prayer Settings",
+        ConfigValidator = "Config Settings Validators"
     };
     interface IError {
         message: string,
@@ -181,6 +182,29 @@ export namespace validators {
         }
         public static createValidator(): IValid<prayer.IPrayersSettings> {
             return new PrayerSettingsValidator();
+        }
+    }
+    export class ConfigValidator extends Validator<config.IPrayersConfig>
+    {
+        private _joiSchema: object;
+        private constructor() {
+            super(ValidatorProviders.ConfigValidator);
+            this._joiSchema = Joi.object().keys({
+                startDate: Joi.date().max(Joi.ref('endDate')).required(),
+                endDate: Joi.date().required(),
+                method: Joi.object().required(),
+                school: Joi.object().required(),
+                adjustmentMethod: Joi.object().required(),
+                adjustments: Joi.array()
+            });
+        }
+
+        public async validate(validateObject: config.IPrayersConfig): Promise<boolean> {
+            return await 
+            super.genericValidator(()=> Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+        }
+        public static createValidator(): IValid<config.IPrayersConfig> {
+            return new ConfigValidator();
         }
     }
     // export class ValidatorProviderFactory {
