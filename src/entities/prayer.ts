@@ -22,7 +22,7 @@ export enum MidnightMode {
     Standard = 0,
     Jafari
 };
-export enum AdjsutmentMethod
+export  enum AdjsutmentMethod
 {
     Provider=0,
     Server,

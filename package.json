@@ -30,7 +30,7 @@
     "@types/debug": "0.0.31",
     "@types/dotenv": "^6.1.1",
     "@types/googlemaps": "^3.30.19",
-    "@types/joi": "^14.3.3",
+    "@types/hapi__joi": "^15.0.1",
     "@types/lowdb": "^1.0.7",
     "@types/moment-timezone": "^0.5.12",
     "@types/node": "^10.14.5",

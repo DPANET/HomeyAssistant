@@ -50,7 +50,8 @@ export declare namespace validators {
         static createValidator(): IValid<prayer.IPrayersSettings>;
     }
     class ConfigValidator extends Validator<config.IPrayersConfig> {
-        private _joiSchema;
+        private _configSchema;
+        private _adjustmentsSchema;
         private constructor();
         validate(validateObject: config.IPrayersConfig): Promise<boolean>;
         static createValidator(): IValid<config.IPrayersConfig>;

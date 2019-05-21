@@ -1,9 +1,10 @@
 const to = require('await-to-js').default;
-import * as Joi from 'joi';
+import  Joi = require('@hapi/joi');
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
 import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
+import ramda from "ramda";
 export namespace validators {
     export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig;
     export enum ValidatorProviders {
@@ -186,22 +187,30 @@ export namespace validators {
     }
     export class ConfigValidator extends Validator<config.IPrayersConfig>
     {
-        private _joiSchema: object;
+        private _configSchema: object;
+        private _adjustmentsSchema:object;
         private constructor() {
             super(ValidatorProviders.ConfigValidator);
-            this._joiSchema = Joi.object().keys({
+            this._adjustmentsSchema = Joi.object().keys({
+                prayerName:Joi.string().valid(ramda.values(prayer.PrayersName)),
+                adjustments:Joi.number().required()
+            });
+            this._configSchema = Joi.object().keys({
                 startDate: Joi.date().max(Joi.ref('endDate')).required(),
                 endDate: Joi.date().required(),
-                method: Joi.object().required(),
-                school: Joi.object().required(),
-                adjustmentMethod: Joi.object().required(),
-                adjustments: Joi.array()
+                method: Joi.number().required().valid(ramda.values(prayer.Methods)),
+                school: Joi.number().required().valid(ramda.values(prayer.Schools)),
+                latitudeAdjustment:Joi.number().required().valid(ramda.values(prayer.LatitudeMethod)),
+                adjustmentMethod: Joi.number().required().valid(ramda.values(prayer.AdjsutmentMethod)),
+                adjustments: Joi.array().items(this._adjustmentsSchema).unique()
             });
+
+
         }
 
         public async validate(validateObject: config.IPrayersConfig): Promise<boolean> {
             return await 
-            super.genericValidator(()=> Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+            super.genericValidator(()=> Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
         }
         public static createValidator(): IValid<config.IPrayersConfig> {
             return new ConfigValidator();
