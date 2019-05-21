@@ -135,9 +135,9 @@ async function buildLocationObject() {
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
         
         // console.log(locationConfig);
-        // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
-        //     .createPrayerTimeManager();
+        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager();
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(null, prayerConfig)
         //     .setLocationByAddress("Abu Dhabi","AE")
@@ -149,7 +149,7 @@ async function buildLocationObject() {
             console.log("the object is valid : " + await validate.validate(prayerConfigFE));
             // console.log(prayerManager.getPrayerAdjsutments());
    
-            // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
+            console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
     }
     catch (err) {
