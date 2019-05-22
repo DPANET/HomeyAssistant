@@ -81,8 +81,8 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 }
 
 var prayerConfigFE:any= {
-    method: 422,
-    school: 122,
+    method: 4,
+    school: 1,
     midnight: 0,
     adjustmentMethod:2,
     latitudeAdjustment: 3,
@@ -95,7 +95,7 @@ var prayerConfigFE:any= {
       },
       {
         prayerName: prayer.PrayersName.FAJR,
-        adjustments: 2
+        adjustments: "3ee"
       },
       {
         prayerName: prayer.PrayersName.SUNRISE,
@@ -110,7 +110,7 @@ var prayerConfigFE:any= {
         adjustments: 3
       },
       {
-        prayerName: prayer.PrayersName.MAGHRIB,
+        prayerName:prayer.PrayersName.MAGHRIB,
         adjustments: 2
       },
       {

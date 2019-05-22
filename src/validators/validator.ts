@@ -194,11 +194,14 @@ export namespace validators {
                 case "any.required":
                     err.message = ` ${err.context.label} is mandatory field`
                     break;
-                case "number.integer":
+                case "number.base":
                     err.message = `${err.context.label} expects integer`
                     break;
-                case "number.string":
+                case "string.base":
                     err.message = `${err.context.label} expects string`
+                    break;
+                case "array.includesOne":
+                    err.message =  `${err.context.label} expects a value not in the list`
                     break;
                 default:
                     err.message = `${err.type}: ${err.context.label} ${err.message} with value ${err.context}`
@@ -213,6 +216,7 @@ export namespace validators {
                 prayerName: Joi.string()
                 .label('Prayer Name')
                 .valid(ramda.values(prayer.PrayersName))
+                .required()
                 .error((errors) => errors.map((err) => this.processErrorMessage(err))),
                 adjustments: Joi.number()
                 .required()
@@ -253,7 +257,7 @@ export namespace validators {
                     .items(this._adjustmentsSchema)
                     .unique()
                     .label('Adjustments')
-                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                    //.error((errors) => errors.map((err) => this.processErrorMessage(err))),
             })//.requiredKeys();
 
 
