@@ -95,7 +95,7 @@ var prayerConfigFE:any= {
       },
       {
         prayerName: prayer.PrayersName.FAJR,
-        adjustments: "3ee"
+        adjustments: 5
       },
       {
         prayerName: prayer.PrayersName.SUNRISE,
