@@ -50,6 +50,7 @@ export declare namespace validators {
         static createValidator(): IValid<prayer.IPrayersSettings>;
     }
     class ConfigValidator extends Validator<config.IPrayersConfig> {
+        private processErrorMessage;
         private _configSchema;
         private _adjustmentsSchema;
         private constructor();

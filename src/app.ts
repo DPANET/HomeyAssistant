@@ -81,13 +81,13 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 }
 
 var prayerConfigFE:any= {
-    method: 4,
-    school: 0,
+    method: 422,
+    school: 122,
     midnight: 0,
     adjustmentMethod:2,
     latitudeAdjustment: 3,
     startDate: new Date(),
-    endDate: new Date('2019-05-22'),
+    endDate: new Date('2019-05-24'),
     adjustments: [
       {
         prayerName: prayer.PrayersName.IMSAK,
@@ -134,26 +134,26 @@ async function buildLocationObject() {
          let prayerConfig: cg.IPrayersConfig = await new configurator().getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
         
-        // console.log(locationConfig);
-        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(locationConfig, prayerConfig)
-            .createPrayerTimeManager();
+        // // console.log(locationConfig);
+        // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
+        //     .createPrayerTimeManager();
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(null, prayerConfig)
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
-        //     console.timeEnd('Prayer_Manager');
+           console.timeEnd('Prayer_Manager');
             let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
-            console.log(prayer.AdjsutmentMethod.Server);
+            //console.log(prayer.AdjsutmentMethod.Server);
             console.log("the object is valid : " + await validate.validate(prayerConfigFE));
             // console.log(prayerManager.getPrayerAdjsutments());
    
-            console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
+           // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
     }
     catch (err) {
-        console.log(err);
+        console.log(err.message);
     }
 
 }

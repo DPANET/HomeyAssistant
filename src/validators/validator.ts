@@ -1,5 +1,5 @@
 const to = require('await-to-js').default;
-import  Joi = require('@hapi/joi');
+import Joi = require('@hapi/joi');
 import * as location from '../entities/location';
 import { isNullOrUndefined } from 'util';
 import * as prayer from '../entities/prayer';
@@ -108,8 +108,7 @@ export namespace validators {
             this._valdationErrors = error;
 
         }
-        protected async genericValidator(validateFn:Function):Promise<boolean>
-        {
+        protected async genericValidator(validateFn: Function): Promise<boolean> {
             let result, err, iErr: IValidationError;
             [err, result] = await to(validateFn());
             if (!isNullOrUndefined(err)) {
@@ -152,11 +151,11 @@ export namespace validators {
 
         }
         public async validate(validateObject: location.ILocationSettings): Promise<boolean> {
-            return await 
-            super.genericValidator(()=> Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+            return await
+                super.genericValidator(() => Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
 
         }
- 
+
         public static createValidator(): IValid<location.ILocationSettings> {
             return new LocationValidator();
         }
@@ -169,17 +168,17 @@ export namespace validators {
         private constructor() {
             super(ValidatorProviders.PrayerSettingsValidator);
             this._joiSchema = Joi.object().keys({
-                startDate: Joi.date().max(Joi.ref('endDate')).required(),
-                endDate: Joi.date().required(),
-                method: Joi.object().required(),
-                school: Joi.object().required(),
+                startDate: Joi.date().max(Joi.ref('endDate')).required().label('Date is required and should be within range'),
+                endDate: Joi.date().required().label('Date is required and should be within range'),
+                method: Joi.object().required().label('Method is required and should be within value list'),
+                school: Joi.object().required().label('School c is required and should be within value list'),
                 adjustmentMethod: Joi.object().required()
             });
 
         }
         public async validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {
-            return await 
-            super.genericValidator(()=> Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+            return await
+                super.genericValidator(() => Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
         }
         public static createValidator(): IValid<prayer.IPrayersSettings> {
             return new PrayerSettingsValidator();
@@ -187,30 +186,82 @@ export namespace validators {
     }
     export class ConfigValidator extends Validator<config.IPrayersConfig>
     {
+        private processErrorMessage(err: Joi.ValidationErrorItem): any {
+            switch (err.type) {
+                case "any.allowOnly":
+                    err.message = ` ${err.context.label} should be within the acceptable list of values`;
+                    break;
+                case "any.required":
+                    err.message = ` ${err.context.label} is mandatory field`
+                    break;
+                case "number.integer":
+                    err.message = `${err.context.label} expects integer`
+                    break;
+                case "number.string":
+                    err.message = `${err.context.label} expects string`
+                    break;
+                default:
+                    err.message = `${err.type}: ${err.context.label} ${err.message} with value ${err.context}`
+            }
+            return err
+        }
         private _configSchema: object;
-        private _adjustmentsSchema:object;
+        private _adjustmentsSchema: object;
         private constructor() {
             super(ValidatorProviders.ConfigValidator);
             this._adjustmentsSchema = Joi.object().keys({
-                prayerName:Joi.string().valid(ramda.values(prayer.PrayersName)),
-                adjustments:Joi.number().required()
+                prayerName: Joi.string()
+                .label('Prayer Name')
+                .valid(ramda.values(prayer.PrayersName))
+                .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                adjustments: Joi.number()
+                .required()
+                .label('Adjustments')
+                .error((errors) => errors.map((err) => this.processErrorMessage(err)))
             });
             this._configSchema = Joi.object().keys({
-                startDate: Joi.date().max(Joi.ref('endDate')).required(),
-                endDate: Joi.date().required(),
-                method: Joi.number().required().valid(ramda.values(prayer.Methods)),
-                school: Joi.number().required().valid(ramda.values(prayer.Schools)),
-                latitudeAdjustment:Joi.number().required().valid(ramda.values(prayer.LatitudeMethod)),
-                adjustmentMethod: Joi.number().required().valid(ramda.values(prayer.AdjsutmentMethod)),
-                adjustments: Joi.array().items(this._adjustmentsSchema).unique()
-            });
+                startDate: Joi
+                    .date()
+                    .max(Joi.ref('endDate')).error(() => "End Date should be less than Start Date")
+                    .required()
+                    .label('Start Date'),
+                endDate: Joi.date()
+                    .required()
+                    .label('End Date')
+                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                method: Joi
+                    .number()
+                    .valid(ramda.values(prayer.Methods))
+                    .label('Prayer Method')
+                    .required()
+                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                school: Joi.number()
+                    .required()
+                    .label('School')
+                    .valid(ramda.values(prayer.Schools))
+                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                latitudeAdjustment: Joi.number()
+                    .required()
+                    .label('Latitude Adjustment')
+                    .valid(ramda.values(prayer.LatitudeMethod))
+                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                adjustmentMethod: Joi.number().required()
+                    .valid(ramda.values(prayer.AdjsutmentMethod))
+                    .label('Adjust Method')
+                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+                adjustments: Joi.array()
+                    .items(this._adjustmentsSchema)
+                    .unique()
+                    .label('Adjustments')
+                    .error((errors) => errors.map((err) => this.processErrorMessage(err))),
+            })//.requiredKeys();
 
 
         }
 
         public async validate(validateObject: config.IPrayersConfig): Promise<boolean> {
-            return await 
-            super.genericValidator(()=> Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
+            return await
+                super.genericValidator(() => Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
         }
         public static createValidator(): IValid<config.IPrayersConfig> {
             return new ConfigValidator();
