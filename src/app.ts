@@ -7,7 +7,8 @@ import ramda from "ramda";
 import moment from "moment";
 import val =require("./validators/validator");
 import validators= val.validators;
-
+import { valid } from "@hapi/joi";
+import util from "util"
 
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
@@ -82,20 +83,20 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 
 var prayerConfigFE:any= {
     method: 4,
-    school: 1,
+    school: 33,
     midnight: 0,
     adjustmentMethod:2,
     latitudeAdjustment: 3,
-    startDate: new Date(),
-    endDate: new Date('2019-05-24'),
+    startDate:  new Date('2019-05-24'),
+    endDate:new Date(),
     adjustments: [
       {
         prayerName: prayer.PrayersName.IMSAK,
-        adjustments: 0
+        adjustments: "ttt"
       },
       {
         prayerName: prayer.PrayersName.FAJR,
-        adjustments: 5
+        adjustments: "ee"
       },
       {
         prayerName: prayer.PrayersName.SUNRISE,
@@ -146,15 +147,21 @@ async function buildLocationObject() {
             let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
+            console.log("validation status : "+ validate.isValid());
             console.log("the object is valid : " + await validate.validate(prayerConfigFE));
+
+       
             // console.log(prayerManager.getPrayerAdjsutments());
    
            // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
     }
     catch (err) {
-        console.log(err.message);
-    }
+            err.details.map((detail:any)=>console.log(`Error at ${detail.value.label} with value ${detail.value.value}: ${detail.message}`))
+           //console.log(err);
+         //  console.log(util.inspect(err, {showHidden: false, depth: null}))
+
+        }
 
 }
 

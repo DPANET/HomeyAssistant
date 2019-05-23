@@ -1,3 +1,4 @@
+import Joi = require('@hapi/joi');
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
@@ -34,6 +35,7 @@ export declare namespace validators {
         validatorName: string;
         getValidationError(): IValidationError;
         protected setValidatonError(error: IValidationError): void;
+        protected processErrorMessage(errors: any): Joi.ValidationErrorItem[];
         protected genericValidator(validateFn: Function): Promise<boolean>;
         private processErrorMessages;
     }
@@ -50,10 +52,10 @@ export declare namespace validators {
         static createValidator(): IValid<prayer.IPrayersSettings>;
     }
     class ConfigValidator extends Validator<config.IPrayersConfig> {
-        private processErrorMessage;
         private _configSchema;
         private _adjustmentsSchema;
         private constructor();
+        private setSchema;
         validate(validateObject: config.IPrayersConfig): Promise<boolean>;
         static createValidator(): IValid<config.IPrayersConfig>;
     }
