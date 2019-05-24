@@ -85,9 +85,9 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     public async createPrayerSettings(): Promise<prayer.IPrayersSettings> {
         let validationErr: validators.IValidationError;
         let validationResult: boolean = false;
-        [validationErr, validationResult] = await to(this._validtor.validate(this._prayerSettings));
-        if (validationErr)
-            return Promise.reject(validationErr);
+        validationResult =this._validtor.validate(this._prayerSettings);
+        if (validationResult===false)
+            return Promise.reject(this._validtor.getValidationError());
         if (validationResult) {
             try {
                 this._prayerSettings.method = await this._prayerProvider.getPrayerMethodsById(this._prayerSettings.method.id);
@@ -152,9 +152,9 @@ export class LocationBuilder implements ILocationBuilder {
     public async createLocation(): Promise<location.ILocationSettings> {
         let validationErr: validators.IValidationError, validationResult: boolean = false;
         let providerErr: Error, locationResult: location.ILocation, timezoneResult: location.ITimeZone;
-        [validationErr, validationResult] = await to(this._validtor.validate(this._location));
-        if (validationErr)
-            return Promise.reject(validationErr);
+        validationResult = this._validtor.validate(this._location);
+        if (validationResult===false)
+            return Promise.reject(this._validtor.getValidationError());
         if (validationResult) {
             if (!isNullOrUndefined(this._location.latitude))
                 [providerErr, locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude, this._location.longtitude));

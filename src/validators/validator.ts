@@ -70,7 +70,7 @@ export namespace validators {
 
     }
     export interface IValid<ValidtionTypes> {
-        validate(validateObject: ValidtionTypes): Promise<boolean>;
+        validate(validateObject: ValidtionTypes): boolean;
         isValid(): boolean;
         getValidationError(): IValidationError;
 
@@ -91,7 +91,7 @@ export namespace validators {
         protected setIsValid(state: boolean) {
             this._isValid = state;
         }
-        abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
+        abstract validate(validateObject: ValidtionTypes): boolean;
         //   abstract  createValidator(): IValid<ValidtionTypes>;
         public get validatorName(): string {
             return this._validatorName;
@@ -140,18 +140,18 @@ export namespace validators {
             // console.log(errors);
             return errors;
         }
-        protected async genericValidator(validateFn: Function): Promise<boolean> {
+        protected  genericValidator(validateFn: Function): boolean {
             let result, err, iErr: IValidationError;
-            [err, result] = await to(validateFn());
+            err= validateFn().error;
             if (!isNullOrUndefined(err)) {
                 iErr = this.processErrorMessages(err);
                 this.setIsValid(false);
                 this.setValidatonError(iErr);
-                return Promise.reject(iErr);
+                return false;
             }
             else {
                 this.setIsValid(true);
-                return Promise.resolve(true);
+                return true;
             }
         }
         private processErrorMessages(err: Joi.ValidationError): IValidationError {
@@ -182,9 +182,8 @@ export namespace validators {
                 .and('latitude', 'longtitude');
 
         }
-        public async validate(validateObject: location.ILocationSettings): Promise<boolean> {
-            return await
-                super.genericValidator(() => Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+        public  validate(validateObject: location.ILocationSettings): boolean {
+            return super.genericValidator(() => Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
 
         }
 
@@ -265,9 +264,8 @@ export namespace validators {
             });
 
         }
-        public async validate(validateObject: prayer.IPrayersSettings): Promise<boolean> {
-            return await
-                super.genericValidator(() => Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+        public  validate(validateObject: prayer.IPrayersSettings):boolean {
+            return  super.genericValidator(() => Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
         }
         public static createValidator(): IValid<prayer.IPrayersSettings> {
             return new PrayerSettingsValidator();
@@ -335,9 +333,8 @@ export namespace validators {
             }).error(this.processErrorMessage, { self: true })
 
         }
-        public async validate(validateObject: config.IPrayersConfig): Promise<boolean> {
-            return await
-                super.genericValidator(() => Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
+        public  validate(validateObject: config.IPrayersConfig): boolean {
+            return  super.genericValidator(() => Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
         }
         public static createValidator(): IValid<config.IPrayersConfig> {
             return new ConfigValidator();

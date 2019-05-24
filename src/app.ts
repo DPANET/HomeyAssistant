@@ -147,10 +147,11 @@ async function buildLocationObject() {
             let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
-            // console.log("validation status : "+ validate.isValid());
-            // console.log("the object is valid : " + await validate.validate(prayerConfigFE));
+            // console.log("validation status : "+ validate.validate());
+            // console.log("the object is valid : " +  validate.validate(prayerConfigFE));
+          //  console.log("Validation Error: "+ validate.getValidationError())
+            // console.log(util.inspect(validate.getValidationError(), {showHidden: false, depth: null}))
 
-       
             //  console.log(prayerManager.getPrayerAdjsutments());
    
            // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));

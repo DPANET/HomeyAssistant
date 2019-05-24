@@ -20,7 +20,7 @@ export declare namespace validators {
         value: object;
     }
     interface IValid<ValidtionTypes> {
-        validate(validateObject: ValidtionTypes): Promise<boolean>;
+        validate(validateObject: ValidtionTypes): boolean;
         isValid(): boolean;
         getValidationError(): IValidationError;
     }
@@ -31,18 +31,18 @@ export declare namespace validators {
         constructor(validatorName: string);
         isValid(): boolean;
         protected setIsValid(state: boolean): void;
-        abstract validate(validateObject: ValidtionTypes): Promise<boolean>;
+        abstract validate(validateObject: ValidtionTypes): boolean;
         validatorName: string;
         getValidationError(): IValidationError;
         protected setValidatonError(error: IValidationError): void;
         protected processErrorMessage(errors: any): Joi.ValidationErrorItem[];
-        protected genericValidator(validateFn: Function): Promise<boolean>;
+        protected genericValidator(validateFn: Function): boolean;
         private processErrorMessages;
     }
     class LocationValidator extends Validator<location.ILocationSettings> {
         private _joiSchema;
         private constructor();
-        validate(validateObject: location.ILocationSettings): Promise<boolean>;
+        validate(validateObject: location.ILocationSettings): boolean;
         static createValidator(): IValid<location.ILocationSettings>;
     }
     class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings> {
@@ -50,7 +50,7 @@ export declare namespace validators {
         private _joiSchema;
         _adjustmentsSchema: Joi.ObjectSchema;
         private constructor();
-        validate(validateObject: prayer.IPrayersSettings): Promise<boolean>;
+        validate(validateObject: prayer.IPrayersSettings): boolean;
         static createValidator(): IValid<prayer.IPrayersSettings>;
     }
     class ConfigValidator extends Validator<config.IPrayersConfig> {
@@ -58,7 +58,7 @@ export declare namespace validators {
         private _adjustmentsSchema;
         private constructor();
         private setSchema;
-        validate(validateObject: config.IPrayersConfig): Promise<boolean>;
+        validate(validateObject: config.IPrayersConfig): boolean;
         static createValidator(): IValid<config.IPrayersConfig>;
     }
 }
