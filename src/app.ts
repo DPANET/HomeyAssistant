@@ -134,32 +134,34 @@ async function buildLocationObject() {
         console.time('Prayer_Manager');
          let prayerConfig: cg.IPrayersConfig = await new configurator().getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
-        
-        // // console.log(locationConfig);
-        // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
-        //     .createPrayerTimeManager();
+
+        // console.log(locationConfig);
+        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager();
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(null, prayerConfig)
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
-           console.timeEnd('Prayer_Manager');
+        //    console.timeEnd('Prayer_Manager');
             let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
-            console.log("validation status : "+ validate.isValid());
-            console.log("the object is valid : " + await validate.validate(prayerConfigFE));
+            // console.log("validation status : "+ validate.isValid());
+            // console.log("the object is valid : " + await validate.validate(prayerConfigFE));
 
        
-            // console.log(prayerManager.getPrayerAdjsutments());
+            //  console.log(prayerManager.getPrayerAdjsutments());
    
            // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
     }
     catch (err) {
-            err.details.map((detail:any)=>console.log(`Error at ${detail.value.label} with value ${detail.value.value}: ${detail.message}`))
-           //console.log(err);
-         //  console.log(util.inspect(err, {showHidden: false, depth: null}))
+      
+            if(err.name==="ValidationError")
+            err.details.map((detail:any)=>console.log((util.inspect(`${detail.value.label} with value ${detail.value.value}: ${detail.message}`,{showHidden: false, depth: null}))));
+         //  console.log(err);
+           console.log(util.inspect(err, {showHidden: false, depth: null}))
 
         }
 

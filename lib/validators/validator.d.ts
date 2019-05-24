@@ -46,7 +46,9 @@ export declare namespace validators {
         static createValidator(): IValid<location.ILocationSettings>;
     }
     class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings> {
+        private readonly _merger;
         private _joiSchema;
+        _adjustmentsSchema: Joi.ObjectSchema;
         private constructor();
         validate(validateObject: prayer.IPrayersSettings): Promise<boolean>;
         static createValidator(): IValid<prayer.IPrayersSettings>;

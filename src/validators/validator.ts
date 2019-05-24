@@ -109,38 +109,37 @@ export namespace validators {
 
         }
         protected processErrorMessage(errors: any): Joi.ValidationErrorItem[] {
-            errors.map((err:any) => 
-            {
-           switch (err.type) {
-               case "date.max":
-                    err.message =  ` ${err.context.label} should not exceed ${err.context.limit}`
-                    break;
-               case "any.allowOnly":
-                    err.message = ` ${err.context.label} should be within the acceptable list of values`;
-                    break;
-               case "any.required":
-                   err.message = ` ${err.context.label} is mandatory field`
-                   break;
-               case "number.base":
-                   err.message = `${err.context.label} expects integer`
-                   break;
-               case "string.base":
-                   err.message = `${err.context.label} expects string`
-                   break;
-               case "array.includesOne":
-                   err.message =  `${err.context.label} expects a value not in the list`
-                   break;
-               case "object.child":
-                   err.message =  `${err.context.label} expects a value not in the list `
-                   break;
-               default:
-                   err.message = `${err.type}: ${err.context.label} ${err.message} with value ${err.context}`
-           }
-       
-       });
-      // console.log(errors);
-           return errors;
-       }
+            errors.map((err: any) => {
+                switch (err.type) {
+                    case "date.max":
+                        err.message = `${err.context.label} should not exceed ${err.context.limit}`
+                        break;
+                    case "any.allowOnly":
+                        err.message = `${err.context.label} should be within the acceptable list of values`;
+                        break;
+                    case "any.required":
+                        err.message = `${err.context.label} is mandatory field`
+                        break;
+                    case "number.base":
+                        err.message = `${err.context.label} expects integer`
+                        break;
+                    case "string.base":
+                        err.message = `${err.context.label} expects string`
+                        break;
+                    case "array.includesOne":
+                        err.message = `${err.context.label} expects a value not in the list`
+                        break;
+                    case "object.child":
+                        err.message = `${err.context.label} expects a value not in the list`
+                        break;
+                    default:
+                        err.message = `${err.type}: ${err.context.label} ${err.message} with value ${err.context}`
+                }
+
+            });
+            // console.log(errors);
+            return errors;
+        }
         protected async genericValidator(validateFn: Function): Promise<boolean> {
             let result, err, iErr: IValidationError;
             [err, result] = await to(validateFn());
@@ -197,15 +196,72 @@ export namespace validators {
 
     export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
     {
+        private readonly _merger: any
         private _joiSchema: object;
+        _adjustmentsSchema: Joi.ObjectSchema;
         private constructor() {
             super(ValidatorProviders.PrayerSettingsValidator);
+            this._adjustmentsSchema = Joi.object().keys({
+                prayerName: Joi.string()
+                    .label('Prayer Name')
+                    .valid(ramda.values(prayer.PrayersName))
+                    .required()
+                    .error(this.processErrorMessage),
+                adjustments: Joi.number()
+                    .required()
+                    .label('Adjustments')
+                    .error(this.processErrorMessage)
+            });
             this._joiSchema = Joi.object().keys({
-                startDate: Joi.date().max(Joi.ref('endDate')).required().label('Start Date'),
-                endDate: Joi.date().required().label('End Date'),
-                method: Joi.object().required().label('Prayer Method'),
-                school: Joi.object().required().label('Prayer School'),
-                adjustmentMethod: Joi.object().required()
+                startDate: Joi.date()
+                    .max(Joi.ref('endDate'))
+                    .required()
+                    .label('Start Date')
+                    .error(this.processErrorMessage),
+                endDate: Joi.date()
+                    .required()
+                    .label('End Date')
+                    .error(this.processErrorMessage),
+                method: Joi.object().keys({
+                    id: Joi.number()
+                        .required()
+                        .valid(ramda.values(prayer.Methods))
+                        .label('Prayer Method')
+                        .error(this.processErrorMessage)
+                }),
+                school: Joi.object().keys({
+                    id: Joi.number()
+                        .required()
+                        .label('Prayer School')
+                        .valid(ramda.values(prayer.Schools))
+                        .error(this.processErrorMessage)
+                }),
+                latitudeAdjustment: Joi.object().keys({
+                    id: Joi.number()
+                        .required()
+                        .label('Prayer Latitude')
+                        .valid(ramda.values(prayer.LatitudeMethod))
+                        .error(this.processErrorMessage)
+                }),
+                midnight: Joi.object().keys({
+                    id: Joi.number()
+                        .required()
+                        .label('Prayer Midnight')
+                        .valid(ramda.values(prayer.MidnightMode))
+                        .error(this.processErrorMessage)
+                }),
+                adjustmentMethod: Joi.object().keys({
+                    id: Joi.number()
+                        .required()
+                        .label('Adjustment Method')
+                        .valid(ramda.values(prayer.AdjsutmentMethod))
+                        .error(this.processErrorMessage)
+                }),
+                adjustments: Joi.array()
+                .items(this._adjustmentsSchema)
+                .unique()
+                .label('Adjustments')
+                .error(this.processErrorMessage, { self: true })
             });
 
         }
@@ -227,19 +283,18 @@ export namespace validators {
             this.setSchema();
 
         }
-        private setSchema():void
-        {
-            this._adjustmentsSchema =  Joi.object().keys({
+        private setSchema(): void {
+            this._adjustmentsSchema = Joi.object().keys({
                 prayerName: Joi.string()
-                .label('Prayer Name')
-                .valid(ramda.values(prayer.PrayersName))
-                .required()
-                .error(this.processErrorMessage),
+                    .label('Prayer Name')
+                    .valid(ramda.values(prayer.PrayersName))
+                    .required()
+                    .error(this.processErrorMessage),
                 adjustments: Joi.number()
-                .required()
-                .label('Adjustments')
-                .error(this.processErrorMessage)
-               // .error((errors) => errors.map((err) => this.processErrorMessage(err)))
+                    .required()
+                    .label('Adjustments')
+                    .error(this.processErrorMessage)
+                // .error((errors) => errors.map((err) => this.processErrorMessage(err)))
             });
             this._configSchema = Joi.object().keys({
                 startDate: Joi
@@ -267,17 +322,17 @@ export namespace validators {
                     .required()
                     .label('Latitude Adjustment')
                     .valid(ramda.values(prayer.LatitudeMethod))
-                    .error(this.processErrorMessage),                
-                    adjustmentMethod: Joi.number().required()
+                    .error(this.processErrorMessage),
+                adjustmentMethod: Joi.number().required()
                     .valid(ramda.values(prayer.AdjsutmentMethod))
                     .label('Adjust Method')
-                    .error(this.processErrorMessage),                
+                    .error(this.processErrorMessage),
                 adjustments: Joi.array()
                     .items(this._adjustmentsSchema)
                     .unique()
                     .label('Adjustments')
-                    .error(this.processErrorMessage,{self:true})
-            }).error(this.processErrorMessage,{self:true})
+                    .error(this.processErrorMessage, { self: true })
+            }).error(this.processErrorMessage, { self: true })
 
         }
         public async validate(validateObject: config.IPrayersConfig): Promise<boolean> {
