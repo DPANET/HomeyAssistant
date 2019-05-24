@@ -111,6 +111,12 @@ export namespace validators {
         protected processErrorMessage(errors: any): Joi.ValidationErrorItem[] {
             errors.map((err: any) => {
                 switch (err.type) {
+                    case "date.base":
+                        err.message = `${err.context.label} value is either not a date or could not be cast to a date from a string or a number`
+                        break;
+                    case "any.empty":
+                        err.message = `${err.context.label} key value is empty, value should be within the list`
+                        break;
                     case "date.max":
                         err.message = `${err.context.label} should not exceed ${err.context.limit}`
                         break;
