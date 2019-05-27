@@ -6,6 +6,7 @@ import lowdb from "lowdb";
 import lowdbfile from "lowdb/adapters/FileAsync";
 import { DateUtil } from '../util/utility';
 import _ = require('lodash');
+import ramda= require('ramda'); 
 //import * as prayers from '../entities/prayer';
 import {IPrayersConfig,ILocationConfig,IConfig} from "./inteface.configuration";
 import * as path from 'path';
@@ -76,6 +77,7 @@ export default class Configurator implements IConfig {
         try {
             let original: IPrayersConfig = await this.getPrayerConfig();
             let updated:IPrayersConfig;
+            ramda.omit(['startDate','endDate'],prayerConfigs);
             updated= _.merge<IPrayersConfig,IPrayersConfig>(original,prayerConfigs);
             console.log(updated);
             await this.getDB()
