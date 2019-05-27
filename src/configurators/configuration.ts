@@ -19,7 +19,7 @@ const ConfigErrorMessages =
 {
     BAD_INPUT: 'Prayer setting recond is not found, please try again',
     TIME_OUT: 'Connection cannot be made to prayer provider, please try again after a while',
-    FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try ensure internet connectivity'
+    FILE_NOT_FOUND: 'Config file not found, please try again'
 }
 
 export default class Configurator implements IConfig {
@@ -45,7 +45,7 @@ export default class Configurator implements IConfig {
             );
             return true;
         } catch (err) {
-            return false;
+            return Promise.reject(ConfigErrorMessages.FILE_NOT_FOUND);
         }
     }
     public async getLocationConfig(): Promise<ILocationConfig> {
@@ -83,9 +83,9 @@ export default class Configurator implements IConfig {
             .assign(updated)
             .write()
             );
-            return true;
+            return Promise.resolve(true);
         } catch (err) {
-            return false;
+            return Promise.reject(err);
         }
     }
 

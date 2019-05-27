@@ -81,22 +81,22 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 
 }
 
-var prayerConfigFE:any= {
+var prayerConfigFE:cg.IPrayersConfig= {
     method: 4,
     school: 33,
     midnight: 0,
     adjustmentMethod:2,
     latitudeAdjustment: 3,
-    startDate:  new Date('2019-05-24'),
-    endDate:new Date(),
+    startDate:  new Date(),
+    endDate:new Date('2019-05-27'),
     adjustments: [
       {
         prayerName: prayer.PrayersName.IMSAK,
-        adjustments: "ttt"
+        adjustments: 2
       },
       {
         prayerName: prayer.PrayersName.FAJR,
-        adjustments: "ee"
+        adjustments: 2
       },
       {
         prayerName: prayer.PrayersName.SUNRISE,
@@ -136,14 +136,15 @@ async function buildLocationObject() {
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
 
         // console.log(locationConfig);
-        // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
-        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
-        //     .createPrayerTimeManager();
+        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager();
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(null, prayerConfig)
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
         //    console.timeEnd('Prayer_Manager');
+         prayerManager.savePrayerConfig(prayerConfigFE);
             let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);

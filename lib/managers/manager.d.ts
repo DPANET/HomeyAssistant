@@ -95,4 +95,5 @@ export interface IPrayerManager {
     getPrayerSettings(): prayer.IPrayersSettings;
     getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
+    savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean>;
 }

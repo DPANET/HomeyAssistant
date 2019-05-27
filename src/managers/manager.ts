@@ -6,6 +6,7 @@ import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
+import Configurator from "../configurators/configuration"; 
 import val = require('../validators/validator');
 import validators = val.validators;
 import { isNullOrUndefined } from 'util';
@@ -346,9 +347,11 @@ export interface IPrayerManager {
     getPrayerSettings(): prayer.IPrayersSettings;
     getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
+    savePrayerConfig(prayerConfig:IPrayersConfig):Promise<boolean>;
 }
 
 class PrayerManager implements IPrayerManager {
+
 
 
     private _prayerTime: prayer.IPrayersTime;
@@ -358,6 +361,21 @@ class PrayerManager implements IPrayerManager {
         this._prayerTime = prayerTime;
         this._prayerEvents = new prayer.PrayerEvents();
         this._prayerTimeBuilder = prayerTimeBuilder;
+    }
+    public savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean> {
+       try{
+        let validator: validators.IValid<IPrayersConfig> = validators.ConfigValidator.createValidator();
+        let validationResult: boolean = validator.validate(prayerConfig);
+        let validationErr: validators.IValidationError;
+        if(validationResult ===false)
+            return Promise.reject(validator.getValidationError());        
+        let configurator:Configurator = new Configurator();
+        configurator.savePrayerConfig(prayerConfig);
+       }
+        catch(err)
+        {
+            Promise.reject(err);
+        }
     }
     public getPrayerTimeZone(): location.ITimeZone {
         return {
