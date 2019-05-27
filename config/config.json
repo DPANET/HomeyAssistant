@@ -9,19 +9,19 @@
         "school": 0,
         "midnight": 0,
         "latitudeAdjustment": 3,
-        "adjustmentMethod":1,
+        "adjustmentMethod": 2,
         "adjustments": [
           {
             "prayerName": "Imsak",
-            "adjustments": 0
+            "adjustments": 2
           },
           {
             "prayerName": "Fajr",
-            "adjustments": 4
+            "adjustments": 2
           },
           {
             "prayerName": "Sunrise",
-            "adjustments": -3
+            "adjustments": 3
           },
           {
             "prayerName": "Dhuhr",
@@ -33,7 +33,7 @@
           },
           {
             "prayerName": "Maghrib",
-            "adjustments": 5
+            "adjustments": 2
           },
           {
             "prayerName": "Sunset",
@@ -47,7 +47,9 @@
             "prayerName": "Midnight",
             "adjustments": 0
           }
-        ]
+        ],
+        "startDate": "2019-05-27T08:06:01.197Z",
+        "endDate": "2019-05-28T00:00:00.000Z"
       }
     },
     "locationConfig": {

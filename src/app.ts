@@ -83,12 +83,12 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 
 var prayerConfigFE:cg.IPrayersConfig= {
     method: 4,
-    school: 33,
+    school: 0,
     midnight: 0,
     adjustmentMethod:2,
     latitudeAdjustment: 3,
-    startDate:  new Date(),
-    endDate:new Date('2019-05-27'),
+    startDate: new Date('2019-05-27'),
+    endDate:new Date('2019-05-28'),
     adjustments: [
       {
         prayerName: prayer.PrayersName.IMSAK,
@@ -144,18 +144,19 @@ async function buildLocationObject() {
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
         //    console.timeEnd('Prayer_Manager');
-         prayerManager.savePrayerConfig(prayerConfigFE);
-            let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
+         let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
+         console.log(result)
+         //   let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
             // console.log("validation status : "+ validate.validate());
-            console.log("the object is valid : " +  validate.validate(prayerConfigFE));
-            let err:validators.IValidationError = validate.getValidationError();
-            let message:string[] = err.details.map((detail:any)=>`${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
+           // console.log("the object is valid : " +  validate.validate(prayerConfigFE));
+            //let err:validators.IValidationError = validate.getValidationError();
+            //let message:string[] = err.details.map((detail:any)=>`${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
 
-            let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
+           // let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
          //  console.log("Validation Error: "+ validate.getValidationError())
-            console.log(messageShort);
+            //console.log(messageShort);
 
             //  console.log(prayerManager.getPrayerAdjsutments());
    
@@ -169,7 +170,8 @@ async function buildLocationObject() {
             message = err.details.map((detail:any)=>`${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
             console.log(message);
             }
-
+            else
+            console.log(err);
         }
 
 }

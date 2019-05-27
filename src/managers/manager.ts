@@ -362,7 +362,7 @@ class PrayerManager implements IPrayerManager {
         this._prayerEvents = new prayer.PrayerEvents();
         this._prayerTimeBuilder = prayerTimeBuilder;
     }
-    public savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean> {
+    public async savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean> {
        try{
         let validator: validators.IValid<IPrayersConfig> = validators.ConfigValidator.createValidator();
         let validationResult: boolean = validator.validate(prayerConfig);
@@ -371,10 +371,11 @@ class PrayerManager implements IPrayerManager {
             return Promise.reject(validator.getValidationError());        
         let configurator:Configurator = new Configurator();
         configurator.savePrayerConfig(prayerConfig);
+        return Promise.resolve(true)
        }
         catch(err)
         {
-            Promise.reject(err);
+          return  Promise.reject(err);
         }
     }
     public getPrayerTimeZone(): location.ITimeZone {
