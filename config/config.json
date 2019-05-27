@@ -9,7 +9,7 @@
         "school": 0,
         "midnight": 0,
         "latitudeAdjustment": 3,
-        "adjustmentMethod": 2,
+        "adjustmentMethod": 1,
         "adjustments": [
           {
             "prayerName": "Imsak",

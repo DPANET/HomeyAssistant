@@ -77,8 +77,8 @@ export default class Configurator implements IConfig {
         try {
             let original: IPrayersConfig = await this.getPrayerConfig();
             let updated:IPrayersConfig;
-            ramda.omit(['startDate','endDate'],prayerConfigs);
-            updated= _.merge<IPrayersConfig,IPrayersConfig>(original,prayerConfigs);
+
+            updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
             console.log(updated);
             await this.getDB()
             .then(result=> result.get(configPaths.prayerConfig)
