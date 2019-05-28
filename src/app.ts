@@ -2,7 +2,8 @@
 import prayer = require("./entities/prayer");
 import cg = require("./configurators/inteface.configuration");
 import configurator from "./configurators/configuration";
-import * as manager from './managers/manager';
+import * as managerInterface from './managers/interface.manager';
+import * as manager from "./managers/manager";
 import ramda from "ramda";
 import moment from "moment";
 import val =require("./validators/validator");
@@ -104,7 +105,7 @@ async function buildLocationObject() {
         let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
 
         // console.log(locationConfig);
-        let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
+        let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager();
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
@@ -125,7 +126,7 @@ async function buildLocationObject() {
          //  console.log("Validation Error: "+ validate.getValidationError())
             //console.log(messageShort);
 
-            //  console.log(prayerManager.getPrayerAdjsutments());
+             console.log(prayerManager.getPrayerAdjsutments());
    
            // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
