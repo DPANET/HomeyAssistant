@@ -37,7 +37,8 @@ const PrayerErrorMessages =
     SCHOOLS_NOT_FOUND: 'School Method record is not found, please try again',
     MIDNIGHT_NOT_FOUND: 'Midnight Calculations record is not found, please try again',
     TIME_OUT: 'Connection cannot be made to prayer provider, please try again after a while',
-    FILE_NOT_FOUND: 'Connection cannot be made to prayer provider, try ensure internet connectivity'
+    FILE_NOT_FOUND: 'Prayer settings file is not, please try to recreate or resintall package',
+    PROVIDER_NOT_AVAILABLE:'Connection cannot be made to prayer provider, try ensure internet connectivity'
 }
 export interface IPrayerProvider {
     getProviderName(): PrayerProviderName;
@@ -87,8 +88,14 @@ abstract class PrayerProvider implements IPrayerProvider {
     private _db: lowdb.LowdbAsync<any>;
     private readonly fileName: string
     constructor() {
+        try{
         super(PrayerProviderName.PRAYER_TIME);
-        this.fileName =require.resolve('../configurators/prayers.json')////''/configurators/prayers.json';
+        this.fileName = require.resolve('../configurators/prayers.json');////''/configurators/prayers.json';
+        }
+        catch(err)
+        {
+            throw new Error(PrayerErrorMessages.FILE_NOT_FOUND);
+        }
     }
     public async getPrayerAdjustmentMethod(): Promise<IPrayerAdjustmentMethod[]> {
         return await this.getDB().then(result => result.get(prayerTimePaths.adjustmentMethod).value());
@@ -98,10 +105,16 @@ abstract class PrayerProvider implements IPrayerProvider {
         return await this.getObjectById<IPrayerAdjustmentMethod>(index,()=>this.getPrayerAdjustmentMethod());
     }
     private async  getDB(): Promise<lowdb.LowdbAsync<any>> {
+        try{
         if (isNullOrUndefined(this._db))
             return this._db = await lowdb(new FileAsync(this.fileName));
         else
             return this._db;
+        }
+        catch(err)
+        {
+            return Promise.reject(PrayerErrorMessages.FILE_NOT_FOUND)
+        }
     }
     async getPrayerLatitude(): Promise<Array<IPrayerLatitude>> {
 
@@ -134,7 +147,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         let err:Error, result: any, url: any;
         [err, url] = await to(this.getPrayerMethodUrl());
         if (err)
-            return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
+            return Promise.reject(new Error(PrayerErrorMessages.PROVIDER_NOT_AVAILABLE));
         let queryString: any =
         {
             uri: url.methods,
@@ -165,7 +178,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         [err, url] = await to(this.getPrayerTimeUrl());
         if (err)
-            return Promise.reject(new Error(PrayerErrorMessages.FILE_NOT_FOUND));
+            return Promise.reject(new Error(PrayerErrorMessages.PROVIDER_NOT_AVAILABLE));
         prayersList= await this.queryPrayerProvider(duration, queryString, url, prayerSettings, prayerLocation, date, prayersList);
 
         return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));

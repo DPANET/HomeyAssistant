@@ -10,6 +10,7 @@ import ramda= require('ramda');
 //import * as prayers from '../entities/prayer';
 import {IPrayersConfig,ILocationConfig,IConfig} from "./inteface.configuration";
 import * as path from 'path';
+import { any } from '@hapi/joi';
 const configPaths =
 {
     
@@ -46,14 +47,14 @@ export default class Configurator implements IConfig {
             );
             return true;
         } catch (err) {
-            return Promise.reject(ConfigErrorMessages.FILE_NOT_FOUND);
+            return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
         }
     }
     public async getLocationConfig(): Promise<ILocationConfig> {
         let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(configPaths.locationConfig).value()));
         if (err || isNullOrUndefined(result))
-            return Promise.reject(ConfigErrorMessages.BAD_INPUT);
+            return Promise.reject(new Error(ConfigErrorMessages.BAD_INPUT));
         return {
             location:
             {
@@ -76,9 +77,12 @@ export default class Configurator implements IConfig {
     public async savePrayerConfig(prayerConfigs: IPrayersConfig): Promise<boolean> {
         try {
             let original: IPrayersConfig = await this.getPrayerConfig();
-            let updated:IPrayersConfig;
-
-            updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
+            let updated:any;
+            let concatPrayers = (k:any,l:any,r:any)=> l.prayerName ==r.prayerName ? r:l
+            let concatValues= (k:any,l:any,r:any)=> k==="adjustments" ? ramda.values(ramda.mergeDeepWithKey(concatPrayers,l,r)) : r
+            let mergedList:any =ramda.mergeDeepWithKey(concatValues,original,prayerConfigs)
+            updated = ramda.omit(['startDate','endDate'],mergedList);
+            //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
             console.log(updated);
             await this.getDB()
             .then(result=> result.get(configPaths.prayerConfig)
@@ -96,16 +100,17 @@ export default class Configurator implements IConfig {
         let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(configPaths.prayerConfig).value()));
         if (err || isNullOrUndefined(result))
-            return Promise.reject(ConfigErrorMessages.BAD_INPUT);
+            return Promise.reject(new Error(ConfigErrorMessages.BAD_INPUT));
         return {
             method: result.method,
             midnight: result.midnight,
             school: result.school,
             latitudeAdjustment: result.latitudeAdjustment,
-            adjustmentMethod:result.adjutmentMethod,
+            adjustmentMethod:result.adjustmentMethod,
             startDate:isNullOrUndefined(result.startDate) ? DateUtil.getNowDate() : DateUtil.formatDate(result.startDate as string),
             endDate: isNullOrUndefined(result.endDate) ?  DateUtil.addMonth(1, DateUtil.getNowDate()): DateUtil.formatDate(result.endDate as string),
-            adjustments: result.adjustments
+            adjustments: result.adjustments,
+            
         };
     }
     private async  getDB(): Promise<lowdb.LowdbAsync<any>> {

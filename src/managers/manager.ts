@@ -156,27 +156,24 @@ export class LocationBuilder implements ILocationBuilder {
         validationResult = this._validtor.validate(this._location);
         if (validationResult===false)
             return Promise.reject(this._validtor.getValidationError());
-        if (validationResult) {
+    
             if (!isNullOrUndefined(this._location.latitude))
                 [providerErr, locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude, this._location.longtitude));
 
-            else if ((!isNullOrUndefined(this._location.address))) {
+            else if ((!isNullOrUndefined(this._location.address))) 
                 [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
-                if (providerErr)
+                
+            
+            if (providerErr)
                     return Promise.reject(providerErr);
-            }
-            if (isNullOrUndefined(locationResult))
-                return Promise.reject(new Error('Location Provider Error'));
 
             [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
             if (providerErr)
                 return Promise.reject(providerErr);
             this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
             return Promise.resolve(this._location);
-        }
-        else {
-            return Promise.reject();
-        }
+    
+    
     }
 
     public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: lp.ILocationProvider): LocationBuilder {

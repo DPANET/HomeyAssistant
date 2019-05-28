@@ -46,7 +46,19 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "compile": "tsc",
+    "bundlejs": "browserify src/public/js/settings.ts -p [tsify] > lib/public/js/bundle.js --debug",
+    "roolupjs": "rollup lib/public/js/settings.js --format iife --name \"main\"  --file lib/public/js/bundle.js",
+    "html:copy": "copyfiles -u 1 src/**.html lib",
+    "css:copy": "copyfiles -u 1 src/css/**.css lib/",
+    "images:copy": "copyfiles -u 1 src/images/**/* lib/",
+    "start:server": "node --inspect lib/index.js",
+    "debug": "npm run start:server",
+    "wait": "wait-on http://localhost:7000",
+    "parallel": "npm-run-all bundlejs wait",
+    "reload": "browser-sync reload --port 7000",
+    "app": "ts-node src/app.ts",
+    "start": "npm run start:server && npm run app "
   },
   "repository": {
     "type": "git",

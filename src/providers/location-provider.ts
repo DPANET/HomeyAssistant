@@ -1,6 +1,6 @@
 // const dotenv = require('dotenv');
 // dotenv.config();
-import config =require('config');
+import config = require('config');
 
 const to = require('await-to-js').default;
 import ramda = require('ramda');
@@ -28,9 +28,9 @@ export interface ILocationProvider {
 
 }
 //add validation later as a seperate class
- abstract class LocationProvider implements ILocationProvider {
+abstract class LocationProvider implements ILocationProvider {
 
-    private _providerName:LocationProviderName;
+    private _providerName: LocationProviderName;
     constructor(providerName: LocationProviderName) {
         this._providerName = providerName;
     }
@@ -44,9 +44,9 @@ export interface ILocationProvider {
 }
 
 class GoogleLocationProvider extends LocationProvider {
-    private _googleMapClient:any;
+    private _googleMapClient: any;
     private _location: ILocation;
-    private _timeZone:ITimeZone;
+    private _timeZone: ITimeZone;
     constructor() {
         super(LocationProviderName.GOOGLE);
         this._googleMapClient = require('@google/maps').createClient({
@@ -61,21 +61,24 @@ class GoogleLocationProvider extends LocationProvider {
                 latlng: [lat, lng],
                 result_type: ['locality', 'country']
             }).asPromise());
-            if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
-            this._location= this.parseLocation(googleLocation);
+            if (err)
+                return Promise.reject(new Error(LocationErrorMessages.TIME_OUT));
+            if (isNullOrUndefined(googleLocation))
+                return Promise.reject(new Error(LocationErrorMessages.NOT_FOUND));
+            this._location = this.parseLocation(googleLocation);
             return this._location;
         }
-        else throw new Error(LocationErrorMessages.BAD_INPUT);
+        else return Promise.reject(new Error(LocationErrorMessages.BAD_INPUT));
     }
     public async getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone> {
         let googleTimeZone, err, timezoneObject;
-        if (!isNullOrUndefined(lat)  && !isNullOrUndefined(lng)) {
+        if (!isNullOrUndefined(lat) && !isNullOrUndefined(lng)) {
             [err, googleTimeZone] = await to(this._googleMapClient
                 .timezone({ location: [lat, lng] })
                 .asPromise());
-            if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
+            if (err) return Promise.reject(new Error(LocationErrorMessages.NOT_FOUND));
             timezoneObject = googleTimeZone.json;
-            this._timeZone= {
+            this._timeZone = {
                 timeZoneId: timezoneObject.timeZoneId,
                 timeZoneName: timezoneObject.timeZoneName,
                 dstOffset: timezoneObject.dstOffset,
@@ -83,32 +86,35 @@ class GoogleLocationProvider extends LocationProvider {
             };
             return this._timeZone;
         }
-        else throw new Error(LocationErrorMessages.BAD_INPUT);
+        else return Promise.reject(new Error(LocationErrorMessages.BAD_INPUT));
     }
     public async getLocationByAddress(address: string, countryCode: string): Promise<ILocation> {
         let googleLocation, err;
-        if (!isNullOrUndefined(address)  && !isNullOrUndefined(countryCode)) {
+        if (!isNullOrUndefined(address) && !isNullOrUndefined(countryCode)) {
             [err, googleLocation] = await to(this._googleMapClient.
                 geocode({ address: address, components: { country: countryCode } })
                 .asPromise());
-            if (err) throw new Error(LocationErrorMessages.NOT_FOUND);
-            this._location= this.parseLocation(googleLocation);
+            if (err)
+                return Promise.reject(new Error(LocationErrorMessages.TIME_OUT));
+            if (isNullOrUndefined(googleLocation))
+                return Promise.reject(new Error(LocationErrorMessages.NOT_FOUND));
+            this._location = this.parseLocation(googleLocation);
             return this._location;
         }
-        else throw new Error(LocationErrorMessages.BAD_INPUT);
+        else return Promise.reject(new Error(LocationErrorMessages.BAD_INPUT));
 
 
     }
     private parseLocation(googleLocation: any): ILocation {
-        let locationCoordinates:any, locationAddress:any, locationCountry:any,locationCity:any;
-        let filterbycountry= (n:any) => ramda.contains('country', n.types);
-        let filterbyaddress = (n:any) => ramda.contains('locality', n.types);
+        let locationCoordinates: any, locationAddress: any, locationCountry: any, locationCity: any;
+        let filterbycountry = (n: any) => ramda.contains('country', n.types);
+        let filterbyaddress = (n: any) => ramda.contains('locality', n.types);
         if (!isNullOrUndefined(googleLocation) && googleLocation.json.results.length > 0) {
             locationCoordinates = ramda.path(['results', '0', 'geometry', 'location'], googleLocation.json);
             locationCity = ramda.find(filterbyaddress)(googleLocation.json.results[0].address_components);
             locationCountry = ramda.find(filterbycountry)(googleLocation.json.results[0].address_components);
             locationAddress = googleLocation.json.results[0].formatted_address;
-            if (isNullOrUndefined(locationCoordinates)  || isNullOrUndefined(locationAddress) || isNullOrUndefined(locationCountry) || isNullOrUndefined(locationCity))
+            if (isNullOrUndefined(locationCoordinates) || isNullOrUndefined(locationAddress) || isNullOrUndefined(locationCountry) || isNullOrUndefined(locationCity))
                 throw new Error(LocationErrorMessages.BAD_RESULT);
             return {
                 address: locationAddress,

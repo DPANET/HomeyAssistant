@@ -7,15 +7,18 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}\\lib\\app",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ],
-            "skipFiles": [
-                "node_modules/**/*.js"],
-            "smartStep": true,
+            "name": "Debug Program",
+            "sourceMaps": true,
+            "cwd": "${workspaceFolder}",
 
+            "outFiles": [
+                "${workspaceFolder}/lib/**/*.js"
+            ],
+            "program": "${workspaceFolder}/src/app.ts",
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "${workspaceFolder}",
+            "skipFiles": ["${workspaceFolder}/node_modules"],
+            "smartStep": true,
             "trace": true
         }
     ]

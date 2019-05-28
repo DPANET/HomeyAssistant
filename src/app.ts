@@ -92,39 +92,7 @@ var prayerConfigFE:cg.IPrayersConfig= {
     adjustments: [
       {
         prayerName: prayer.PrayersName.IMSAK,
-        adjustments: 2
-      },
-      {
-        prayerName: prayer.PrayersName.FAJR,
-        adjustments: 2
-      },
-      {
-        prayerName: prayer.PrayersName.SUNRISE,
-        adjustments: 3
-      },
-      {
-        prayerName: prayer.PrayersName.DHUHR,
-        adjustments: 2
-      },
-      {
-        prayerName: prayer.PrayersName.ASR,
-        adjustments: 3
-      },
-      {
-        prayerName:prayer.PrayersName.MAGHRIB,
-        adjustments: 2
-      },
-      {
-        prayerName: prayer.PrayersName.SUNSET,
-        adjustments: 0
-      },
-      {
-        prayerName: prayer.PrayersName.ISHA,
-        adjustments: -10
-      },
-      {
-        prayerName: prayer.PrayersName.MIDNIGHT,
-        adjustments: 0
+        adjustments: 5
       }
     ]
   };
@@ -144,8 +112,8 @@ async function buildLocationObject() {
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
         //    console.timeEnd('Prayer_Manager');
-         let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
-         console.log(result)
+      //   let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
+        // console.log(result)
         //   let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
