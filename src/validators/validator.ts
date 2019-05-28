@@ -6,7 +6,8 @@ import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
 import ramda from "ramda";
 export namespace validators {
-    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig;
+    export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig |any;
+    
     export enum ValidatorProviders {
         LocationValidator = "Validate Location",
         PrayerSettingsValidator = "Validate Prayer Settings",
@@ -30,6 +31,7 @@ export namespace validators {
             this._err = err;
             this._name = err.name;
             this._message = err.message;
+
         }
         private _name: string;
         public get name(): string {
@@ -69,13 +71,13 @@ export namespace validators {
         }
 
     }
-    export interface IValid<ValidtionTypes> {
-        validate(validateObject: ValidtionTypes): boolean;
+    export interface IValid< T extends ValidtionTypes> {
+        validate(validateObject: T): boolean;
         isValid(): boolean;
         getValidationError(): IValidationError;
 
     }
-    abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes>
+    abstract class Validator<T> implements IValid<T>
     {
 
         private _validatorName: string;
@@ -91,7 +93,7 @@ export namespace validators {
         protected setIsValid(state: boolean) {
             this._isValid = state;
         }
-        abstract validate(validateObject: ValidtionTypes): boolean;
+        abstract validate(validateObject: T): boolean;
         //   abstract  createValidator(): IValid<ValidtionTypes>;
         public get validatorName(): string {
             return this._validatorName;

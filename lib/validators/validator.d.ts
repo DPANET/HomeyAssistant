@@ -3,7 +3,7 @@ import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
 export declare namespace validators {
-    type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig;
+    type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig | any;
     enum ValidatorProviders {
         LocationValidator = "Validate Location",
         PrayerSettingsValidator = "Validate Prayer Settings",
@@ -19,19 +19,19 @@ export declare namespace validators {
         details: Array<IError>;
         value: object;
     }
-    interface IValid<ValidtionTypes> {
-        validate(validateObject: ValidtionTypes): boolean;
+    interface IValid<T extends ValidtionTypes> {
+        validate(validateObject: T): boolean;
         isValid(): boolean;
         getValidationError(): IValidationError;
     }
-    abstract class Validator<ValidtionTypes> implements IValid<ValidtionTypes> {
+    abstract class Validator<T> implements IValid<T> {
         private _validatorName;
         private _valdationErrors;
         private _isValid;
         constructor(validatorName: string);
         isValid(): boolean;
         protected setIsValid(state: boolean): void;
-        abstract validate(validateObject: ValidtionTypes): boolean;
+        abstract validate(validateObject: T): boolean;
         validatorName: string;
         getValidationError(): IValidationError;
         protected setValidatonError(error: IValidationError): void;
