@@ -6,8 +6,8 @@ import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
 import ramda from "ramda";
 import moment from "moment";
-import val =require("./validators/validator");
-import validators= val.validators;
+import validators =require("./validators/validator");
+//import validators= val.validators;
 import { valid } from "@hapi/joi";
 import util from "util"
 

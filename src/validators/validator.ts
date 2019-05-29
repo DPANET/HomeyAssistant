@@ -5,7 +5,7 @@ import { isNullOrUndefined } from 'util';
 import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
 import ramda from "ramda";
-export namespace validators {
+
     export type ValidtionTypes = prayer.IPrayersSettings | location.ILocationSettings | config.IPrayersConfig |any;
     
     export enum ValidatorProviders {
@@ -362,4 +362,3 @@ export namespace validators {
 
     //     }
     // }
-}
