@@ -91,10 +91,11 @@ var prayerConfigFE:cg.IPrayersConfig= {
     startDate: new Date(),
     endDate:new Date("06-06-2019"),
     adjustments: [
-      {
-        prayerName: prayer.PrayersName.IMSAK,
-        adjustments: 5
-      }
+     { prayerName: prayer.PrayersName.FAJR, adjustments: 350 },
+     { prayerName: prayer.PrayersName.DHUHR, adjustments: 450 },
+     { prayerName: prayer.PrayersName.ASR, adjustments: 600 },
+     { prayerName: prayer.PrayersName.MAGHRIB, adjustments: 750 },
+     { prayerName: prayer.PrayersName.ISHA, adjustments: 800 },
     ]
   };
 
@@ -113,8 +114,8 @@ async function buildLocationObject() {
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
         //    console.timeEnd('Prayer_Manager');
-      //   let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
-        // console.log(result)
+         let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
+         console.log(result)
         //   let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
@@ -125,9 +126,6 @@ async function buildLocationObject() {
            // let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
          //  console.log("Validation Error: "+ validate.getValidationError())
             //console.log(messageShort);
-
-             console.log(prayerManager.getPrayerAdjsutments());
-   
            // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
     }

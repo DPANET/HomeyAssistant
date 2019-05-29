@@ -78,8 +78,10 @@ export default class Configurator implements IConfig {
         try {
             let original: IPrayersConfig = await this.getPrayerConfig();
             let updated:any;
+            let originalIndexBy = ramda.indexBy(ramda.prop('prayerName'));
+            let updateIndexBy = ramda.indexBy(ramda.prop('prayerName'))
             let concatPrayers = (k:any,l:any,r:any)=> l.prayerName ==r.prayerName ? r:l
-            let concatValues= (k:any,l:any,r:any)=> k==="adjustments" ? ramda.values(ramda.mergeDeepWithKey(concatPrayers,l,r)) : r
+            let concatValues= (k:any,l:any,r:any)=> k==="adjustments" ? (ramda.values(ramda.mergeDeepWithKey(concatPrayers,originalIndexBy(l),updateIndexBy(r)))) : r
             let mergedList:any =ramda.mergeDeepWithKey(concatValues,original,prayerConfigs)
             updated = ramda.omit(['startDate','endDate'],mergedList);
             //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
