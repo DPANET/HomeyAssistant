@@ -23,7 +23,7 @@ export interface IValid<T extends ValidtionTypes> {
     isValid(): boolean;
     getValidationError(): IValidationError;
 }
-declare abstract class Validator<T> implements IValid<T> {
+export declare abstract class Validator<T> implements IValid<T> {
     private _validatorName;
     private _valdationErrors;
     private _isValid;

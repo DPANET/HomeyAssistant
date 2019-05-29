@@ -77,7 +77,7 @@ import ramda from "ramda";
         getValidationError(): IValidationError;
 
     }
-    abstract class Validator<T> implements IValid<T>
+   export abstract class Validator<T> implements IValid<T>
     {
 
         private _validatorName: string;
