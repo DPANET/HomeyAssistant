@@ -1,7 +1,7 @@
 
 import prayer = require("./entities/prayer");
 import cg = require("./configurators/inteface.configuration");
-import configurator from "./configurators/configuration";
+import {Configurator} from "./configurators/configuration";
 import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
 import ramda from "ramda";
@@ -102,8 +102,8 @@ var prayerConfigFE:cg.IPrayersConfig= {
 async function buildLocationObject() {
     try {
         console.time('Prayer_Manager');
-         let prayerConfig: cg.IPrayersConfig = await new configurator().getPrayerConfig();
-        let locationConfig: cg.ILocationConfig = await new configurator().getLocationConfig();
+         let prayerConfig: cg.IPrayersConfig = await new Configurator().getPrayerConfig();
+        let locationConfig: cg.ILocationConfig = await new Configurator().getLocationConfig();
 
         // console.log(locationConfig);
         let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder

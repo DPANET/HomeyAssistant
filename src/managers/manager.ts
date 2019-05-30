@@ -6,7 +6,7 @@ import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
-import Configurator from "../configurators/configuration"; 
+import {Configurator} from "../configurators/configuration"; 
 import validators = require('../validators/validator');
 //import validators = val.validators;
 import { isNullOrUndefined } from 'util';

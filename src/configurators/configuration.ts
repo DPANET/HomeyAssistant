@@ -24,7 +24,7 @@ const ConfigErrorMessages =
     FILE_NOT_FOUND: 'Config file not found, please try again'
 }
 
-export default class Configurator implements IConfig {
+export  class Configurator implements IConfig {
 
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;
