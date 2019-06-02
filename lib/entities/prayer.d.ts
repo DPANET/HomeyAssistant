@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { ILocationSettings } from './location';
 import { EventEmitter } from 'events';
 export declare enum PrayersName {
