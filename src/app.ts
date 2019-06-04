@@ -6,10 +6,11 @@ import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
 import ramda from "ramda";
 import moment from "moment";
-import validators =require("./validators/validator");
+import validators =require("./validators/interface.validators");
 //import validators= val.validators;
 import { valid } from "@hapi/joi";
 import util from "util"
+import { ConfigValidator } from "./validators/validator";
 
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
@@ -21,7 +22,6 @@ let prayers: Array<object> =
     { prayerName: 'Maghrib', prayerTime: "2019-01-31T18:09:00.000Z" },
     { prayerName: 'Imsak', prayerTime: "2019-01-31T05:34:00.000Z" },
     { prayerName: 'Midnight', prayerTime: "2019-01-31T00:36:00.000Z" }];
-buildLocationObject().catch((err) => console.log(err));
 interface IPrayersView {
     prayerDate: string,
     fajr: string,
@@ -82,11 +82,11 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 
 }
 
-var prayerConfigFE:cg.IPrayersConfig= {
+var prayerConfigFE:any= {
     method: 4,
     school: 0,
     midnight: 0,
-    adjustmentMethod:2,
+    adjustmentMethod:4,
     latitudeAdjustment: 3,
     startDate: new Date(),
     endDate:new Date("06-06-2019"),
@@ -101,14 +101,14 @@ var prayerConfigFE:cg.IPrayersConfig= {
 
 async function buildLocationObject() {
     try {
-        console.time('Prayer_Manager');
-         let prayerConfig: cg.IPrayersConfig = await new Configurator().getPrayerConfig();
-        let locationConfig: cg.ILocationConfig = await new Configurator().getLocationConfig();
+      //  console.time('Prayer_Manager');
+        //  let prayerConfig: cg.IPrayersConfig = await new Configurator().getPrayerConfig();
+        // let locationConfig: cg.ILocationConfig = await new Configurator().getLocationConfig();
 
-         console.log(locationConfig);
-        let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(locationConfig, prayerConfig)
-            .createPrayerTimeManager();
+        //  console.log(locationConfig);
+        // let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
+        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
+        //     .createPrayerTimeManager();
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(null, prayerConfig)
         //     .setLocationByAddress("Abu Dhabi","AE")
@@ -116,17 +116,19 @@ async function buildLocationObject() {
         //    console.timeEnd('Prayer_Manager');
          //let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
          //console.log(result)
-        //   let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
-         //   console.log(ramda.values(prayer.AdjsutmentMethod));
+            let validate: validators.IValid<cg.IPrayersConfig> = ConfigValidator.createValidator();
+         //  console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
-         //  console.log("the object is valid : " +  validate.validate(prayerConfigFE));
+        //console.log(Object.values(prayer.AdjsutmentMethod));;
+        console.log(prayerConfigFE);
+          console.log("the object is valid : " +  validate.validate(prayerConfigFE));
             //let err:validators.IValidationError = validate.getValidationError();
             //let message:string[] = err.details.map((detail:any)=>`${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
 
            // let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
          //  console.log("Validation Error: "+ validate.getValidationError())
             //console.log(messageShort);
-            console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
+            //console.log(prayerManager.getPrayersByDate(new Date('2019-06-23')));
 
     }
     catch (err) {
@@ -141,4 +143,6 @@ async function buildLocationObject() {
         }
 
 }
+buildLocationObject().catch((err) => console.log(err));
+
 

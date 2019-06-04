@@ -2,7 +2,6 @@ import Joi = require('@hapi/joi');
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
-import ramda from "ramda";
 import {Validator,ValidatorProviders,IValid} from "./interface.validators";
 
 
@@ -18,13 +17,12 @@ export class LocationValidator extends Validator<location.ILocationSettings>
             longtitude: Joi.number().min(-180).max(180),
             countryName: Joi.any()
         })
-            .and('address', 'countryCode')
-            .and('latitude', 'longtitude');
+        .and('address', 'countryCode')
+        .and('latitude', 'longtitude');
 
     }
     public validate(validateObject: location.ILocationSettings): boolean {
         return super.genericValidator(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
-
     }
 
     public static createValidator(): IValid<location.ILocationSettings> {
@@ -43,7 +41,7 @@ export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
         this._adjustmentsSchema = Joi.object().keys({
             prayerName: Joi.string()
                 .label('Prayer Name')
-                .valid(ramda.values(prayer.PrayersName))
+                .valid(Object.values(prayer.PrayersName))
                 .required()
                 .error(this.processErrorMessage),
             adjustments: Joi.number()
@@ -64,7 +62,7 @@ export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
             method: Joi.object().keys({
                 id: Joi.number()
                     .required()
-                    .valid(ramda.values(prayer.Methods))
+                    .valid(Object.values(prayer.Methods))
                     .label('Prayer Method')
                     .error(this.processErrorMessage)
             }),
@@ -72,28 +70,28 @@ export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
                 id: Joi.number()
                     .required()
                     .label('Prayer School')
-                    .valid(ramda.values(prayer.Schools))
+                    .valid(Object.values(prayer.Schools))
                     .error(this.processErrorMessage)
             }),
             latitudeAdjustment: Joi.object().keys({
                 id: Joi.number()
                     .required()
                     .label('Prayer Latitude')
-                    .valid(ramda.values(prayer.LatitudeMethod))
+                    .valid(Object.values(prayer.LatitudeMethod))
                     .error(this.processErrorMessage)
             }),
             midnight: Joi.object().keys({
                 id: Joi.number()
                     .required()
                     .label('Prayer Midnight')
-                    .valid(ramda.values(prayer.MidnightMode))
+                    .valid(Object.values(prayer.MidnightMode))
                     .error(this.processErrorMessage)
             }),
             adjustmentMethod: Joi.object().keys({
                 id: Joi.number()
                     .required()
                     .label('Adjustment Method')
-                    .valid(ramda.values(prayer.AdjsutmentMethod))
+                    .valid(Object.values(prayer.AdjsutmentMethod))
                     .error(this.processErrorMessage)
             }),
             adjustments: Joi.array()
@@ -125,7 +123,7 @@ export class ConfigValidator extends Validator<config.IPrayersConfig>
         this._adjustmentsSchema = Joi.object().keys({
             prayerName: Joi.string()
                 .label('Prayer Name')
-                .valid(ramda.values(prayer.PrayersName))
+                .valid(Object.values(prayer.PrayersName))
                 .required()
                 .error(this.processErrorMessage),
             adjustments: Joi.number()
@@ -147,22 +145,22 @@ export class ConfigValidator extends Validator<config.IPrayersConfig>
                 .error(this.processErrorMessage),
             method: Joi
                 .number()
-                .valid(ramda.values(prayer.Methods))
+                .valid(Object.values(prayer.Methods))
                 .label('Prayer Method')
                 .required()
                 .error(this.processErrorMessage),
             school: Joi.number()
                 .required()
                 .label('School')
-                .valid(ramda.values(prayer.Schools))
+                .valid(Object.values(prayer.Schools))
                 .error(this.processErrorMessage),
             latitudeAdjustment: Joi.number()
                 .required()
                 .label('Latitude Adjustment')
-                .valid(ramda.values(prayer.LatitudeMethod))
+                .valid(Object.values(prayer.LatitudeMethod))
                 .error(this.processErrorMessage),
             adjustmentMethod: Joi.number().required()
-                .valid(ramda.values(prayer.AdjsutmentMethod))
+                .valid(Object.values(prayer.AdjsutmentMethod))
                 .label('Adjust Method')
                 .error(this.processErrorMessage),
             adjustments: Joi.array()

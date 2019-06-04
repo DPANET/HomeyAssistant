@@ -1,6 +1,5 @@
 import Joi = require('@hapi/joi');
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
-
 export type ValidtionTypes =  any;
 
 export enum ValidatorProviders {
@@ -147,8 +146,8 @@ export abstract class Validator<T> implements IValid<T>
     protected genericValidator(validateFn: Joi.ValidationResult<T> ): boolean {
         let result, err, iErr: IValidationError;
         
-        err = validateFn.error;
-        if (isNullOrUndefined(err)) {
+        err =  validateFn.error;
+        if (!isNullOrUndefined(err)) {
             iErr = this.processErrorMessages(err);
             this.setIsValid(false);
             this.setValidatonError(iErr);
