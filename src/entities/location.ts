@@ -1,5 +1,5 @@
 
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from '../util/isNullOrUndefined';
 export enum LocationTypeName {
   LocationBuilder = "Location Builder"
 };

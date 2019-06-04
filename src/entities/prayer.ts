@@ -1,7 +1,6 @@
 
 import { ILocationSettings } from './location';
-import { isNullOrUndefined } from 'util';
-import { EventEmitter } from 'events';
+import { isNullOrUndefined } from '../util/isNullOrUndefined';
 export enum PrayersName {
     IMSAK = "Imsak",
     FAJR = "Fajr",
@@ -371,8 +370,4 @@ export class PrayersSettings implements IPrayersSettings {
     }
 
 
-}
-export class PrayerEvents extends EventEmitter
-{
-    
 }

@@ -1,5 +1,4 @@
 import { ILocationSettings } from './location';
-import { EventEmitter } from 'events';
 export declare enum PrayersName {
     IMSAK = "Imsak",
     FAJR = "Fajr",
@@ -144,6 +143,4 @@ export declare class PrayersSettings implements IPrayersSettings {
     toJSON(): IPrayersSettings;
     private _prayersSettings;
     constructor(prayersSettings?: IPrayersSettings);
-}
-export declare class PrayerEvents extends EventEmitter {
 }

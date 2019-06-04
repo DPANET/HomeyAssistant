@@ -4,7 +4,7 @@ import config = require('config');
 
 const to = require('await-to-js').default;
 import ramda = require('ramda');
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { ITimeZone, ILocation } from '../entities/location';
 
 export enum LocationProviderName {

@@ -105,7 +105,7 @@ async function buildLocationObject() {
          let prayerConfig: cg.IPrayersConfig = await new Configurator().getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await new Configurator().getLocationConfig();
 
-        // console.log(locationConfig);
+         console.log(locationConfig);
         let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager();
@@ -114,8 +114,8 @@ async function buildLocationObject() {
         //     .setLocationByAddress("Abu Dhabi","AE")
         //     .createPrayerTimeManager();
         //    console.timeEnd('Prayer_Manager');
-         let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
-         console.log(result)
+         //let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
+         //console.log(result)
         //   let validate: validators.IValid<validators.ValidtionTypes> = validators.ConfigValidator.createValidator();
          //   console.log(ramda.values(prayer.AdjsutmentMethod));
             //console.log(prayer.AdjsutmentMethod.Server);
@@ -126,7 +126,7 @@ async function buildLocationObject() {
            // let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
          //  console.log("Validation Error: "+ validate.getValidationError())
             //console.log(messageShort);
-           // console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
+            console.log(prayerManager.getPrayersByDate(new Date('2019-05-23')));
 
     }
     catch (err) {

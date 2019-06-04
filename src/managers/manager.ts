@@ -7,11 +7,11 @@ import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
 import {Configurator} from "../configurators/configuration"; 
-import validators = require('../validators/validator');
+import validators = require('../validators/interface.validators');
+import {PrayerSettingsValidator,LocationValidator,ConfigValidator} from "../validators/validator";
 //import validators = val.validators;
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { DateUtil } from '../util/utility';
-import util = require('util');
 import {IPrayerManager,ILocationBuilder,IPrayerSettingsBuilder,IPrayerTimeBuilder} from "./interface.manager"
 
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
@@ -97,7 +97,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     public static createPrayerSettingsBuilder(prayerConfig?: IPrayersConfig, prayerProvider?: pp.IPrayerProvider): IPrayerSettingsBuilder {
         let prayerProviderName: pp.IPrayerProvider = pp.PrayerProviderFactory
             .createPrayerProviderFactory(pp.PrayerProviderName.PRAYER_TIME);
-        let validate: validators.IValid<validators.ValidtionTypes> = validators.PrayerSettingsValidator.createValidator();
+        let validate: validators.IValid<validators.ValidtionTypes> = PrayerSettingsValidator.createValidator();
         return new PrayerSettingsBuilder(prayerProviderName, validate, prayerConfig);
     }
 
@@ -164,7 +164,7 @@ export class LocationBuilder implements ILocationBuilder {
     public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: lp.ILocationProvider): LocationBuilder {
         let providerName: lp.ILocationProvider = lp.LocationProviderFactory.
             createLocationProviderFactory(lp.LocationProviderName.GOOGLE);
-        let validate: validators.IValid<validators.ValidtionTypes> = validators.LocationValidator.createValidator();
+        let validate: validators.IValid<validators.ValidtionTypes> = LocationValidator.createValidator();
         return new LocationBuilder(providerName, validate, locationConfig);
     }
 
@@ -302,15 +302,15 @@ class PrayerManager implements IPrayerManager {
 
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
-    private _prayerEvents: prayer.PrayerEvents;
+   // private _prayerEvents: prayer.PrayerEvents;
     constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
         this._prayerTime = prayerTime;
-        this._prayerEvents = new prayer.PrayerEvents();
+     //   this._prayerEvents = new prayer.PrayerEvents();
         this._prayerTimeBuilder = prayerTimeBuilder;
     }
     public async savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean> {
        try{
-        let validator: validators.IValid<IPrayersConfig> = validators.ConfigValidator.createValidator();
+        let validator: validators.IValid<IPrayersConfig> =ConfigValidator.createValidator();
         let validationResult: boolean = validator.validate(prayerConfig);
         let validationErr: validators.IValidationError;
         if(validationResult ===false)

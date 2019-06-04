@@ -3,7 +3,7 @@ const to = require('await-to-js').default;
 import ramda = require('ramda');
 
 
-import { isNullOrUndefined ,inspect} from 'util';
+import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight, IPrayerAdjustmentMethod,AdjsutmentMethod } from '../entities/prayer';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
