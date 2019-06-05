@@ -90,7 +90,9 @@ export  class Configurator implements IConfig {
             .then(result=> result.get(configPaths.prayerConfig)
             .assign(updated)
             .write()
-            );
+            .then()
+            .catch((err)=>console.log(err)));
+            
             return Promise.resolve(true);
         } catch (err) {
             return Promise.reject(err);
