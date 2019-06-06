@@ -316,7 +316,7 @@ class PrayerManager implements IPrayerManager {
         if(validationResult ===false)
             return Promise.reject(validator.getValidationError());        
         let configurator:Configurator = new Configurator();
-        configurator.savePrayerConfig(prayerConfig);
+        await configurator.savePrayerConfig(prayerConfig);
         return Promise.resolve(true)
        }
         catch(err)
