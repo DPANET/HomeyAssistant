@@ -1,4 +1,6 @@
-
+//process.env.NODE_CONFIG_DIR = "config";
+import dotenv = require('dotenv');
+dotenv.config();
 import prayer = require("./entities/prayer");
 import cg = require("./configurators/inteface.configuration");
 import {Configurator} from "./configurators/configuration";
@@ -115,6 +117,7 @@ async function buildLocationObject() {
         //     .createPrayerTimeManager();
         //    console.timeEnd('Prayer_Manager');
          let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
+         console.log(`save result :${result}`)
          //console.log(result)
             let validate: validators.IValid<cg.IPrayersConfig> = ConfigValidator.createValidator();
          //  console.log(ramda.values(prayer.AdjsutmentMethod));

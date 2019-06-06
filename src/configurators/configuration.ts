@@ -1,4 +1,5 @@
 import Debug = require('debug');
+import config from "config";
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
@@ -9,7 +10,7 @@ import { DateUtil } from '../util/utility';
 import ramda= require('ramda'); 
 //import * as prayers from '../entities/prayer';
 import {IPrayersConfig,ILocationConfig,IConfig} from "./inteface.configuration";
-
+import path from "path";
 const configPaths =
 {
     
@@ -20,7 +21,8 @@ const ConfigErrorMessages =
 {
     BAD_INPUT: 'Prayer setting recond is not found, please try again',
     TIME_OUT: 'Connection cannot be made to prayer provider, please try again after a while',
-    FILE_NOT_FOUND: 'Config file not found, please try again'
+    FILE_NOT_FOUND: 'Config file not found, please try again',
+    SAVE_FAILED: 'Confile file saving failed'
 }
 
 export  class Configurator implements IConfig {
@@ -31,7 +33,7 @@ export  class Configurator implements IConfig {
         if(!isNullOrUndefined(fileName))
         this._fileName = fileName;
         else
-       this._fileName= 'config/config.json';
+       this._fileName= path.join(config.get("CONFIG_FOLDER_PATH"),config.get("PRAYER_CONFIG"));
     }
     public async saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean> {
         try {
@@ -75,6 +77,7 @@ export  class Configurator implements IConfig {
     }
     public async savePrayerConfig(prayerConfigs: IPrayersConfig): Promise<boolean> {
         try {
+            let err:Error,result:any;
             let original: IPrayersConfig = await this.getPrayerConfig();
             let updated:any;
             let originalIndexBy = ramda.indexBy(ramda.prop('prayerName'));
@@ -85,14 +88,20 @@ export  class Configurator implements IConfig {
             updated = ramda.omit(['startDate','endDate'],mergedList);
             //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
           //  console.log(updated);
-            await this.getDB()
-            .then(result=> result.get(configPaths.prayerConfig)
+            [err,result]=await to(this.getDB()
+            .then(async (result)=>{return await result.get(configPaths.prayerConfig)
             .assign(updated)
-            .write()
-            .then((value)=>console.log(`save success: ${value}`))
-            .catch((err)=>console.log(err)));
-            
+            .write().then().catch()}));
+            if(err)
+            return Promise.reject(err);
+            if(isNullOrUndefined(result))
+            return Promise.reject(ConfigErrorMessages.SAVE_FAILED);
+            if(result)
             return Promise.resolve(true);
+
+            //.then((value)=>console.log(`save success: ${value}`))
+            //.catch((err)=> Promise.reject(err));
+            
         } catch (err) {
             return Promise.reject(err);
         }
