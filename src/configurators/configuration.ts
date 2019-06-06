@@ -88,12 +88,12 @@ export  class Configurator implements IConfig {
             updated = ramda.omit(['startDate','endDate'],mergedList);
             //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
           //  console.log(updated);
-            [err,result]=await to(this.getDB()
+             result =await this.getDB()
             .then(async (result)=>{return await result.get(configPaths.prayerConfig)
             .assign(updated)
-            .write().then().catch()}));
-            if(err)
-            return Promise.reject(err);
+            .write()
+            });
+
             if(isNullOrUndefined(result))
             return Promise.reject(ConfigErrorMessages.SAVE_FAILED);
             if(result)

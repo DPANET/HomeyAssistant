@@ -100,7 +100,7 @@ var prayerConfigFE:cg.IPrayersConfig= {
      { prayerName: prayer.PrayersName.ISHA, adjustments: 800 },
     ]
   };
-
+var countnumber = 0;
 async function buildLocationObject() {
     try {
       //  console.time('Prayer_Manager');
@@ -135,6 +135,11 @@ async function buildLocationObject() {
 
     }
     catch (err) {
+        console.log(err);
+        if(countnumber <4)
+       await buildLocationObject();
+        countnumber+=1;
+       
       let message:string;
             if(err.name==="ValidationError")
             {
