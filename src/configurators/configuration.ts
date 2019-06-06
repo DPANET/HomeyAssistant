@@ -1,16 +1,15 @@
 import Debug = require('debug');
 const debug = Debug("app:startup");
 const to = require('await-to-js').default;
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import lowdb from "lowdb";
 import lowdbfile from "lowdb/adapters/FileAsync";
 import { DateUtil } from '../util/utility';
-import _ = require('lodash');
+//import _ = require('lodash');
 import ramda= require('ramda'); 
 //import * as prayers from '../entities/prayer';
 import {IPrayersConfig,ILocationConfig,IConfig} from "./inteface.configuration";
-import * as path from 'path';
-import { any } from '@hapi/joi';
+
 const configPaths =
 {
     
@@ -38,7 +37,7 @@ export  class Configurator implements IConfig {
         try {
             let original: ILocationConfig = await this.getLocationConfig();
             let updated:ILocationConfig;
-            updated= _.merge<ILocationConfig,ILocationConfig>(original,locationConfig);
+            updated= ramda.merge<ILocationConfig,ILocationConfig>(original,locationConfig);
             console.log(updated);
             await this.getDB()
             .then(result=> result.get(configPaths.locationConfig)
@@ -85,12 +84,12 @@ export  class Configurator implements IConfig {
             let mergedList:any =ramda.mergeDeepWithKey(concatValues,original,prayerConfigs)
             updated = ramda.omit(['startDate','endDate'],mergedList);
             //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
-            console.log(updated);
+          //  console.log(updated);
             await this.getDB()
             .then(result=> result.get(configPaths.prayerConfig)
             .assign(updated)
             .write()
-            .then()
+            .then((value)=>console.log(`save success: ${value}`))
             .catch((err)=>console.log(err)));
             
             return Promise.resolve(true);

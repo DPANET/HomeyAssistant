@@ -12,7 +12,6 @@
   "dependencies": {
     "@google/maps": "^0.5.5",
     "@hapi/joi": "^15.0.3",
-    "@sentry/minimal": "^5.4.0",
     "await-to-js": "^2.1.1",
     "config": "^3.1.0",
     "debug": "^2.6.9",
