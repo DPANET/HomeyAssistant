@@ -340,7 +340,23 @@ class PrayerManager implements IPrayerManager {
             countryCode: this._prayerTime.location.countryCode,
             countryName: this._prayerTime.location.countryName,
             address: this._prayerTime.location.address
+        
         };
+    }
+    public getPrayerLocationSettings():location.ILocationSettings
+    {
+        return {
+            latitude: this._prayerTime.location.latitude,
+            longtitude: this._prayerTime.location.longtitude,
+            city: this._prayerTime.location.city,
+            countryCode: this._prayerTime.location.countryCode,
+            countryName: this._prayerTime.location.countryName,
+            address: this._prayerTime.location.address,
+            timeZoneId: this._prayerTime.location.timeZoneId,
+            timeZoneName: this._prayerTime.location.timeZoneName,
+            dstOffset: this._prayerTime.location.dstOffset,
+            rawOffset: this._prayerTime.location.rawOffset
+        }
     }
     public getPrayerStartPeriod(): Date {
         return this._prayerTime.pareyerSettings.startDate;

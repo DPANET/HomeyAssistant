@@ -1,6 +1,6 @@
 import Debug = require('debug');
 import config from "config";
-const debug = Debug("app:startup");
+const debug = Debug("app:router");
 const to = require('await-to-js').default;
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import lowdb from "lowdb";

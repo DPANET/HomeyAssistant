@@ -29,6 +29,7 @@ export interface IPrayerManager {
     getPrayerConfig(): IPrayersConfig;
     getPrayerTimeZone(): location.ITimeZone;
     getPrayerLocation(): location.ILocation;
+    getPrayerLocationSettings():location.ILocationSettings;
     getPrayerStartPeriod(): Date;
     getPrayerEndPeriond(): Date;
     getPrayersByDate(date: Date): prayer.IPrayers;
