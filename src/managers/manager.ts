@@ -130,7 +130,7 @@ export class LocationBuilder implements ILocationBuilder {
         this._location.longtitude = lng;
         return this;
     }
-    public setLocationAddress(address: string, countryCode: string): ILocationBuilder {
+    public setLocationAddress(address: string, countryCode?: string): ILocationBuilder {
         this._location.countryCode = countryCode;
         this._location.address = address;
         return this;
@@ -211,7 +211,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         this._locationBuilder.setLocationCoordinates(lat, lng);
         return this;
     }
-    public setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder {
+    public setLocationByAddress(address: string, countryCode?: string): IPrayerTimeBuilder {
         this._locationBuilder.setLocationAddress(address, countryCode);
         return this;
     }

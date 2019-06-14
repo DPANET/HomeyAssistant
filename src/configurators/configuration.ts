@@ -41,12 +41,16 @@ export  class Configurator implements IConfig {
             let updated:ILocationConfig;
             updated= ramda.merge<ILocationConfig,ILocationConfig>(original,locationConfig);
             console.log(updated);
-            await this.getDB()
-            .then(result=> result.get(configPaths.locationConfig)
-            .assign(updated)
+            let result=await this.getDB()
+            .then(async (result)=> {let action:any = await result.get(configPaths.locationConfig)
+             return await action.assign(updated)
             .write()
+            }
             );
-            return true;
+            if(isNullOrUndefined(result))
+            return Promise.reject(ConfigErrorMessages.SAVE_FAILED);
+            if(result)
+            return Promise.resolve(true);
         } catch (err) {
             return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
         }
@@ -89,8 +93,8 @@ export  class Configurator implements IConfig {
             //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
           //  console.log(updated);
              result =await this.getDB()
-            .then(async (result)=>{return await result.get(configPaths.prayerConfig)
-            .assign(updated)
+            .then(async (result)=>{  let action:any= result.get(configPaths.prayerConfig)
+            return await action.assign(updated)
             .write()
             });
 

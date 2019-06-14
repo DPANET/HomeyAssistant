@@ -15,7 +15,7 @@ export interface IPrayerSettingsBuilder {
 
 export interface ILocationBuilder {
     setLocationCoordinates(lat: number, lng: number): ILocationBuilder
-    setLocationAddress(address: string, countryCode: string): ILocationBuilder
+    setLocationAddress(address: string, countryCode?: string): ILocationBuilder
     createLocation(): Promise<location.ILocationSettings>
 
 };
@@ -50,7 +50,7 @@ export interface IPrayerTimeBuilder {
     setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerTimeBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
-    setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
+    setLocationByAddress(address: string, countryCode?: string): IPrayerTimeBuilder;
     createPrayerTimeManager(): Promise<IPrayerManager>;
     createPrayerTime(): Promise<prayer.IPrayersTime>;
 };

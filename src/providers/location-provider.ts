@@ -36,7 +36,7 @@ abstract class LocationProvider implements ILocationProvider {
     }
     abstract async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation>;
     abstract async getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone>;
-    abstract async getLocationByAddress(address: string, countryCode: string): Promise<ILocation>;
+    abstract async getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>;
 
 }
 
@@ -85,11 +85,16 @@ class GoogleLocationProvider extends LocationProvider {
         }
         else return Promise.reject(new Error(LocationErrorMessages.BAD_INPUT));
     }
-    public async getLocationByAddress(address: string, countryCode: string): Promise<ILocation> {
+    public async getLocationByAddress(address: string, countryCode?: string): Promise<ILocation> {
+        let locationinput={
+            address:address,
+            components: { country: isNullOrUndefined(countryCode)? "" : countryCode }           
+        }
+        
         let googleLocation, err;
-        if (!isNullOrUndefined(address) && !isNullOrUndefined(countryCode)) {
+        if (!isNullOrUndefined(address) ) {
             [err, googleLocation] = await to(this._googleMapClient.
-                geocode({ address: address, components: { country: countryCode } })
+                geocode(locationinput)
                 .asPromise());
             if (err)
                 return Promise.reject(new Error(LocationErrorMessages.TIME_OUT));

@@ -17,7 +17,7 @@ export class LocationValidator extends Validator<location.ILocationSettings>
             longtitude: Joi.number().min(-180).max(180),
             countryName: Joi.any()
         })
-        .and('address', 'countryCode')
+        .and('address')
         .and('latitude', 'longtitude');
 
     }

@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/maps": "^0.5.5",
     "@hapi/joi": "^15.0.3",
+    "@types/lowdb": "^1.0.9",
     "await-to-js": "^2.1.1",
     "config": "^3.1.0",
     "debug": "^2.6.9",
@@ -28,15 +29,14 @@
     "@types/cron": "^1.7.1",
     "@types/debug": "0.0.31",
     "@types/dotenv": "^6.1.1",
-    "@types/googlemaps": "^3.30.19",
+    "@types/googlemaps": "^3.36.4",
     "@types/hapi__joi": "^15.0.1",
-    "@types/lowdb": "^1.0.7",
     "@types/moment-timezone": "^0.5.12",
-    "@types/node": "^10.14.5",
+    "@types/node": "^10.14.9",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
-    "@types/request-promise-native": "^1.0.15",
-    "typescript": "^3.4.4"
+    "@types/request-promise-native": "^1.0.16",
+    "typescript": "^3.5.2"
   },
   "directories": {
     "lib": "lib",

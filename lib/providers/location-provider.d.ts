@@ -16,7 +16,7 @@ declare abstract class LocationProvider implements ILocationProvider {
     getProviderName(): LocationProviderName;
     abstract getLocationByCoordinates(lat: number, lng: number): Promise<ILocation>;
     abstract getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone>;
-    abstract getLocationByAddress(address: string, countryCode: string): Promise<ILocation>;
+    abstract getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>;
 }
 export declare class LocationProviderFactory {
     static createLocationProviderFactory(locationProviderName: LocationProviderName): LocationProvider;

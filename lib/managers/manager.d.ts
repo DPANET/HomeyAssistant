@@ -25,7 +25,7 @@ export declare class LocationBuilder implements ILocationBuilder {
     private _validtor;
     private constructor();
     setLocationCoordinates(lat: number, lng: number): ILocationBuilder;
-    setLocationAddress(address: string, countryCode: string): ILocationBuilder;
+    setLocationAddress(address: string, countryCode?: string): ILocationBuilder;
     createLocation(): Promise<location.ILocationSettings>;
     static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: lp.ILocationProvider): LocationBuilder;
 }
@@ -42,7 +42,7 @@ export declare class PrayerTimeBuilder implements IPrayerTimeBuilder {
     setPrayerLatitudeAdjustment(latitudeAdjustment: prayer.LatitudeMethod): IPrayerTimeBuilder;
     setPrayerPeriod(startDate: Date, endDate: Date): IPrayerTimeBuilder;
     setLocationByCoordinates(lat: number, lng: number): IPrayerTimeBuilder;
-    setLocationByAddress(address: string, countryCode: string): IPrayerTimeBuilder;
+    setLocationByAddress(address: string, countryCode?: string): IPrayerTimeBuilder;
     setPrayerAdjustmentMethod(adjustmentMethodId: prayer.AdjsutmentMethod): IPrayerTimeBuilder;
     createPrayerTime(): Promise<prayer.IPrayersTime>;
     private adjustPrayers;
