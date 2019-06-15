@@ -6,13 +6,13 @@ import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
-import {Configurator} from "../configurators/configuration"; 
+import { Configurator } from "../configurators/configuration";
 import validators = require('../validators/interface.validators');
-import {PrayerSettingsValidator,LocationValidator,ConfigValidator} from "../validators/validator";
+import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator,LocationConfigValidator } from "../validators/validator";
 //import validators = val.validators;
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { DateUtil } from '../util/utility';
-import {IPrayerManager,ILocationBuilder,IPrayerSettingsBuilder,IPrayerTimeBuilder} from "./interface.manager"
+import { IPrayerManager, ILocationBuilder, IPrayerSettingsBuilder, IPrayerTimeBuilder } from "./interface.manager"
 
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
 
@@ -76,8 +76,8 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     public async createPrayerSettings(): Promise<prayer.IPrayersSettings> {
         let validationErr: validators.IValidationError;
         let validationResult: boolean = false;
-        validationResult =this._validtor.validate(this._prayerSettings);
-        if (validationResult===false)
+        validationResult = this._validtor.validate(this._prayerSettings);
+        if (validationResult === false)
             return Promise.reject(this._validtor.getValidationError());
         if (validationResult) {
             try {
@@ -139,26 +139,26 @@ export class LocationBuilder implements ILocationBuilder {
         let validationErr: validators.IValidationError, validationResult: boolean = false;
         let providerErr: Error, locationResult: location.ILocation, timezoneResult: location.ITimeZone;
         validationResult = this._validtor.validate(this._location);
-        if (validationResult===false)
+        if (validationResult === false)
             return Promise.reject(this._validtor.getValidationError());
-    
-            if (!isNullOrUndefined(this._location.latitude))
-                [providerErr, locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude, this._location.longtitude));
 
-            else if ((!isNullOrUndefined(this._location.address))) 
-                [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
-                
-            
-            if (providerErr)
-                    return Promise.reject(providerErr);
+        if (!isNullOrUndefined(this._location.latitude))
+            [providerErr, locationResult] = await to(this._locationProvider.getLocationByCoordinates(this._location.latitude, this._location.longtitude));
 
-            [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
-            if (providerErr)
-                return Promise.reject(providerErr);
-            this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
-            return Promise.resolve(this._location);
-    
-    
+        else if ((!isNullOrUndefined(this._location.address)))
+            [providerErr, locationResult] = await to(this._locationProvider.getLocationByAddress(this._location.address, this._location.countryCode));
+
+
+        if (providerErr)
+            return Promise.reject(providerErr);
+
+        [providerErr, timezoneResult] = await to(this._locationProvider.getTimeZoneByCoordinates(locationResult.latitude, locationResult.longtitude));
+        if (providerErr)
+            return Promise.reject(providerErr);
+        this._location = ramda.mergeWith(ramda.concat, locationResult, timezoneResult);
+        return Promise.resolve(this._location);
+
+
     }
 
     public static createLocationBuilder(locationConfig?: ILocationConfig, ILocationProvider?: lp.ILocationProvider): LocationBuilder {
@@ -220,18 +220,17 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         return this;
     }
     public async createPrayerTime(): Promise<prayer.IPrayersTime> {
-       
+
         let location: location.ILocationSettings, prayerSettings: prayer.IPrayersSettings;
         try {
             // location = await this._locationBuilder.createLocation();
             // prayerSettings = await this._prayerSettingsBuilder.createPrayerSettings()
-            await Promise.all([ this._locationBuilder.createLocation(), this._prayerSettingsBuilder.createPrayerSettings()])
-             .then((result:any)=>
-             {   
-                 location= result[0];
-                 prayerSettings= result[1];
+            await Promise.all([this._locationBuilder.createLocation(), this._prayerSettingsBuilder.createPrayerSettings()])
+                .then((result: any) => {
+                    location = result[0];
+                    prayerSettings = result[1];
 
-             });
+                });
 
             this._prayers = await this._prayerProvider.getPrayerTime(prayerSettings, location);
             this._prayers = await this.adjustPrayers(this._prayers, prayerSettings);
@@ -240,18 +239,18 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         catch (err) {
             return Promise.reject(err);
         }
-        
+
     }
     private adjustPrayers(prayers: prayer.IPrayers[], prayerSettings: prayer.IPrayersSettings): prayer.IPrayers[] {
         //  let adjustTimingFN = ramda.find<>(n => n.prayerName === prayerName, this.getPrayerAdjsutments());
         //console.log(prayers);
         switch (prayerSettings.adjustmentMethod.id) {
             case prayer.AdjsutmentMethod.Provider:
-            break;
+                break;
             case prayer.AdjsutmentMethod.Server:
             case prayer.AdjsutmentMethod.Client:
-            prayers = this.adjustServerPrayers(prayers, prayerSettings);
-            break;
+                prayers = this.adjustServerPrayers(prayers, prayerSettings);
+                break;
         }
         return prayers
     }
@@ -267,7 +266,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
                 ramda.values
                     (ramda.mergeDeepRight(prayerTimeObject.prayerTime, indexedByAdjustment)),
                 prayerTimeObject);
-        var addObject = (o: any) => ramda.set(prayerTime, DateUtil.addMinutes( o.prayerTime,o.adjustments), o);
+        var addObject = (o: any) => ramda.set(prayerTime, DateUtil.addMinutes(o.prayerTime, o.adjustments), o);
         var pluckObject = ramda.dissoc('adjustments')
         var addPrayerAdjustment =
             (prayerTimeObject: prayer.IPrayers) => ramda.set(
@@ -297,31 +296,42 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     }
 };
 class PrayerManager implements IPrayerManager {
-
-
-
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
-   // private _prayerEvents: prayer.PrayerEvents;
+    // private _prayerEvents: prayer.PrayerEvents;
     constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
         this._prayerTime = prayerTime;
-     //   this._prayerEvents = new prayer.PrayerEvents();
+        //   this._prayerEvents = new prayer.PrayerEvents();
         this._prayerTimeBuilder = prayerTimeBuilder;
     }
     public async savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean> {
-       try{
-        let validator: validators.IValid<IPrayersConfig> =ConfigValidator.createValidator();
-        let validationResult: boolean = validator.validate(prayerConfig);
-        let validationErr: validators.IValidationError;
-        if(validationResult ===false)
-            return Promise.reject(validator.getValidationError());        
-        let configurator:Configurator = new Configurator();
-        await configurator.savePrayerConfig(prayerConfig);
-        return Promise.resolve(true)
-       }
-        catch(err)
-        {
-          return  Promise.reject(err);
+        try {
+            let validator: validators.IValid<IPrayersConfig> = PrayerConfigValidator.createValidator();
+            let validationResult: boolean = validator.validate(prayerConfig);
+            let validationErr: validators.IValidationError;
+            if (validationResult === false)
+                return Promise.reject(validator.getValidationError());
+            let configurator: Configurator = new Configurator();
+            await configurator.savePrayerConfig(prayerConfig);
+            return Promise.resolve(true)
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+    }
+    public async saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean> {
+        try {
+            let validator: validators.IValid<ILocationConfig> = LocationConfigValidator.createValidator();
+            let validationResult: boolean = validator.validate(locationConfig);
+            let validationErr: validators.IValidationError;
+            if (validationResult === false)
+                return Promise.reject(validator.getValidationError());
+            let configurator: Configurator = new Configurator();
+            await configurator.saveLocationConfig(locationConfig);
+            return Promise.resolve(true)
+        }
+        catch (err) {
+            return Promise.reject(err);
         }
     }
     public getPrayerTimeZone(): location.ITimeZone {
@@ -340,11 +350,10 @@ class PrayerManager implements IPrayerManager {
             countryCode: this._prayerTime.location.countryCode,
             countryName: this._prayerTime.location.countryName,
             address: this._prayerTime.location.address
-        
+
         };
     }
-    public getPrayerLocationSettings():location.ILocationSettings
-    {
+    public getPrayerLocationSettings(): location.ILocationSettings {
         return {
             latitude: this._prayerTime.location.latitude,
             longtitude: this._prayerTime.location.longtitude,

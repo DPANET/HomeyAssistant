@@ -11,7 +11,7 @@ import moment from "moment";
 import validators =require("./validators/interface.validators");
 //import validators= val.validators;
 import { valid } from "@hapi/joi";
-import { ConfigValidator } from "./validators/validator";
+import { PrayerConfigValidator,LocationConfigValidator } from "./validators/validator";
 import { DateUtil } from "./util/utility";
 
 let prayers: Array<object> =
@@ -105,11 +105,18 @@ var prayerConfigFE:cg.IPrayersConfig= {
   {
       location:{
           latitude:24.444103,
-          longtitude:54.370867
+          longtitude:54.370867,
+          countryCode:"AE",
+          countryName:"ffs",
+          address:"f",
+          city:"Abu Dhabi"
       },
       timezone:
       {
-          
+          timeZoneId:"asia/duba",
+          timeZoneName:"ffs",
+          dstOffset:444,
+          rawOffset:505
       }
       
   }
@@ -133,19 +140,22 @@ async function buildLocationObject() {
         //  let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
         //  console.log(`save result :${result}`)
          //console.log(result)
-            // let validate: validators.IValid<cg.IPrayersConfig> = ConfigValidator.createValidator();
-         //  console.log(ramda.values(prayer.AdjsutmentMethod));
-            //console.log(prayer.AdjsutmentMethod.Server);
-        //console.log(Object.values(prayer.AdjsutmentMethod));;
-        // console.log(prayerConfigFE);
-        //   console.log("the object is valid : " +  validate.validate(prayerConfigFE));
-            //let err:validators.IValidationError = validate.getValidationError();
-            //let message:string[] = err.details.map((detail:any)=>`${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
+         await prayerManager.saveLocationConfig(locationConfigPE);
+        //  let validate: validators.IValid<cg.ILocationConfig> = LocationConfigValidator.createValidator();
+        //  //console.log(validate.validate(locationConfigPE));
 
-           // let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
-         //  console.log("Validation Error: "+ validate.getValidationError())
-            //console.log(messageShort);
-             console.log(prayerManager.getPrayersByDate(new Date('2019-06-23')));
+        //  //  console.log(ramda.values(prayer.AdjsutmentMethod));
+        //     //console.log(prayer.AdjsutmentMethod.Server);
+        // //console.log(Object.values(prayer.AdjsutmentMethod));;
+        // // console.log(prayerConfigFE);
+        // console.log("the object is valid : " +  validate.validate(locationConfigPE));
+        // let err:validators.IValidationError = validate.getValidationError();
+        // let message:string[] = err.details.map((detail:any)=>`${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
+
+        // let messageShort = message.reduce((prvs,curr,index,array)=> prvs.concat('\r\n',curr));
+        //    console.log("Validation Error: "+ validate.getValidationError())
+        //     console.log(messageShort);
+        //      //console.log(prayerManager.getPrayersByDate(new Date('2019-06-23')));
 
     }
     catch (err) {

@@ -36,6 +36,7 @@ export interface IPrayerManager {
     getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
     savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean>;
+    saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
 }
 export interface IPrayerTimeBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerTimeBuilder;

@@ -3,7 +3,8 @@ export declare type ValidtionTypes = any;
 export declare enum ValidatorProviders {
     LocationValidator = "Validate Location",
     PrayerSettingsValidator = "Validate Prayer Settings",
-    ConfigValidator = "Config Settings Validators"
+    PrayerConfigValidator = "Prayer Config Settings Validators",
+    LocationConfigValidator = "Location Config Settings Validators"
 }
 interface IError {
     message: string;

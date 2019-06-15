@@ -108,13 +108,13 @@ export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
         return new PrayerSettingsValidator();
     }
 }
-export class ConfigValidator extends Validator<config.IPrayersConfig>
+export class PrayerConfigValidator extends Validator<config.IPrayersConfig>
 {
 
     private _configSchema: object;
     private _adjustmentsSchema: object;
     private constructor() {
-        super(ValidatorProviders.ConfigValidator);
+        super(ValidatorProviders.PrayerConfigValidator);
         this.setSchema();
 
     }
@@ -174,8 +174,87 @@ export class ConfigValidator extends Validator<config.IPrayersConfig>
         return super.genericValidator(Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
     }
     public static createValidator(): IValid<config.IPrayersConfig> {
-        return new ConfigValidator();
+        return new PrayerConfigValidator();
     }
+}
+export class LocationConfigValidator extends Validator<config.ILocationConfig>
+{
+    private _configSchema: object;
+    private _locationSchema:object
+    private _timeZoneSchema: object;
+    private constructor() {
+        super(ValidatorProviders.PrayerConfigValidator);
+        this.setSchema();
+
+    }
+    private setSchema(): void {
+        this._locationSchema =  Joi.object().keys({
+            countryCode: Joi.string()
+            .required()
+            .regex(/^[A-Z]{2}$/i)
+            .label('Country Code')
+            .error(this.processErrorMessage)
+            ,
+            address: Joi.string()
+            .required()
+            .label('Address')
+            .error(this.processErrorMessage),
+            latitude: Joi.number()
+            .min(-90)
+            .max(90)
+            .required()
+            .label('Latitude')
+            .error(this.processErrorMessage),
+            longtitude: Joi.number()
+            .min(-180)
+            .max(180)
+            .required()
+            .label('Longtitude')
+            .error(this.processErrorMessage),
+            countryName: Joi.string()
+            .required()
+            .label('Country Name')
+            .error(this.processErrorMessage),
+            city:Joi.string()
+            .required()
+            .label('City')
+            .error(this.processErrorMessage)
+        })
+        .and('address','countryCode')
+        .and('latitude', 'longtitude');
+        this._timeZoneSchema = Joi.object().keys({
+            timeZoneId: Joi
+                .string()
+                .required()
+                .label('Time Zone ID')
+                .error(this.processErrorMessage),
+                timeZoneName: Joi
+                .string()
+                .required()
+                .label('Time Zone Name')
+                .error(this.processErrorMessage),
+                dstOffset: Joi
+                .number()
+                .required()
+                .label('DSTOffset')
+                .error(this.processErrorMessage),
+                rawOffset: Joi.number()
+                .required()
+                .label('Rawoffset')
+                .error(this.processErrorMessage)
+        });
+        this._configSchema= Joi.object().keys({
+            location:this._locationSchema,
+            timezone:this._timeZoneSchema
+        }).error(this.processErrorMessage, { self: true })
+    }
+    public validate(validateObject: config.ILocationConfig): boolean {
+        return super.genericValidator(Joi.validate(validateObject, this._configSchema, { abortEarly: false, allowUnknown: true }));
+    }
+    public static createValidator(): IValid<config.ILocationConfig> {
+        return new LocationConfigValidator();
+    }
+
 }
     // export class ValidatorProviderFactory {
     //     static createValidateProvider(validatorProviderName: ValidatorProviders): IValid<ValidtionTypes> {

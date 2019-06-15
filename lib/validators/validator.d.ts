@@ -17,11 +17,20 @@ export declare class PrayerSettingsValidator extends Validator<prayer.IPrayersSe
     validate(validateObject: prayer.IPrayersSettings): boolean;
     static createValidator(): IValid<prayer.IPrayersSettings>;
 }
-export declare class ConfigValidator extends Validator<config.IPrayersConfig> {
+export declare class PrayerConfigValidator extends Validator<config.IPrayersConfig> {
     private _configSchema;
     private _adjustmentsSchema;
     private constructor();
     private setSchema;
     validate(validateObject: config.IPrayersConfig): boolean;
     static createValidator(): IValid<config.IPrayersConfig>;
+}
+export declare class LocationConfigValidator extends Validator<config.ILocationConfig> {
+    private _configSchema;
+    private _locationSchema;
+    private _timeZoneSchema;
+    private constructor();
+    private setSchema;
+    validate(validateObject: config.ILocationConfig): boolean;
+    static createValidator(): IValid<config.ILocationConfig>;
 }
