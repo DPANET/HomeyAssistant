@@ -100,6 +100,19 @@ var prayerConfigFE:cg.IPrayersConfig= {
      { prayerName: prayer.PrayersName.ISHA, adjustments: 800 },
     ]
   };
+
+  var locationConfigPE:cg.ILocationConfig=
+  {
+      location:{
+          latitude:24.444103,
+          longtitude:54.370867
+      },
+      timezone:
+      {
+          
+      }
+      
+  }
 var countnumber = 0;
 async function buildLocationObject() {
     try {
@@ -109,8 +122,7 @@ async function buildLocationObject() {
         console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
         //  console.log(locationConfig);
         let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(null, prayerConfig)
-            .setLocationByAddress("dubai mall","AE")
+            .createPrayerTimeBuilder(locationConfigPE, prayerConfig)
             .createPrayerTimeManager();
         console.log(prayerManager.getPrayerLocation().address);
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder

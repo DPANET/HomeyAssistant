@@ -11,18 +11,17 @@ export class LocationValidator extends Validator<location.ILocationSettings>
     private constructor() {
         super(ValidatorProviders.LocationValidator);
         this._joiSchema = Joi.object().keys({
-            countryCode: Joi.string().optional().regex(/^[A-Z]{2}$/i),
-            address: Joi.string().optional(),
+            countryCode: Joi.string().optional().regex(/^[A-Z]{2}$/i).allow(null),
+            address: Joi.string().optional().allow(null),
             latitude: Joi.number().min(-90).max(90).optional(),
             longtitude: Joi.number().min(-180).max(180).optional(),
-            countryName: Joi.any().optional()
+            countryName: Joi.any().optional().allow(null)
         })
         .and('address')
-        .and('latitude', 'longtitude');
-
+        .and('latitude', 'longtitude')
     }
     public validate(validateObject: location.ILocationSettings): boolean {
-        return super.genericValidator(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }));
+        return super.genericValidator(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true  }));
     }
 
     public static createValidator(): IValid<location.ILocationSettings> {
@@ -103,7 +102,7 @@ export class PrayerSettingsValidator extends Validator<prayer.IPrayersSettings>
 
     }
     public validate(validateObject: prayer.IPrayersSettings): boolean {
-        return super.genericValidator(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true }) );
+        return super.genericValidator(Joi.validate(validateObject, this._joiSchema, { abortEarly: false, allowUnknown: true}) );
     }
     public static createValidator(): IValid<prayer.IPrayersSettings> {
         return new PrayerSettingsValidator();
