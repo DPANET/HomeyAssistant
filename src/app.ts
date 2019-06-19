@@ -2,9 +2,6 @@
 import nconf = require('nconf');
 nconf.file('config/default.json');
 
-
-import dotenv = require('dotenv');
-dotenv.config();
 import prayer = require("./entities/prayer");
 import cg = require("./configurators/inteface.configuration");
 import {Configurator} from "./configurators/configuration";

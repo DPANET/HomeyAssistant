@@ -15,7 +15,6 @@
     "@types/lowdb": "^1.0.9",
     "await-to-js": "^2.1.1",
     "debug": "^2.6.9",
-    "dotenv": "^6.2.0",
     "lowdb": "^1.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.25",
@@ -27,7 +26,6 @@
   "devDependencies": {
     "@types/cron": "^1.7.1",
     "@types/debug": "0.0.31",
-    "@types/dotenv": "^6.1.1",
     "@types/googlemaps": "^3.36.4",
     "@types/hapi__joi": "^15.0.1",
     "@types/moment-timezone": "^0.5.12",
