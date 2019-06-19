@@ -1,5 +1,5 @@
 import Debug = require('debug');
-import config from "config";
+import config from "nconf";
 const debug = Debug("app:router");
 const to = require('await-to-js').default;
 import { isNullOrUndefined } from '../util/isNullOrUndefined';

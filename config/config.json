@@ -54,16 +54,16 @@
       "location": {
         "latitude": 24.444103,
         "longtitude": 54.370867,
-        "city": "Abu Dhabi",
         "countryCode": "AE",
-        "countryName": "United Arab Emirates",
-        "address": "Abu Dhabi - United Arab Emirates"
+        "countryName": "ffs",
+        "address": "f",
+        "city": "Abu Dhabi"
       },
       "timezone": {
-        "timeZoneId": "Asia/Dubai",
-        "timeZoneName": "Gulf Standard Time",
-        "dstOffset": 0,
-        "rawOffset": 14400
+        "timeZoneId": "asia/duba",
+        "timeZoneName": "ffs",
+        "dstOffset": 444,
+        "rawOffset": 505
       }
     }
   }

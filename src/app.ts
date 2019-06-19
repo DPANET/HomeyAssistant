@@ -1,4 +1,8 @@
 //process.env.NODE_CONFIG_DIR = "config";
+import nconf = require('nconf');
+nconf.file('config/default.json');
+
+
 import dotenv = require('dotenv');
 dotenv.config();
 import prayer = require("./entities/prayer");
@@ -6,14 +10,14 @@ import cg = require("./configurators/inteface.configuration");
 import {Configurator} from "./configurators/configuration";
 import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
-import ramda from "ramda";
+import R from "ramda";
 import moment from "moment";
 import validators =require("./validators/interface.validators");
 //import validators= val.validators;
 import { valid } from "@hapi/joi";
 import { PrayerConfigValidator,LocationConfigValidator } from "./validators/validator";
 import { DateUtil } from "./util/utility";
-
+import util from "util";
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -123,15 +127,68 @@ var prayerConfigFE:cg.IPrayersConfig= {
 var countnumber = 0;
 async function buildLocationObject() {
     try {
-      //  console.time('Prayer_Manager');
+
+      //  console.log(nconf.get('GOOGLE_API_KEY'));
+
+    //     let prayers= [ { prayerTime:
+    //         [ { prayerName: 'Fajr', prayerTime: "2019-06-16T00:03:00.000Z" },
+    //           { prayerName: 'Sunrise', prayerTime: "2019-06-16T01:37:00.000Z" },
+    //           { prayerName: 'Dhuhr', prayerTime: "2019-06-16T08:25:00.000Z" },
+    //           { prayerName: 'Asr', prayerTime: "2019-06-16T11:46:00.000Z"},
+    //           { prayerName: 'Sunset', prayerTime: "2019-06-16T15:13:00.000Z" },
+    //           { prayerName: 'Maghrib', prayerTime: "2019-06-16T15:16:00.000Z" },
+    //           { prayerName: 'Isha', prayerTime: "2019-06-16T16:13:00.000Z" },
+    //           { prayerName: 'Imsak', prayerTime: "2019-06-15T23:54:00.000Z "},
+    //           { prayerName: 'Midnight', prayerTime: "2019-06-15T20:23:00.000Z" } ],
+    //        prayersDate: "2019-06-16T00:00:00.000Z" },
+    //      { prayerTime:
+    //         [ { prayerName: 'Fajr', prayerTime: "2019-06-17T00:04:00.000Z" },
+    //           { prayerName: 'Sunrise', prayerTime: "2019-06-17T01:37:00.000Z" },
+    //           { prayerName: 'Dhuhr', prayerTime: "2019-06-17T08:25:00.000Z" },
+    //           { prayerName: 'Asr', prayerTime: "2019-06-17T11:47:00.000Z" },
+    //           { prayerName: 'Sunset', prayerTime: "2019-06-17T15:13:00.000Z" },
+    //           { prayerName: 'Maghrib', prayerTime: "2019-06-17T15:16:00.000Z" },
+    //           { prayerName: 'Isha', prayerTime: "2019-06-17T16:13:00.000Z" },
+    //           { prayerName: 'Imsak', prayerTime: "2019-06-16T23:55:00.000Z" },
+    //           { prayerName: 'Midnight', prayerTime: "2019-06-16T20:23:00.000Z" } ],
+    //        prayersDate: "2019-06-17T00:00:00.000Z" },
+    //      ];
+       
+
+    //  let sortObject=(obj:any) =>{
+    //        return  {
+    //            prayersDate: moment(obj.prayersDate).toDate().toDateString() ,
+    //            Imsak: moment(obj.Imsak).format('LT'),
+    //            Fajr: moment(obj.Fajr).format('LT'),
+    //            Sunrise: moment(obj.Sunrise).format('LT'),
+    //            Dhuhr: moment(obj.Dhuhr).format('LT'),
+    //            Asr: moment(obj.Asr).format('LT'),
+    //            Sunset: moment(obj.Sunset).format('LT'),
+    //            Maghrib:moment(obj.Maghrib).format('LT'),
+    //            Isha: moment(obj.Isha).format('LT'),
+    //            Midnight:moment(obj.Midnight).format('LT'),   
+    //        }
+    //    }      
+    //    let swapPrayers= (x:any)=> R.assoc(x.prayerName,x.prayerTime,x)
+    //    let removePrayers= (x:any)=> R.omit(['prayerName','prayerTime','undefined'],x)
+    //    let prayerTime= R.pipe(swapPrayers,removePrayers)
+    //    let prayerTimes =(x:any)=>R.map(prayerTime,x)
+    //    let prayersList =(x:any)=> R.append({prayersDate:x.prayersDate},x.prayerTime)
+    //    let projectPrayers= R.curry(sortObject)
+    //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
+    //  //  console.time('Prayer_Manager');
          let prayerConfig: cg.IPrayersConfig = await new Configurator().getPrayerConfig();
-        //let locationConfig: cg.ILocationConfig = await new Configurator().getLocationConfig();
-        console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
-        //  console.log(locationConfig);
+        let locationConfig: cg.ILocationConfig = await new Configurator().getLocationConfig();
+    //     // console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
+    //     //  console.log(locationConfig);
         let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(locationConfigPE, prayerConfig)
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager();
-        console.log(prayerManager.getPrayerLocation().address);
+       let prayer=prayerManager.getPrayers()
+    //         console.log( R.map(pump,prayer))
+
+
+       // console.log(prayerManager.getPrayerLocation().address);
         // let prayerManager: manager.IPrayerManager = await manager.PrayerTimeBuilder
         //     .createPrayerTimeBuilder(null, prayerConfig)
         //     .setLocationByAddress("Abu Dhabi","AE")
@@ -140,7 +197,7 @@ async function buildLocationObject() {
         //  let result:boolean = await prayerManager.savePrayerConfig(prayerConfigFE);
         //  console.log(`save result :${result}`)
          //console.log(result)
-         await prayerManager.saveLocationConfig(locationConfigPE);
+        //  await prayerManager.saveLocationConfig(locationConfigPE);
         //  let validate: validators.IValid<cg.ILocationConfig> = LocationConfigValidator.createValidator();
         //  //console.log(validate.validate(locationConfigPE));
 
@@ -156,6 +213,9 @@ async function buildLocationObject() {
         //    console.log("Validation Error: "+ validate.getValidationError())
         //     console.log(messageShort);
         //      //console.log(prayerManager.getPrayersByDate(new Date('2019-06-23')));
+        //console.log(util.inspect(prayerManager.getPrayers(), {showHidden: false, depth: null}))
+
+      console.log(prayerManager.getPrayers());
 
     }
     catch (err) {
