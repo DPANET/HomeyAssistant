@@ -30,11 +30,11 @@
     "@types/hapi__joi": "^15.0.1",
     "@types/moment-timezone": "^0.5.12",
     "@types/nconf": "^0.10.0",
-    "@types/node": "^10.14.9",
+    "@types/node": "^10.17.13",
     "@types/ramda": "github:types/npm-ramda#dist",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.16",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.5"
   },
   "directories": {
     "lib": "lib",
