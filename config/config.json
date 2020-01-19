@@ -15,7 +15,7 @@
             "prayerName": "Imsak",
             "adjustments": 2
           },
-          {
+          { 
             "prayerName": "Fajr",
             "adjustments": 1
           },
@@ -52,18 +52,18 @@
     },
     "locationConfig": {
       "location": {
-        "latitude": 24.444103,
-        "longtitude": 54.370867,
-        "countryCode": "AE",
-        "countryName": "ffs",
-        "address": "f",
-        "city": "Abu Dhabi"
+        "latitude": 21.3890824,
+        "longtitude": 39.8579118,
+        "city": "Mecca",
+        "countryCode": "SA",
+        "countryName": "Saudi Arabia",
+        "address": "Mecca Saudi Arabia"
       },
       "timezone": {
-        "timeZoneId": "asia/duba",
-        "timeZoneName": "ffs",
-        "dstOffset": 444,
-        "rawOffset": 505
+        "timeZoneId": "Asia/Riyadh",
+        "timeZoneName": "Arabian Standard Time",
+        "dstOffset": 0,
+        "rawOffset": 10800
       }
     }
   }

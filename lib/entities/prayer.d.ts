@@ -102,44 +102,59 @@ export interface IPrayersTime {
 }
 export declare class PrayerAdjustment implements IPrayerAdjustments {
     private _prayerName;
-    prayerName: PrayersName;
+    get prayerName(): PrayersName;
+    set prayerName(value: PrayersName);
     private _adjustments;
-    adjustments: number;
+    get adjustments(): number;
+    set adjustments(value: number);
 }
 export declare class Prayers implements IPrayers {
     private _prayerTime;
     constructor();
-    prayerTime: IPrayersTiming[];
+    get prayerTime(): IPrayersTiming[];
+    set prayerTime(value: IPrayersTiming[]);
     private _prayersDate;
-    prayersDate: Date;
+    get prayersDate(): Date;
+    set prayersDate(value: Date);
     toJSON(): IPrayers;
 }
 export declare class PrayersTime implements IPrayersTime {
     constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings);
     private _location;
-    location: ILocationSettings;
+    get location(): ILocationSettings;
+    set location(value: ILocationSettings);
     private _pareyerSettings;
-    pareyerSettings: IPrayersSettings;
+    get pareyerSettings(): IPrayersSettings;
+    set pareyerSettings(value: IPrayersSettings);
     private _prayers;
-    prayers: IPrayers[];
+    get prayers(): IPrayers[];
+    set prayers(value: IPrayers[]);
 }
 export declare class PrayersSettings implements IPrayersSettings {
     private _adjustmentMethod;
-    adjustmentMethod: IPrayerAdjustmentMethod;
+    get adjustmentMethod(): IPrayerAdjustmentMethod;
+    set adjustmentMethod(value: IPrayerAdjustmentMethod);
     private _startDate;
-    startDate: Date;
+    get startDate(): Date;
+    set startDate(value: Date);
     private _endDate;
-    endDate: Date;
+    get endDate(): Date;
+    set endDate(value: Date);
     private _adjustments;
-    adjustments: IPrayerAdjustments[];
+    get adjustments(): IPrayerAdjustments[];
+    set adjustments(value: IPrayerAdjustments[]);
     private _method;
-    method: IPrayerMethods;
+    get method(): IPrayerMethods;
+    set method(value: IPrayerMethods);
     private _school;
-    school: IPrayerSchools;
+    get school(): IPrayerSchools;
+    set school(value: IPrayerSchools);
     private _midnight;
-    midnight: IPrayerMidnight;
+    get midnight(): IPrayerMidnight;
+    set midnight(value: IPrayerMidnight);
     private _latitudeAdjustment;
-    latitudeAdjustment: IPrayerLatitude;
+    get latitudeAdjustment(): IPrayerLatitude;
+    set latitudeAdjustment(value: IPrayerLatitude);
     toJSON(): IPrayersSettings;
     private _prayersSettings;
     constructor(prayersSettings?: IPrayersSettings);

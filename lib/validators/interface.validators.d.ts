@@ -29,7 +29,8 @@ export declare abstract class Validator<T> implements IValid<T> {
     isValid(): boolean;
     protected setIsValid(state: boolean): void;
     abstract validate(validateObject: T): boolean;
-    validatorName: string;
+    get validatorName(): string;
+    set validatorName(value: string);
     getValidationError(): IValidationError;
     protected setValidatonError(error: IValidationError): void;
     protected processErrorMessage(errors: any): Joi.ValidationErrorItem[];

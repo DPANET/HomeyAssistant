@@ -26,8 +26,13 @@ export interface ILocationConfig {
     };
 }
 export interface IConfig {
-    getPrayerConfig(): Promise<IPrayersConfig>;
-    savePrayerConfig(prayerConfigs: IPrayersConfig): Promise<boolean>;
-    getLocationConfig(): Promise<ILocationConfig>;
-    saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
+    id?: string;
+    deviceID?: string;
+}
+export interface IConfigProvider {
+    createConfig(id: string): Promise<IConfig>;
+    getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
+    updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
+    getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
+    updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
 }

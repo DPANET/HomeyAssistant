@@ -9,7 +9,7 @@ import { DateUtil } from '../util/utility';
 //import _ = require('lodash');
 import ramda= require('ramda'); 
 //import * as prayers from '../entities/prayer';
-import {IPrayersConfig,ILocationConfig,IConfig} from "./inteface.configuration";
+import {IPrayersConfig,ILocationConfig,IConfigProvider,IConfig} from "./inteface.configuration";
 import path from "path";
 const configPaths =
 {
@@ -24,20 +24,41 @@ const ConfigErrorMessages =
     FILE_NOT_FOUND: 'Config file not found, please try again',
     SAVE_FAILED: 'Confile file saving failed'
 }
+export enum ConfigProviderName {
+    SERVER = "Server",
+    CLIENT = "Client"
+}
+abstract class ConfigProvider implements IConfigProvider {
 
-export  class Configurator implements IConfig {
+    private _providerName: ConfigProviderName;
+    constructor(providerName: ConfigProviderName) {
+        this._providerName = providerName;
+    }
+    abstract async createConfig(id:string):Promise<IConfig>;
+    abstract async getPrayerConfig(config?:IConfig): Promise<IPrayersConfig>;
+    abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig,config:IConfig): Promise<boolean>;
+    abstract async getLocationConfig(config?:IConfig): Promise<ILocationConfig>;
+    abstract async updateLocationConfig(locationConfig: ILocationConfig,config:IConfig): Promise<boolean>;
+}
 
+
+
+  class ClientConfigurator extends ConfigProvider {
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;
     constructor(fileName?:string) {
+        super(ConfigProviderName.CLIENT);
         if(!isNullOrUndefined(fileName))
         this._fileName = fileName;
         else
        this._fileName= path.join(config.get("CONFIG_FOLDER_PATH"),config.get("PRAYER_CONFIG"));
     }
-    public async saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean> {
+    public async createConfig(id: string): Promise<IConfig> {
+        throw new Error("Method not implemented.");
+    }
+    public async updateLocationConfig(locationConfig: ILocationConfig,config:IConfig): Promise<boolean> {
         try {
-            let original: ILocationConfig = await this.getLocationConfig();
+            let original: ILocationConfig = await this.getLocationConfig(config);
             let updated:ILocationConfig;
             updated= ramda.merge<ILocationConfig,ILocationConfig>(original,locationConfig);
             console.log(updated);
@@ -55,7 +76,7 @@ export  class Configurator implements IConfig {
             return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
         }
     }
-    public async getLocationConfig(): Promise<ILocationConfig> {
+    public async getLocationConfig(config?:IConfig): Promise<ILocationConfig> {
         let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(configPaths.locationConfig).value()));
         if (err || isNullOrUndefined(result))
@@ -79,10 +100,10 @@ export  class Configurator implements IConfig {
 
         };    
     }
-    public async savePrayerConfig(prayerConfigs: IPrayersConfig): Promise<boolean> {
+    public async updatePrayerConfig(prayerConfigs: IPrayersConfig,config:IConfig): Promise<boolean> {
         try {
             let err:Error,result:any;
-            let original: IPrayersConfig = await this.getPrayerConfig();
+            let original: IPrayersConfig = await this.getPrayerConfig(config);
             let updated:any;
             let originalIndexBy = ramda.indexBy(ramda.prop('prayerName'));
             let updateIndexBy = ramda.indexBy(ramda.prop('prayerName'))
@@ -111,7 +132,7 @@ export  class Configurator implements IConfig {
         }
     }
 
-    public async getPrayerConfig(): Promise<IPrayersConfig> {
+    public async getPrayerConfig(config?:IConfig): Promise<IPrayersConfig> {
 
         let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(configPaths.prayerConfig).value()));
@@ -139,4 +160,42 @@ export  class Configurator implements IConfig {
     }
 
 
+}
+ class ServerConfigurator extends ConfigProvider
+{
+    constructor() {
+        super(ConfigProviderName.SERVER);
+    }
+    createConfig(id: string): Promise<IConfig> {
+        throw new Error("Method not implemented.");
+    }    
+    getPrayerConfig(config?: IConfig): Promise<IPrayersConfig> {
+        throw new Error("Method not implemented.");
+    }
+    updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getLocationConfig(config?: IConfig): Promise<ILocationConfig> {
+        throw new Error("Method not implemented.");
+    }
+    
+    updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
+    
+}
+
+
+export class ConfigProviderFactory {
+    static createConfigProviderFactory(configProviderName: ConfigProviderName): ConfigProvider {
+        switch (configProviderName) {
+            case ConfigProviderName.CLIENT:
+                return new ClientConfigurator();
+                break;
+            case ConfigProviderName.SERVER:
+                return new ServerConfigurator();
+                break
+        }
+    }
 }

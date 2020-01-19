@@ -5,8 +5,8 @@ import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
-import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
-import { Configurator } from "../configurators/configuration";
+import { ILocationConfig, IPrayersConfig,IConfigProvider, IConfig } from "../configurators/inteface.configuration";
+import { ConfigProviderFactory,ConfigProviderName } from "../configurators/configuration";
 import validators = require('../validators/interface.validators');
 import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator,LocationConfigValidator } from "../validators/validator";
 //import validators = val.validators;
@@ -298,36 +298,38 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
 class PrayerManager implements IPrayerManager {
     private _prayerTime: prayer.IPrayersTime;
     private _prayerTimeBuilder: IPrayerTimeBuilder;
+    private _configProvider:ConfigProviderName;
     // private _prayerEvents: prayer.PrayerEvents;
-    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder) {
+    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder,configProvider?:ConfigProviderName) {
         this._prayerTime = prayerTime;
         //   this._prayerEvents = new prayer.PrayerEvents();
         this._prayerTimeBuilder = prayerTimeBuilder;
+        this._configProvider= isNullOrUndefined(configProvider) ? ConfigProviderName.CLIENT : configProvider;
     }
-    public async savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean> {
+    public async updatePrayerConfig(prayerConfig: IPrayersConfig,config:IConfig): Promise<boolean> {
         try {
             let validator: validators.IValid<IPrayersConfig> = PrayerConfigValidator.createValidator();
             let validationResult: boolean = validator.validate(prayerConfig);
             let validationErr: validators.IValidationError;
             if (validationResult === false)
                 return Promise.reject(validator.getValidationError());
-            let configurator: Configurator = new Configurator();
-            await configurator.savePrayerConfig(prayerConfig);
+            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(this._configProvider)
+            await configurator.updatePrayerConfig(prayerConfig,config);
             return Promise.resolve(true)
         }
         catch (err) {
             return Promise.reject(err);
         }
     }
-    public async saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean> {
+    public async updateLocationConfig(locationConfig: ILocationConfig,config:IConfig): Promise<boolean> {
         try {
             let validator: validators.IValid<ILocationConfig> = LocationConfigValidator.createValidator();
             let validationResult: boolean = validator.validate(locationConfig);
             let validationErr: validators.IValidationError;
             if (validationResult === false)
                 return Promise.reject(validator.getValidationError());
-            let configurator: Configurator = new Configurator();
-            await configurator.saveLocationConfig(locationConfig);
+            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(this._configProvider)
+            await configurator.updateLocationConfig(locationConfig,config);
             return Promise.resolve(true)
         }
         catch (err) {

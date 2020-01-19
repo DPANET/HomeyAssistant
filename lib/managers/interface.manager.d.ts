@@ -1,6 +1,6 @@
 import * as prayer from '../entities/prayer';
 import * as location from '../entities/location';
-import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
+import { ILocationConfig, IPrayersConfig, IConfig } from "../configurators/inteface.configuration";
 export interface IPrayerSettingsBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerSettingsBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerSettingsBuilder;
@@ -35,8 +35,8 @@ export interface IPrayerManager {
     getPrayerSettings(): prayer.IPrayersSettings;
     getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
-    savePrayerConfig(prayerConfig: IPrayersConfig): Promise<boolean>;
-    saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
+    updatePrayerConfig(prayerConfig: IPrayersConfig, config: IConfig): Promise<boolean>;
+    updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
 }
 export interface IPrayerTimeBuilder {
     setPrayerMethod(methodId: prayer.Methods): IPrayerTimeBuilder;

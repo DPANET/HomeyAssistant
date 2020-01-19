@@ -4,11 +4,11 @@ export interface IPrayersConfig {
     midnight: prayers.MidnightMode;
     school: prayers.Schools;
     latitudeAdjustment: prayers.LatitudeMethod;
-    adjustmentMethod:prayers.AdjsutmentMethod,
+    adjustmentMethod: prayers.AdjsutmentMethod,
     startDate: Date;
     endDate: Date;
-    adjustments:prayers.IPrayerAdjustments[];
-}
+    adjustments: prayers.IPrayerAdjustments[];
+};
 export interface ILocationConfig {
     location: {
         latitude?: number,
@@ -24,10 +24,18 @@ export interface ILocationConfig {
         dstOffset?: number,
         rawOffset?: number
     };
+};
+
+export interface IConfig //extends IPrayersConfig,ILocationConfig
+{
+    id?:string,
+    deviceID?:string    
+
 }
-export interface IConfig {
-    getPrayerConfig(): Promise<IPrayersConfig>;
-    savePrayerConfig(prayerConfigs:IPrayersConfig): Promise<boolean>;
-    getLocationConfig(): Promise<ILocationConfig>;
-    saveLocationConfig(locationConfig: ILocationConfig): Promise<boolean>;
-}
+export interface IConfigProvider {
+    createConfig(id:string):Promise<IConfig>;
+    getPrayerConfig(config?:IConfig): Promise<IPrayersConfig>;
+    updatePrayerConfig(prayerConfigs: IPrayersConfig,config:IConfig): Promise<boolean>;
+    getLocationConfig(config?:IConfig): Promise<ILocationConfig>;
+    updateLocationConfig(locationConfig: ILocationConfig,config:IConfig): Promise<boolean>;
+};
