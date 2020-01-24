@@ -304,7 +304,7 @@ class PrayerManager implements IPrayerManager {
         this._prayerTime = prayerTime;
         //   this._prayerEvents = new prayer.PrayerEvents();
         this._prayerTimeBuilder = prayerTimeBuilder;
-        this._configProvider= isNullOrUndefined(configProvider) ? ConfigProviderName.CLIENT : configProvider;
+        this._configProvider= isNullOrUndefined(configProvider) ? ConfigProviderName.SERVER : configProvider;
     }
     public async updatePrayerConfig(prayerConfig: IPrayersConfig,config:IConfig): Promise<boolean> {
         try {
