@@ -2,12 +2,15 @@
 import nconf = require('nconf');
 nconf.file('config/default.json');
 import mongoose from "mongoose";
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 import prayer = require("./entities/prayer");
 import cg = require("./configurators/inteface.configuration");
 import * as cfgSchema from "./configurators/schema.configuration";
-import { ConfigProviderFactory,ConfigProviderName } from "./configurators/configuration";
- import * as managerInterface from './managers/interface.manager';
- import * as manager from "./managers/manager";
+import { ConfigProviderFactory, ConfigProviderName } from "./configurators/configuration";
+import * as managerInterface from './managers/interface.manager';
+import * as manager from "./managers/manager";
 // import R from "ramda";
 import moment from "moment";
 import validators = require("./validators/interface.validators");
@@ -129,8 +132,9 @@ async function buildLocationObject() {
     let prayerDBConnection: mongoose.Mongoose;
     try {
 
-        // let prayerDBURI: string = nconf.get('MONGO_DB');
-        // prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        let prayerDBURI: string = nconf.get('MONGO_DB');
+        prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+        mongoose.set('useCreateIndex', true);
         // let prayerConfigModel: mongoose.Model<cfgSchema.IConfigSchemaModel> = cfgSchema.configModel;
         // let result: cfgSchema.IConfigSchemaModel = await prayerConfigModel.findOne();
         // console.log(util.inspect(result.config.prayerConfig.calculations, { showHidden: true, depth: null }))
@@ -186,14 +190,21 @@ async function buildLocationObject() {
         //    let projectPrayers= R.curry(sortObject)
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
-             let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.CLIENT);
-             let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig();
-            let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig();
+        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
+        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ deviceID: "45effedd" });
+        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ deviceID: "45effedd" });
+        console.log(locationConfig.location.address);
+        locationConfig.location.address ="Mecca Saudi Arabia";
+       let resut:boolean= await configProvider.updateLocationConfig(locationConfig,{deviceID: "45effedd"});
+        console.log(locationConfig.location.address);
+        console.log(resut);
+    //    console.log(await configProvider.createConfig("fuck yeah"));
+        
         // //     // console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
         // //     //  console.log(locationConfig);
-            let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
-                .createPrayerTimeBuilder(locationConfig, prayerConfig)
-                .createPrayerTimeManager();
+        // let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
+        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
+        //     .createPrayerTimeManager();
         //    let prayer=prayerManager.getPrayers()
         //         console.log( R.map(pump,prayer))
 
@@ -223,27 +234,27 @@ async function buildLocationObject() {
         //    console.log("Validation Error: "+ validate.getValidationError())
         //     console.log(messageShort);
         //      //console.log(prayerManager.getPrayersByDate(new Date('2019-06-23')));
-       console.log(util.inspect(prayerManager.getPrayers(), {showHidden: false, depth: null}))
+        //  console.log(util.inspect(prayerManager.getPrayers(), {showHidden: false, depth: null}))
 
         // console.log(prayerManager.getPrayers());
 
     }
     catch (err) {
-        console.log(err);
-        if (countnumber < 4)
-            // await buildLocationObject();
-            countnumber += 1;
 
-        let message: string;
-        if (err.name === "ValidationError") {
-            message = err.details.map((detail: any) => `${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
-            console.log(message);
-        }
-        else
+        // if (countnumber < 4)
+        //     // await buildLocationObject();
+        //     countnumber += 1;
+
+        // let message: string;
+        // if (err.name === "ValidationError") {
+        //     message = err.details.map((detail: any) => `${detail.value.label} with value ${detail.value.value}: ${detail.message}`);
+        //     console.log(message);
+        // }
+        // else
             console.log(err);
     }
     finally {
-       // await prayerDBConnection.disconnect();
+        await prayerDBConnection.disconnect();
     }
 
 }

@@ -1,11 +1,22 @@
-import {Schema,Model,Document,model}  from 'mongoose';
+import {Schema,Model,Document,model, SchemaDefinition,Types}  from 'mongoose';
+import {IPrayersConfig,ILocationConfig} from './inteface.configuration'
+import { IPrayerManager } from '../managers/interface.manager';
+import { triggerAsyncId } from 'async_hooks';
 
 export const configSchema: Schema = new Schema(
   {
-    _id: Schema.Types.ObjectId,
-    deviceID:String,
+    _id:{
+      type: Schema.Types.ObjectId,
+      createIndexes:true,
+      required: true,
+      auto: true,
+    },
+    deviceID:{type:String,
+      unique:true}
+    ,
     config: {
-      prayerConfig: {
+      prayerConfig: 
+      {
         prayer: {
           timing: String
         },
@@ -17,12 +28,14 @@ export const configSchema: Schema = new Schema(
           adjustmentMethod: Number,
           adjustments: [
             {
+              _id:false,
               prayerName: String,
               adjustments: Number
             }
           ]
         }
-      },
+      }
+      ,
       locationConfig: {
         location: {
           latitude: Number,
@@ -54,33 +67,33 @@ export interface IConfigSchemaModel extends Document {
         timing: string
       }
       ,
-      calculations:
-      {
-        method: number,
-        school: number,
-        midnight: number,
-        latitudeAdjustment: number,
-        adjustmentMethod: number,
-        adjustments: [{ prayerName: string, adjustments: number }]
-      }
+      calculations:IPrayersConfig
+      // {
+      //   method: number,
+      //   school: number,
+      //   midnight: number,
+      //   latitudeAdjustment: number,
+      //   adjustmentMethod: number,
+      //   adjustments: [{ prayerName: string, adjustments: number }]
+      // }
     },
-      locationConfig:
-      {
-        location: {
-          latitude: number,
-          longtitude: number
-          city: string,
-          countryCode: string,
-          countryName: string,
-          address: string
-        },
-        timezone: {
-          timeZoneName: string,
-          dstOffset: number,
-          rawOffset: number
+      locationConfig:ILocationConfig
+      // {
+      //   location: {
+      //     latitude: number,
+      //     longtitude: number
+      //     city: string,
+      //     countryCode: string,
+      //     countryName: string,
+      //     address: string
+      //   },
+      //   timezone: {
+      //     timeZoneName: string,
+      //     dstOffset: number,
+      //     rawOffset: number
 
-        }
-      }
+      //   }
+      // }
 
     }
   };
