@@ -1,7 +1,5 @@
-import {Schema,Model,Document,model, SchemaDefinition,Types}  from 'mongoose';
+import {Schema,Model,Document,model}  from 'mongoose';
 import {IPrayersConfig,ILocationConfig} from './inteface.configuration'
-import { IPrayerManager } from '../managers/interface.manager';
-import { triggerAsyncId } from 'async_hooks';
 
 export const configSchema: Schema = new Schema(
   {
