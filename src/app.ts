@@ -21,6 +21,25 @@ import { PrayerConfigValidator, LocationConfigValidator } from "./validators/val
 import { DateUtil } from "./util/utility";
 import util from "util";
 import requestPromise = require('request-promise-native');
+import {
+    createModelSchema,
+    primitive,
+    reference,
+    list,
+    object,
+    identifier,
+    serialize,
+    deserialize,
+    getDefaultModelSchema,
+    serializable,
+} from 'serializr';
+// import {PrayersMethods} from "./entities/prayer"
+
+class User {
+    @serializable(identifier())
+    uuid = Math.floor(Math.random() * 10000);
+    @serializable displayName = 'John Doe';
+}
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -132,6 +151,18 @@ async function buildLocationObject() {
     let prayerDBConnection: mongoose.Mongoose;
     try {
 
+        // let prayerMethod:PrayersMethods = new PrayersMethods()
+        // prayerMethod.id = prayer.Methods.America;
+        // prayerMethod.methodName = "America";
+        // let serializedValue:PrayersMethods = serialize(prayerMethod);
+        // console.log(util.inspect(serializedValue, {showHidden: false, depth: null}))
+        // console.log(prayerMethod)
+        // prayerMethod=deserialize(PrayersMethods,serializedValue);
+        // console.log(prayerMethod);
+        // console.log(prayerMethod.id);
+       // console.log(util.inspect(prayerMethod, {showHidden: false, depth: null}))
+
+     //   console.log(deserialize(User,json));
         let prayerDBURI: string = nconf.get('MONGO_DB');
         prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
         mongoose.set('useCreateIndex', true);
@@ -193,18 +224,37 @@ async function buildLocationObject() {
         let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
         let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ deviceID: "45effedd" });
         let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ deviceID: "45effedd" });
-        console.log(locationConfig.location.address);
-        locationConfig.location.address ="Mecca Saudi Arabia";
-       let resut:boolean= await configProvider.updateLocationConfig(locationConfig,{deviceID: "45effedd"});
-        console.log(locationConfig.location.address);
-        console.log(resut);
+    //     console.log(locationConfig.location.address);
+    //     locationConfig.location.address ="Mecca Saudi Arabia";
+    //    let resut:boolean= await configProvider.updateLocationConfig(locationConfig,{deviceID: "45effedd"});
+    //     console.log(locationConfig.location.address);
+
+       // console.log(resut);
+
     //    console.log(await configProvider.createConfig("fuck yeah"));
         
         // //     // console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
         // //     //  console.log(locationConfig);
-        // let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
-        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
-        //     .createPrayerTimeManager();
+        let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager() ;
+
+       let value:prayer.IPrayersTime= prayerManager.prayerTime;
+       //value.method
+       
+      // console.log(value);
+         let serializedValue:any = serialize(prayer.PrayersTime,value );
+       //console.log(serializedValue)
+       
+         let valueDesrialized:prayer.PrayersTime = deserialize(prayer.PrayersTime,serializedValue);
+       //   console.log(util.inspect(valueDesrialized.prayers, {showHidden: false, depth: null}))
+       
+       let prayerManagerSerialized:managerInterface.IPrayerManager = new manager.PrayerManager(valueDesrialized);
+       console.log(prayerManagerSerialized.getUpcomingPrayer(new Date()));
+
+          // let prayers= JSON.stringify(prayerManager);
+        // console.log(util.inspect(prayers, {showHidden: false, depth: null}))
+
         //    let prayer=prayerManager.getPrayers()
         //         console.log( R.map(pump,prayer))
 

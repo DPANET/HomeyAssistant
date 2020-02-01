@@ -2,7 +2,7 @@ import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
-import { ILocationConfig, IPrayersConfig } from "../configurators/inteface.configuration";
+import { ILocationConfig, IPrayersConfig, IConfig } from "../configurators/inteface.configuration";
 import { IPrayerManager, ILocationBuilder, IPrayerSettingsBuilder, IPrayerTimeBuilder } from "./interface.manager";
 export declare class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerSettings;
@@ -34,7 +34,7 @@ export declare class PrayerTimeBuilder implements IPrayerTimeBuilder {
     private _prayerSettingsBuilder;
     private _prayers;
     private _prayerProvider;
-    private constructor();
+    constructor(prayerProvider: pp.IPrayerProvider, locationBuilder: ILocationBuilder, prayerSettingsBuilder: IPrayerSettingsBuilder);
     setPrayerMethod(methodId: prayer.Methods): IPrayerTimeBuilder;
     setPrayerSchool(schoolId: prayer.Schools): IPrayerTimeBuilder;
     setPrayerAdjustments(adjustments: prayer.IPrayerAdjustments[]): IPrayerTimeBuilder;
@@ -49,4 +49,31 @@ export declare class PrayerTimeBuilder implements IPrayerTimeBuilder {
     private adjustServerPrayers;
     createPrayerTimeManager(): Promise<IPrayerManager>;
     static createPrayerTimeBuilder(locationConfig?: ILocationConfig, prayerConfig?: IPrayersConfig): PrayerTimeBuilder;
+}
+export declare class PrayerManager implements IPrayerManager {
+    private _prayerTime;
+    get prayerTime(): prayer.IPrayersTime;
+    set prayerTime(value: prayer.IPrayersTime);
+    constructor(prayerTime: prayer.IPrayersTime);
+    updatePrayerConfig(prayerConfig: IPrayersConfig, config: IConfig): Promise<boolean>;
+    updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
+    getPrayerTimeZone(): location.ITimeZone;
+    getPrayerLocation(): location.ILocation;
+    getPrayerLocationSettings(): location.ILocationSettings;
+    getPrayerStartPeriod(): Date;
+    getPrayerEndPeriond(): Date;
+    getUpcomingPrayerTimeRemaining(): Date;
+    getPrviouesPrayerTimeElapsed(): Date;
+    getPrayerConfig(): IPrayersConfig;
+    getLocationConfig(): ILocationConfig;
+    getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming;
+    getPrayersByDate(date: Date): prayer.IPrayers;
+    getUpcomingPrayer(date?: Date, prayerType?: prayer.PrayerType): prayer.IPrayersTiming;
+    private processUpcomingPrayer;
+    getPreviousPrayer(): prayer.IPrayersTime;
+    updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager>;
+    getPrayerSettings(): prayer.IPrayersSettings;
+    getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
+    getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
+    getPrayers(): prayer.IPrayers[];
 }

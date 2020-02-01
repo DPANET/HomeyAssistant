@@ -1,6 +1,14 @@
 
-import { ILocationSettings } from './location';
+import { ILocationSettings, Location } from './location';
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
+
+import {
+    list,
+    object,
+    identifier,
+    date,
+    serializable,
+} from 'serializr';
 export enum PrayersName {
     IMSAK = "Imsak",
     FAJR = "Fajr",
@@ -99,6 +107,7 @@ export interface IPrayerLatitude {
     latitudeMethod: string;
 }
 export interface IPrayersSettings {
+    
     adjustments: IPrayerAdjustments[];
     method: IPrayerMethods;
     school: IPrayerSchools;
@@ -123,8 +132,9 @@ export interface IPrayersTime {
     prayers: Array<IPrayers>;
 
 }
-export class PrayerAdjustment implements IPrayerAdjustments {
+ class PrayerAdjustment implements IPrayerAdjustments {
     private _prayerName: PrayersName;
+    @serializable(identifier())
     public get prayerName(): PrayersName {
         return this._prayerName;
     }
@@ -132,6 +142,7 @@ export class PrayerAdjustment implements IPrayerAdjustments {
         this._prayerName = value;
     }
     private _adjustments: number;
+    @serializable
     public get adjustments(): number {
         return this._adjustments;
     }
@@ -140,8 +151,9 @@ export class PrayerAdjustment implements IPrayerAdjustments {
     }
 
 }
-class PrayersMidnight implements IPrayerMidnight {
+ class PrayersMidnight implements IPrayerMidnight {
     private _id: MidnightMode;
+    @serializable(identifier())
     public get id(): MidnightMode {
         return this._id;
     }
@@ -149,6 +161,7 @@ class PrayersMidnight implements IPrayerMidnight {
         this._id = value;
     }
     private _midnight: string;
+    @serializable   
     public get midnight(): string {
         return this._midnight;
     }
@@ -157,16 +170,18 @@ class PrayersMidnight implements IPrayerMidnight {
     }
 
 }
-class PrayerAdjustmentMethod implements IPrayerAdjustmentMethod
+ class PrayerAdjustmentMethod implements IPrayerAdjustmentMethod
 {
-    private _id: AdjsutmentMethod;   
+    private _id: AdjsutmentMethod;
+    @serializable(identifier())
     public get id(): AdjsutmentMethod {
         return this._id;
     }
     public set id(value: AdjsutmentMethod) {
         this._id = value;
     }
-     private _adjustmentMethod: string;
+    private _adjustmentMethod: string;
+    @serializable
     public get adjustmentMethod(): string {
         return this._adjustmentMethod;
     }
@@ -176,8 +191,9 @@ class PrayerAdjustmentMethod implements IPrayerAdjustmentMethod
 
     
 }
-class PrayerLatitude implements IPrayerLatitude {
+ class PrayerLatitude implements IPrayerLatitude {
     private _id: LatitudeMethod;
+    @serializable(identifier())
     public get id(): LatitudeMethod {
         return this._id;
     }
@@ -185,6 +201,7 @@ class PrayerLatitude implements IPrayerLatitude {
         this._id = value;
     }
     private _latitudeMethod: string;
+    @serializable
     public get latitudeMethod(): string {
         return this._latitudeMethod;
     }
@@ -194,8 +211,9 @@ class PrayerLatitude implements IPrayerLatitude {
 
 
 }
-class PrayerSchools implements IPrayerSchools {
+ class PrayerSchools implements IPrayerSchools {
     private _id: Schools;
+    @serializable(identifier())
     public get id(): Schools {
         return this._id;
     }
@@ -203,6 +221,7 @@ class PrayerSchools implements IPrayerSchools {
         this._id = value;
     }
     private _school: string;
+    @serializable
     public get school(): string {
         return this._school;
     }
@@ -210,8 +229,9 @@ class PrayerSchools implements IPrayerSchools {
         this._school = value;
     }
 }
-class PrayersMethods implements IPrayerMethods {
+ class PrayersMethods implements IPrayerMethods { 
     private _id: Methods;
+    @serializable(identifier())
     public get id(): Methods {
         return this._id;
     }
@@ -219,6 +239,7 @@ class PrayersMethods implements IPrayerMethods {
         this._id = value;
     }
     private _methodName: string;
+    @serializable
     public get methodName(): string {
         return this._methodName;
     }
@@ -226,11 +247,36 @@ class PrayersMethods implements IPrayerMethods {
         this._methodName = value;
     }
 }
+export class PrayersTiming implements IPrayersTiming
+{
+    private _prayerName: PrayersName;
+    @serializable(identifier())
+    public get prayerName(): PrayersName {
+        return this._prayerName;
+    }
+    public set prayerName(value: PrayersName) {
+        this._prayerName = value;
+    }
+    private _prayerTime: Date;
+    @serializable(date())
+    public get prayerTime(): Date {
+        return this._prayerTime;
+    }
+    public set prayerTime(value: Date) {
+        this._prayerTime = value;
+    }
+
+
+}
 export class Prayers implements IPrayers {
     private _prayerTime: IPrayersTiming[];
-    public constructor() {
+    public constructor(prayerTime?: Array<IPrayersTiming>) {
+        if (!isNullOrUndefined(prayerTime))
+            this._prayerTime = prayerTime;
+        else
         this._prayerTime = new Array<IPrayersTiming>();
     }
+    @serializable(list(object(PrayersTiming)))
     public get prayerTime(): IPrayersTiming[] {
         return this._prayerTime;
     }
@@ -238,6 +284,7 @@ export class Prayers implements IPrayers {
         this._prayerTime = value;
     }
     private _prayersDate: Date;
+    @serializable(date())
     public get prayersDate(): Date {
         return this._prayersDate;
     }
@@ -252,48 +299,18 @@ export class Prayers implements IPrayers {
         };
     }
 }
-export class PrayersTime implements IPrayersTime {
-
-    //prayer constructors, with timing,
-    constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings) {
-        this._location = locationSettings;
-        this._prayers = prayers;
-        this._pareyerSettings = prayerConfig;
-    }
-    private _location: ILocationSettings;
-    public get location(): ILocationSettings {
-        return this._location;
-    }
-    public set location(value: ILocationSettings) {
-        this._location = value;
-    }
-    private _pareyerSettings: IPrayersSettings;
-    public get pareyerSettings(): IPrayersSettings {
-        return this._pareyerSettings;
-    }
-    public set pareyerSettings(value: IPrayersSettings) {
-        this._pareyerSettings = value;
-    }
-    private _prayers: IPrayers[];
-    public get prayers(): IPrayers[] {
-        return this._prayers;
-    }
-    public set prayers(value: IPrayers[]) {
-        this._prayers = value;
-    }
-
-    
-}
 export class PrayersSettings implements IPrayersSettings {
+ 
     private _adjustmentMethod: IPrayerAdjustmentMethod;
+    @serializable(object(PrayerAdjustmentMethod))
     public get adjustmentMethod(): IPrayerAdjustmentMethod {
         return this._adjustmentMethod;
     }
     public set adjustmentMethod(value: IPrayerAdjustmentMethod) {
         this._adjustmentMethod = value;
     }
-
     private _startDate: Date;
+    @serializable(date())
     public get startDate(): Date {
         return this._startDate;
     }
@@ -301,6 +318,7 @@ export class PrayersSettings implements IPrayersSettings {
         this._startDate = value;
     }
     private _endDate: Date;
+    @serializable(date())
     public get endDate(): Date {
         return this._endDate;
     }
@@ -308,6 +326,7 @@ export class PrayersSettings implements IPrayersSettings {
         this._endDate = value;
     }
     private _adjustments: IPrayerAdjustments[];
+    @serializable(list(object(PrayerAdjustment)))
     public get adjustments(): IPrayerAdjustments[] {
         return this._adjustments;
     }
@@ -315,6 +334,7 @@ export class PrayersSettings implements IPrayersSettings {
         this._adjustments = value;
     }
     private _method: IPrayerMethods;
+    @serializable(object(PrayersMethods))
     public get method(): IPrayerMethods {
         return this._method;
     }
@@ -322,6 +342,7 @@ export class PrayersSettings implements IPrayersSettings {
         this._method = value;
     }
     private _school: IPrayerSchools;
+    @serializable(object(PrayerSchools))
     public get school(): IPrayerSchools {
         return this._school;
     }
@@ -329,6 +350,7 @@ export class PrayersSettings implements IPrayersSettings {
         this._school = value;
     }
     private _midnight: IPrayerMidnight;
+    @serializable(object(PrayersMidnight))
     public get midnight(): IPrayerMidnight {
         return this._midnight;
     }
@@ -336,6 +358,7 @@ export class PrayersSettings implements IPrayersSettings {
         this._midnight = value;
     }
     private _latitudeAdjustment: IPrayerLatitude;
+    @serializable(object(PrayerLatitude))
     public get latitudeAdjustment(): IPrayerLatitude {
         return this._latitudeAdjustment;
     }
@@ -356,7 +379,7 @@ export class PrayersSettings implements IPrayersSettings {
         };
     }
     private _prayersSettings: IPrayersSettings;
-    constructor(prayersSettings?: IPrayersSettings) {
+    public constructor(prayersSettings?: IPrayersSettings) {
         if (!isNullOrUndefined(prayersSettings))
             this._prayersSettings = prayersSettings;
         else {
@@ -371,3 +394,40 @@ export class PrayersSettings implements IPrayersSettings {
 
 
 }
+export class PrayersTime implements IPrayersTime {
+
+    //prayer constructors, with timing,
+    constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings) {
+        this._location = locationSettings;
+        this._prayers = prayers;
+        this._pareyerSettings = prayerConfig;
+    }
+    private _location: ILocationSettings;
+    @serializable(object(Location))
+    public get location(): ILocationSettings {
+        return this._location;
+    }
+    public set location(value: ILocationSettings) {
+        this._location = value;
+    }
+
+    private _pareyerSettings: IPrayersSettings;
+    @serializable(object(PrayersSettings))
+    public get pareyerSettings(): IPrayersSettings {
+        return this._pareyerSettings;
+    }
+    public set pareyerSettings(value: IPrayersSettings) {
+        this._pareyerSettings = value;
+    }
+    private _prayers: IPrayers[];
+    @serializable(list(object(Prayers)))
+    public get prayers(): IPrayers[] {
+        return this._prayers;
+    }
+    public set prayers(value: IPrayers[]) {
+        this._prayers = value;
+    }
+
+    
+}
+

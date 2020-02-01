@@ -40,6 +40,7 @@ export interface IPrayerManager {
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
     updatePrayerConfig(prayerConfig:IPrayersConfig, config:IConfig):Promise<boolean>;
     updateLocationConfig(locationConfig:ILocationConfig, config:IConfig):Promise<boolean>;
+    prayerTime:prayer.IPrayersTime;
 }
 
 export interface IPrayerTimeBuilder {

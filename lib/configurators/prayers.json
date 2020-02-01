@@ -17,25 +17,25 @@
             "schools": [
                 {
                     "id": 0,
-                    "name": "Sahfi, Hanbali and Maliki"
+                    "school": "Sahfi, Hanbali and Maliki"
                 },
                 {
                     "id": 1,
-                    "name": "Hanafi"
+                    "school": "Hanafi"
                 }
             ],
             "adjustmentMethod": [
                 {
                     "id": 0,
-                    "name": "Provider"
+                    "adjustmentMethod": "Provider"
                 },
                 {
                     "id": 1,
-                    "name": "Server"
+                    "adjustmentMethod": "Server"
                 },
                 {
                     "id": 2,
-                    "name": "Client"
+                    "adjustmentMethod": "Client"
                 }
             ],
             "latitude": [
@@ -55,11 +55,11 @@
             "midnight": [
                 {
                     "id": 0,
-                    "name": "Standard (Mid Sunset to Sunrise)"
+                    "midnight": "Standard (Mid Sunset to Sunrise)"
                 },
                 {
                     "id": 1,
-                    "name": "Jafari (Mid Sunset to Sunrise)"
+                    "midnight": "Jafari (Mid Sunset to Sunrise)"
                 }
             ]
         }

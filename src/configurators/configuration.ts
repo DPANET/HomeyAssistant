@@ -251,7 +251,9 @@ class ServerConfigurator extends ConfigProvider {
 
 
 export class ConfigProviderFactory {
-    static createConfigProviderFactory(configProviderName: ConfigProviderName): ConfigProvider {
+    static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider {
+        let configName:ConfigProviderName;
+        configName = isNullOrUndefined(configProviderName) ? config.get("SOURCE"): configProviderName;
         switch (configProviderName) {
             case ConfigProviderName.CLIENT:
                 return new ClientConfigurator();

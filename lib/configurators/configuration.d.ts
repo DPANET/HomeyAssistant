@@ -15,6 +15,6 @@ declare abstract class ConfigProvider implements IConfigProvider {
     protected mergeLocationConfig(original: ILocationConfig, target: ILocationConfig): ILocationConfig;
 }
 export declare class ConfigProviderFactory {
-    static createConfigProviderFactory(configProviderName: ConfigProviderName): ConfigProvider;
+    static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider;
 }
 export {};

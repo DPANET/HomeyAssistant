@@ -22,7 +22,8 @@
     "nconf": "^0.10.0",
     "ramda": "^0.26.1",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.8"
+    "request-promise-native": "^1.0.8",
+    "serializr": "^1.5.4"
   },
   "devDependencies": {
     "@types/cron": "^1.7.1",

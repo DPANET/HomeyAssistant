@@ -100,35 +100,23 @@ export interface IPrayersTime {
     pareyerSettings: IPrayersSettings;
     prayers: Array<IPrayers>;
 }
-export declare class PrayerAdjustment implements IPrayerAdjustments {
+export declare class PrayersTiming implements IPrayersTiming {
     private _prayerName;
     get prayerName(): PrayersName;
     set prayerName(value: PrayersName);
-    private _adjustments;
-    get adjustments(): number;
-    set adjustments(value: number);
+    private _prayerTime;
+    get prayerTime(): Date;
+    set prayerTime(value: Date);
 }
 export declare class Prayers implements IPrayers {
     private _prayerTime;
-    constructor();
+    constructor(prayerTime?: Array<IPrayersTiming>);
     get prayerTime(): IPrayersTiming[];
     set prayerTime(value: IPrayersTiming[]);
     private _prayersDate;
     get prayersDate(): Date;
     set prayersDate(value: Date);
     toJSON(): IPrayers;
-}
-export declare class PrayersTime implements IPrayersTime {
-    constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings);
-    private _location;
-    get location(): ILocationSettings;
-    set location(value: ILocationSettings);
-    private _pareyerSettings;
-    get pareyerSettings(): IPrayersSettings;
-    set pareyerSettings(value: IPrayersSettings);
-    private _prayers;
-    get prayers(): IPrayers[];
-    set prayers(value: IPrayers[]);
 }
 export declare class PrayersSettings implements IPrayersSettings {
     private _adjustmentMethod;
@@ -158,4 +146,16 @@ export declare class PrayersSettings implements IPrayersSettings {
     toJSON(): IPrayersSettings;
     private _prayersSettings;
     constructor(prayersSettings?: IPrayersSettings);
+}
+export declare class PrayersTime implements IPrayersTime {
+    constructor(prayers: Array<IPrayers>, locationSettings: ILocationSettings, prayerConfig: IPrayersSettings);
+    private _location;
+    get location(): ILocationSettings;
+    set location(value: ILocationSettings);
+    private _pareyerSettings;
+    get pareyerSettings(): IPrayersSettings;
+    set pareyerSettings(value: IPrayersSettings);
+    private _prayers;
+    get prayers(): IPrayers[];
+    set prayers(value: IPrayers[]);
 }

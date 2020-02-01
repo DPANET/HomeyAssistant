@@ -13,9 +13,20 @@ import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator,Locat
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { DateUtil } from '../util/utility';
 import { IPrayerManager, ILocationBuilder, IPrayerSettingsBuilder, IPrayerTimeBuilder } from "./interface.manager"
-
+import {
+    createModelSchema,
+    primitive,
+    reference,
+    list,
+    object,
+    identifier,
+    serialize,
+    deserialize,
+    serializable,
+} from 'serializr';
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
 
+    @serializable(object(prayer.PrayersSettings))
     private _prayerSettings: prayer.IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
     private _validtor: validators.IValid<prayer.IPrayersSettings>;
@@ -104,6 +115,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
 };
 
 export class LocationBuilder implements ILocationBuilder {
+    @serializable(object(location.Location))
     private _location: location.ILocationSettings
     private _locationProvider: lp.ILocationProvider;
     private _validtor: validators.IValid<location.ILocationSettings>;
@@ -171,12 +183,12 @@ export class LocationBuilder implements ILocationBuilder {
 };
 
 export class PrayerTimeBuilder implements IPrayerTimeBuilder {
-
     private _locationBuilder: ILocationBuilder;
     private _prayerSettingsBuilder: IPrayerSettingsBuilder;
+    @serializable(list(object(prayer.Prayers)))
     private _prayers: Array<prayer.IPrayers>;
     private _prayerProvider: pp.IPrayerProvider;
-    private constructor(prayerProvider: pp.IPrayerProvider, locationBuilder: ILocationBuilder, prayerSettingsBuilder: IPrayerSettingsBuilder) {
+    constructor(prayerProvider: pp.IPrayerProvider, locationBuilder: ILocationBuilder, prayerSettingsBuilder: IPrayerSettingsBuilder) {
         this._prayerSettingsBuilder = prayerSettingsBuilder;
         this._locationBuilder = locationBuilder;
         this._prayerProvider = prayerProvider;
@@ -279,7 +291,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         try {
             let prayersTime: prayer.IPrayersTime = await this.createPrayerTime();
 
-            let prayerManager: IPrayerManager = new PrayerManager(prayersTime, this);
+            let prayerManager: IPrayerManager = new PrayerManager(prayersTime);
             return Promise.resolve(prayerManager);
         }
         catch (err) {
@@ -295,16 +307,20 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
         return new PrayerTimeBuilder(prayerProvider, locationBuilder, prayerSettingsBuilder);
     }
 };
-class PrayerManager implements IPrayerManager {
+export class PrayerManager implements IPrayerManager {
     private _prayerTime: prayer.IPrayersTime;
-    private _prayerTimeBuilder: IPrayerTimeBuilder;
-    private _configProvider:ConfigProviderName;
+    @serializable(object(prayer.PrayersTime))
+    public get prayerTime(): prayer.IPrayersTime {
+        return this._prayerTime;
+    }
+    public set prayerTime(value: prayer.IPrayersTime) {
+        this._prayerTime = value;
+    }
+
     // private _prayerEvents: prayer.PrayerEvents;
-    constructor(prayerTime: prayer.IPrayersTime, prayerTimeBuilder: IPrayerTimeBuilder,configProvider?:ConfigProviderName) {
+    constructor(prayerTime: prayer.IPrayersTime) {
         this._prayerTime = prayerTime;
-        //   this._prayerEvents = new prayer.PrayerEvents();
-        this._prayerTimeBuilder = prayerTimeBuilder;
-        this._configProvider= isNullOrUndefined(configProvider) ? ConfigProviderName.SERVER : configProvider;
+
     }
     public async updatePrayerConfig(prayerConfig: IPrayersConfig,config:IConfig): Promise<boolean> {
         try {
@@ -313,7 +329,7 @@ class PrayerManager implements IPrayerManager {
             let validationErr: validators.IValidationError;
             if (validationResult === false)
                 return Promise.reject(validator.getValidationError());
-            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(this._configProvider)
+            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory()
             await configurator.updatePrayerConfig(prayerConfig,config);
             return Promise.resolve(true)
         }
@@ -328,7 +344,7 @@ class PrayerManager implements IPrayerManager {
             let validationErr: validators.IValidationError;
             if (validationResult === false)
                 return Promise.reject(validator.getValidationError());
-            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(this._configProvider)
+            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory()
             await configurator.updateLocationConfig(locationConfig,config);
             return Promise.resolve(true)
         }
@@ -474,7 +490,10 @@ class PrayerManager implements IPrayerManager {
     }
     public async updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager> {
         try {
-            this._prayerTime = await this._prayerTimeBuilder
+            let locationConfig: ILocationConfig = this.getLocationConfig();
+            let prayerConfig:IPrayersConfig = this.getPrayerConfig();
+            this._prayerTime = await PrayerTimeBuilder
+                .createPrayerTimeBuilder(locationConfig,prayerConfig)
                 .setPrayerPeriod(startDate, endDate)
                 .createPrayerTime();
             return this;
