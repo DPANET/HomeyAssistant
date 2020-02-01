@@ -35,4 +35,5 @@ export interface IConfigProvider {
     updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
     getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
     updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
+    getConfigId(config?: IConfig): Promise<IConfig>;
 }

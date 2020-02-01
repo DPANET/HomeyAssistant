@@ -5,12 +5,13 @@ import mongoose from "mongoose";
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-import prayer = require("./entities/prayer");
+import * as prayer from "./entities/prayer";
 import cg = require("./configurators/inteface.configuration");
 import * as cfgSchema from "./configurators/schema.configuration";
 import { ConfigProviderFactory, ConfigProviderName } from "./configurators/configuration";
 import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
+import {PrayerTimeCache} from "./configurators/userscache";
 // import R from "ramda";
 import moment from "moment";
 import validators = require("./validators/interface.validators");
@@ -32,6 +33,7 @@ import {
     deserialize,
     getDefaultModelSchema,
     serializable,
+    date,
 } from 'serializr';
 // import {PrayersMethods} from "./entities/prayer"
 
@@ -171,7 +173,7 @@ async function buildLocationObject() {
         // console.log(util.inspect(result.config.prayerConfig.calculations, { showHidden: true, depth: null }))
         //console.log(await prayerConfigModel.estimatedDocumentCount());
         //   await prayerDBConnection.disconnect();
-
+         
 
 
         //     let prayers= [ { prayerTime:
@@ -221,9 +223,11 @@ async function buildLocationObject() {
         //    let projectPrayers= R.curry(sortObject)
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
-        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
-        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ deviceID: "45effedd" });
-        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ deviceID: "45effedd" });
+        // let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
+        // let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ deviceID: "45effedd" });
+        // let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ deviceID: "45effedd" });
+        // let config: cg.IConfig = await configProvider.getConfigId({deviceID:"45effedd"});
+        let prayerUserCache: PrayerTimeCache = new PrayerTimeCache();
     //     console.log(locationConfig.location.address);
     //     locationConfig.location.address ="Mecca Saudi Arabia";
     //    let resut:boolean= await configProvider.updateLocationConfig(locationConfig,{deviceID: "45effedd"});
@@ -235,22 +239,27 @@ async function buildLocationObject() {
         
         // //     // console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
         // //     //  console.log(locationConfig);
-        let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
-            .createPrayerTimeBuilder(locationConfig, prayerConfig)
-            .createPrayerTimeManager() ;
-
-       let value:prayer.IPrayersTime= prayerManager.prayerTime;
+        // let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
+        //     .createPrayerTimeBuilder(locationConfig, prayerConfig)
+        //     .createPrayerTimeManager() ;
+            let value:prayer.IPrayersTime= await prayerUserCache.getPrayerTimeCache({deviceID:"45effedd"});
+         //  console.log(util.inspect(value, {showHidden: false, depth: null}))
+         let prayerManager:managerInterface.IPrayerManager=  new manager.PrayerManager(value);
+           console.log(prayerManager.getPrayerTime(prayer.PrayersName.FAJR, new Date()));
+    //     let result:boolean = await prayerUserCache.createPrayerTimeCache(config,value);
+    //     console.log(result);
        //value.method
-       
+     //  console.log(JSON.stringify(value));
+   //    console.dir(util.inspect(value, {showHidden: false, depth: null}))
       // console.log(value);
-         let serializedValue:any = serialize(prayer.PrayersTime,value );
+      //   let serializedValue:any = serialize(prayer.PrayersTime,value );
        //console.log(serializedValue)
        
-         let valueDesrialized:prayer.PrayersTime = deserialize(prayer.PrayersTime,serializedValue);
+      //   let valueDesrialized:prayer.PrayersTime = deserialize(prayer.PrayersTime,serializedValue);
        //   console.log(util.inspect(valueDesrialized.prayers, {showHidden: false, depth: null}))
        
-       let prayerManagerSerialized:managerInterface.IPrayerManager = new manager.PrayerManager(valueDesrialized);
-       console.log(prayerManagerSerialized.getUpcomingPrayer(new Date()));
+//let prayerManagerSerialized:managerInterface.IPrayerManager = new manager.PrayerManager(valueDesrialized);
+      // console.log(prayerManagerSerialized.getUpcomingPrayer(new Date()));
 
           // let prayers= JSON.stringify(prayerManager);
         // console.log(util.inspect(prayers, {showHidden: false, depth: null}))

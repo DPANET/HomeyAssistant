@@ -16,7 +16,7 @@ import path from "path";
 const configPaths =
 {
 
-    prayerConfig: 'config.prayerConfig.calculations',  
+    prayerConfig: 'config.prayerConfig.calculations',
     locationConfig: 'config.locationConfig'
 }
 const ConfigErrorMessages =
@@ -41,6 +41,8 @@ abstract class ConfigProvider implements IConfigProvider {
     abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
     abstract async getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
     abstract async updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
+    abstract getConfigId(config?: IConfig): Promise<IConfig>;
+
     protected mergePrayerConfig(original: IPrayersConfig, target: IPrayersConfig): IPrayersConfig {
         let originalIndexBy = ramda.indexBy(ramda.prop('prayerName'));
         let updated: any;
@@ -61,6 +63,7 @@ abstract class ConfigProvider implements IConfigProvider {
 }
 
 class ClientConfigurator extends ConfigProvider {
+
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;
     constructor(fileName?: string) {
@@ -168,9 +171,12 @@ class ClientConfigurator extends ConfigProvider {
         else
             return this._db;
     }
-
+    public getConfigId(config?: IConfig): Promise<IConfig> {
+        throw new Error("Method not implemented.");
+    }
 }
 class ServerConfigurator extends ConfigProvider {
+
     private _configModel: mongoose.Model<cfgSchema.IConfigSchemaModel>;
     constructor() {
         super(ConfigProviderName.SERVER);
@@ -180,15 +186,15 @@ class ServerConfigurator extends ConfigProvider {
         try {
             let newConfigRecord: cfgSchema.IConfigSchemaModel;
             let result: cfgSchema.IConfigSchemaModel = await this._configModel
-                .findOne(null,null,{lean:true});
+                .findOne(null, null, { lean: true });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
-            delete result._id
-           let newConfigModel:mongoose.Model<cfgSchema.IConfigSchemaModel>=  cfgSchema.configModel;
+            delete result.id
+            let newConfigModel: mongoose.Model<cfgSchema.IConfigSchemaModel> = cfgSchema.configModel;
             newConfigRecord = new newConfigModel(result);
-            newConfigRecord.deviceID= id;
-            newConfigRecord= await newConfigRecord.save();
-          return Promise.resolve(newConfigRecord);
+            newConfigRecord.deviceID = id;
+            newConfigRecord = await newConfigRecord.save();
+            return Promise.resolve(newConfigRecord);
         } catch (err) {
             return Promise.reject(err);
         }
@@ -246,14 +252,31 @@ class ServerConfigurator extends ConfigProvider {
         }
     }
 
+    public async getConfigId(config?: IConfig): Promise<IConfig> {
+        try{
+        let result: cfgSchema.IConfigSchemaModel = await this._configModel
+            .findOne({ deviceID: config.deviceID }, null, { lean: true });
+        if (isNullOrUndefined(result))
+            return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
+            return Promise.resolve({
+                id:result.id,
+                deviceID:result.deviceID
+            });
+        }
+        catch(err)
+        {
+            return Promise.reject(err);
+        }
+
+    }
 
 }
 
 
 export class ConfigProviderFactory {
     static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider {
-        let configName:ConfigProviderName;
-        configName = isNullOrUndefined(configProviderName) ? config.get("SOURCE"): configProviderName;
+        let configName: ConfigProviderName;
+        configName = isNullOrUndefined(configProviderName) ? config.get("SOURCE") : configProviderName;
         switch (configProviderName) {
             case ConfigProviderName.CLIENT:
                 return new ClientConfigurator();
@@ -263,4 +286,6 @@ export class ConfigProviderFactory {
                 break
         }
     }
+
+
 }
