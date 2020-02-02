@@ -11,7 +11,7 @@ import ramda = require('ramda');
 //import * as prayers from '../entities/prayer';
 import { IPrayersConfig, ILocationConfig, IConfigProvider, IConfig } from "./inteface.configuration";
 import mongoose from 'mongoose';
-import * as cfgSchema from "./schema.configuration";
+import * as cfgSchema from "../cache/schema.configuration";
 import path from "path";
 const configPaths =
 {
@@ -189,7 +189,7 @@ class ServerConfigurator extends ConfigProvider {
                 .findOne(null, null, { lean: true });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
-            delete result.id
+            delete result._id
             let newConfigModel: mongoose.Model<cfgSchema.IConfigSchemaModel> = cfgSchema.configModel;
             newConfigRecord = new newConfigModel(result);
             newConfigRecord.deviceID = id;

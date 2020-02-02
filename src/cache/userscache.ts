@@ -1,8 +1,8 @@
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import mongoose from 'mongoose';
-import * as cfgSchema from "./schema.configuration";
-import { IPrayersTimeCache} from "./interface.userscache";
-import {IConfig} from "./inteface.configuration";
+import * as cfgSchema from "./schema.userscache";
+import { IPrayersTimeCache} from "../configurators/interface.userscache";
+import {IConfig} from "../configurators/inteface.configuration";
 import {IPrayersTime, PrayersTime} from "../entities/prayer";
 import {
     serialize,
@@ -32,6 +32,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
             newPrayerTimeCache  = new newPrayerTimeModel();
             newPrayerTimeCache.deviceID = config.deviceID;
             newPrayerTimeCache.prayersTime = serialize(PrayersTime,prayersTime);
+          //  newPrayerTimeCache.expireAt = new Date(Date.now() + (10*1000));
             newPrayerTimeCache = await newPrayerTimeCache.save();
             return Promise.resolve(true);
         } catch (err) {
@@ -53,7 +54,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
     public async updatePrayerTimeCache(config: IConfig, prayerTime:IPrayersTime): Promise<boolean> {
         try {
             let result: cfgSchema.IPrayerTimeSchemaModel = await this._userCacheModel
-                .findByIdAndUpdate({ deviceID: config.deviceID },{prayersTime:serialize(prayerTime)});
+                .findOneAndUpdate({ deviceID: config.deviceID },{prayersTime:serialize(prayerTime)});
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(true);
@@ -65,7 +66,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
     public async deletePrayerTimeCache(config: IConfig): Promise<boolean> {
         try {
             let result: cfgSchema.IPrayerTimeSchemaModel = await this._userCacheModel
-                .findByIdAndDelete({ deviceID: config.deviceID });
+                .findOneAndDelete({ deviceID: config.deviceID });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(true);

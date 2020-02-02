@@ -8,4 +8,4 @@ export * from './configurators/configuration';
 export * from './configurators/inteface.configuration';
 export * from './util/utility';
 export * from './managers/interface.manager';
-export * from './configurators/schema.configuration';
+export * from './cache/schema.configuration';

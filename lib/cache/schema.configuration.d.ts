@@ -1,6 +1,5 @@
 import { Schema, Model, Document } from 'mongoose';
-import { IPrayersConfig, ILocationConfig } from './inteface.configuration';
-import { IPrayersTime } from '../entities/prayer';
+import { IPrayersConfig, ILocationConfig } from '../configurators/inteface.configuration';
 export declare const configSchema: Schema;
 export interface IConfigSchemaModel extends Document {
     _id: Schema.Types.ObjectId;
@@ -15,13 +14,4 @@ export interface IConfigSchemaModel extends Document {
         locationConfig: ILocationConfig;
     };
 }
-export declare const prayerTimeSchema: Schema;
-export interface IPrayerTimeSchemaModel extends Document {
-    _id: Schema.Types.ObjectId;
-    deviceID: string;
-    prayersTime: IPrayersTime;
-    expireAt: Date;
-    createdAt: Date;
-}
 export declare const configModel: Model<IConfigSchemaModel>;
-export declare const prayerTimeModel: Model<IPrayerTimeSchemaModel>;
