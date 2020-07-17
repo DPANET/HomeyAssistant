@@ -165,9 +165,9 @@ async function buildLocationObject() {
        // console.log(util.inspect(prayerMethod, {showHidden: false, depth: null}))
 
      //   console.log(deserialize(User,json));
-        let prayerDBURI: string = nconf.get('MONGO_DB');
-        prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
-        mongoose.set('useCreateIndex', true);
+    //    let prayerDBURI: string = nconf.get('MONGO_DB');
+    //    prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+    //    mongoose.set('useCreateIndex', true);
         // let prayerConfigModel: mongoose.Model<cfgSchema.IConfigSchemaModel> = cfgSchema.configModel;
         // let result: cfgSchema.IConfigSchemaModel = await prayerConfigModel.findOne();
         // console.log(util.inspect(result.config.prayerConfig.calculations, { showHidden: true, depth: null }))
@@ -223,11 +223,11 @@ async function buildLocationObject() {
         //    let projectPrayers= R.curry(sortObject)
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
-        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
+        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.CLIENT);
         let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ deviceID: "45effedd" });
         let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ deviceID: "45effedd" });
-        let config: cg.IConfig = await configProvider.getConfigId({deviceID:"45effedd"});
-        let prayerUserCache: PrayerTimeCache = new PrayerTimeCache();
+        //let config: cg.IConfig = await configProvider.getConfigId({deviceID:"45effedd"});
+        //let prayerUserCache: PrayerTimeCache = new PrayerTimeCache();
     //     console.log(locationConfig.location.address);
     //     locationConfig.location.address ="Mecca Saudi Arabia";
       //   let resut:cg.IConfig= await configProvider.createConfig("45effedd");
@@ -242,7 +242,7 @@ async function buildLocationObject() {
         let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager() ;
-            let value:boolean= await prayerUserCache.createPrayerTimeCache(config,prayerManager.prayerTime);
+          //  let value:boolean= await prayerUserCache.createPrayerTimeCache(config,prayerManager.prayerTime);
          //  console.log(util.inspect(value, {showHidden: false, depth: null}))
           prayerManager=  new manager.PrayerManager(prayerManager.prayerTime);
            console.log(prayerManager.getPrayerTime(prayer.PrayersName.FAJR, new Date()));
@@ -313,7 +313,7 @@ async function buildLocationObject() {
             console.log(err);
     }
     finally {
-        await prayerDBConnection.disconnect();
+      //  await prayerDBConnection.disconnect();
     }
 
 }

@@ -171,8 +171,9 @@ class ClientConfigurator extends ConfigProvider {
         else
             return this._db;
     }
-    public getConfigId(config?: IConfig): Promise<IConfig> {
-        throw new Error("Method not implemented.");
+    public async getConfigId(config?: IConfig): Promise<IConfig> {
+        return  {    id:config.id,
+            deviceID:config.deviceID};
     }
 }
 class ServerConfigurator extends ConfigProvider {
