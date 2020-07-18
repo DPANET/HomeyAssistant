@@ -224,8 +224,8 @@ async function buildLocationObject() {
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
         let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.CLIENT);
-        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ deviceID: "45effedd" });
-        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ deviceID: "45effedd" });
+        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ profileID: "45effedd" });
+        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ profileID: "45effedd" });
         //let config: cg.IConfig = await configProvider.getConfigId({deviceID:"45effedd"});
         //let prayerUserCache: PrayerTimeCache = new PrayerTimeCache();
     //     console.log(locationConfig.location.address);

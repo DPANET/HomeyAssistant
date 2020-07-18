@@ -27,7 +27,7 @@ export interface ILocationConfig {
 }
 export interface IConfig {
     id?: string;
-    deviceID?: string;
+    profileID?: string;
 }
 export interface IConfigProvider {
     createConfig(id: string): Promise<IConfig>;

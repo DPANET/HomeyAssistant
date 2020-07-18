@@ -29,7 +29,7 @@ export interface ILocationConfig {
 export interface IConfig //extends IPrayersConfig,ILocationConfig
 {
     id?:string,
-    deviceID?:string    
+    profileID?:string    
 
 }
 export interface IConfigProvider {

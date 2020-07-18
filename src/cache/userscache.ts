@@ -30,7 +30,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
 
             let newPrayerTimeModel: mongoose.Model<cfgSchema.IPrayerTimeSchemaModel> = cfgSchema.prayerTimeModel;
             newPrayerTimeCache  = new newPrayerTimeModel();
-            newPrayerTimeCache.deviceID = config.deviceID;
+            newPrayerTimeCache.deviceID = config.profileID;
             newPrayerTimeCache.prayersTime = serialize(PrayersTime,prayersTime);
           //  newPrayerTimeCache.expireAt = new Date(Date.now() + (10*1000));
             newPrayerTimeCache = await newPrayerTimeCache.save();
@@ -42,7 +42,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
     public async getPrayerTimeCache(config: IConfig): Promise<IPrayersTime> {
         try {
             let result: cfgSchema.IPrayerTimeSchemaModel = await this._userCacheModel
-                .findOne({ deviceID: config.deviceID }, null, { lean: true });
+                .findOne({ deviceID: config.profileID }, null, { lean: true });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(result.prayersTime);
@@ -54,7 +54,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
     public async updatePrayerTimeCache(config: IConfig, prayerTime:IPrayersTime): Promise<boolean> {
         try {
             let result: cfgSchema.IPrayerTimeSchemaModel = await this._userCacheModel
-                .findOneAndUpdate({ deviceID: config.deviceID },{prayersTime:serialize(prayerTime)});
+                .findOneAndUpdate({ deviceID: config.profileID },{prayersTime:serialize(prayerTime)});
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(true);
@@ -66,7 +66,7 @@ export class PrayerTimeCache implements IPrayersTimeCache
     public async deletePrayerTimeCache(config: IConfig): Promise<boolean> {
         try {
             let result: cfgSchema.IPrayerTimeSchemaModel = await this._userCacheModel
-                .findOneAndDelete({ deviceID: config.deviceID });
+                .findOneAndDelete({ deviceID: config.profileID });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(true);
