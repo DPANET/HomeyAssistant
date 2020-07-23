@@ -9,8 +9,8 @@ export const configSchema: Schema = new Schema(
       required: true,
       auto: true,
     },
-    deviceID: {
-      type: String,
+    profileID: {
+      type: Schema.Types.ObjectId,
       unique: true
     }
     ,
