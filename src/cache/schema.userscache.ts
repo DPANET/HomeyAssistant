@@ -1,13 +1,13 @@
-import { Schema, Model, Document, model } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { IPrayersTime } from '../entities/prayer'
 
 
-export const prayerTimeSchema: Schema = new Schema(
+export const prayerTimeSchema: mongoose.Schema = new mongoose.Schema(
   {
 
     _id:
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       createIndexes: true,
       required: true,
       auto: true
@@ -123,11 +123,11 @@ export const prayerTimeSchema: Schema = new Schema(
     }
   },{timestamps: { createdAt: 'createdAt' ,updatedAt:'updatedAt'} }
 )
-export interface IPrayerTimeSchemaModel extends Document {
-  _id: Schema.Types.ObjectId;
+export interface IPrayerTimeSchemaModel extends mongoose.Document {
+  _id: mongoose.Types.ObjectId;
   deviceID: string;
   prayersTime: IPrayersTime;
   expireAt:Date;
   createdAt:Date;
 };
-export const prayerTimeModel: Model<IPrayerTimeSchemaModel> = model('PrayersTimeCache', prayerTimeSchema, 'PrayersTimeCache')
+export const prayerTimeModel: mongoose.Model<IPrayerTimeSchemaModel> = mongoose.model('PrayersTimeCache', prayerTimeSchema, 'PrayersTimeCache')

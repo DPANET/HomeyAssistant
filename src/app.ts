@@ -1,12 +1,12 @@
 //process.env.NODE_CONFIG_DIR = "config";
-import nconf = require('nconf');
+import nconf from 'nconf';
 nconf.file('config/default.json');
 import mongoose from "mongoose";
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 import * as prayer from "./entities/prayer";
-import cg = require("./configurators/inteface.configuration");
+import * as cg from "./configurators/inteface.configuration";
 import * as cfgSchema from "./cache/schema.userscache";
 import { ConfigProviderFactory, ConfigProviderName } from "./configurators/configuration";
 import * as managerInterface from './managers/interface.manager';
@@ -14,14 +14,14 @@ import * as manager from "./managers/manager";
 import {PrayerTimeCache} from "./cache/userscache";
 // import R from "ramda";
 import moment from "moment";
-import validators = require("./validators/interface.validators");
+import * as validators from "./validators/interface.validators";
 
 //import validators= val.validators;
 import { valid } from "@hapi/joi";
 import { PrayerConfigValidator, LocationConfigValidator } from "./validators/validator";
 import { DateUtil } from "./util/utility";
 import util from "util";
-import requestPromise = require('request-promise-native');
+import * as requestPromise from 'request-promise-native';
 import {
     createModelSchema,
     primitive,

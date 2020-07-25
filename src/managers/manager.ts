@@ -1,13 +1,13 @@
 
 const to = require('await-to-js').default;
-import ramda = require('ramda');
+import ramda  from 'ramda';
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
 import { ILocationConfig, IPrayersConfig,IConfigProvider, IConfig } from "../configurators/inteface.configuration";
 import { ConfigProviderFactory,ConfigProviderName } from "../configurators/configuration";
-import validators = require('../validators/interface.validators');
+import * as validators from '../validators/interface.validators';
 import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator,LocationConfigValidator } from "../validators/validator";
 //import validators = val.validators;
 import { isNullOrUndefined } from '../util/isNullOrUndefined';

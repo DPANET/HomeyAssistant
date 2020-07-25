@@ -1,6 +1,6 @@
-import config = require('nconf');
+import config from 'nconf';
 const to = require('await-to-js').default;
-import ramda = require('ramda');
+import ramda  from 'ramda';
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { ITimeZone, ILocation } from '../entities/location';
 

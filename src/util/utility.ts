@@ -1,5 +1,5 @@
-import moment = require('moment');
-import momentTZ= require('moment-timezone');
+import moment  from 'moment';
+import momentTZ from 'moment-timezone';
 
 export class DateUtil
 {

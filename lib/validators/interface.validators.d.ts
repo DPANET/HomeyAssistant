@@ -1,4 +1,4 @@
-import Joi = require('@hapi/joi');
+import Joi from '@hapi/joi';
 export declare type ValidtionTypes = any;
 export declare enum ValidatorProviders {
     LocationValidator = "Validate Location",

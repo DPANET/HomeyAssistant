@@ -1,4 +1,4 @@
-import Joi = require('@hapi/joi');
+import Joi from '@hapi/joi';
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 export type ValidtionTypes =  any;
 

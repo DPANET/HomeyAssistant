@@ -1,4 +1,4 @@
-import Debug = require('debug');
+import Debug from 'debug';
 import config from "nconf";
 const debug = Debug("app:router");
 const to = require('await-to-js').default;
@@ -7,7 +7,7 @@ import lowdb from "lowdb";
 import lowdbfile from "lowdb/adapters/FileAsync";
 import { DateUtil } from '../util/utility';
 //import _ = require('lodash');
-import ramda = require('ramda');
+import ramda from 'ramda';
 //import * as prayers from '../entities/prayer';
 import { IPrayersConfig, ILocationConfig, IConfigProvider, IConfig } from "./inteface.configuration";
 import mongoose from 'mongoose';

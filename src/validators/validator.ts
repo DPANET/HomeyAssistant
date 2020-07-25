@@ -1,4 +1,4 @@
-import Joi = require('@hapi/joi');
+import Joi from '@hapi/joi';
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as config from '../configurators/inteface.configuration';
