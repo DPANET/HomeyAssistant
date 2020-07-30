@@ -225,7 +225,7 @@ async function buildLocationObject() {
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
         let profileID: Schema.Types.ObjectId =  new mongoose.Types.ObjectId("5f20ebac9627ac26ccc551e0") as any;
-        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
+        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory();
         let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ profileID:profileID});
         let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ profileID:profileID});
         let config: cg.IConfig = await configProvider.getConfigId({profileID: profileID});

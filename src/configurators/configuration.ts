@@ -285,7 +285,7 @@ export class ConfigProviderFactory {
     static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider {
         let configName: ConfigProviderName;
         configName = isNullOrUndefined(configProviderName) ? config.get("SOURCE") : configProviderName;
-        switch (configProviderName) {
+        switch (configName) {
             case ConfigProviderName.CLIENT:
                 return new ClientConfigurator();
                 break;
