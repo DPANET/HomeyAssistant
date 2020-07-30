@@ -1,7 +1,7 @@
 //process.env.NODE_CONFIG_DIR = "config";
 import nconf from 'nconf';
 nconf.file('config/default.json');
-import mongoose from "mongoose";
+import mongoose, { Schema, SchemaType, SchemaTypes, Types } from "mongoose";
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -35,6 +35,7 @@ import {
     serializable,
     date,
 } from 'serializr';
+import { profile } from 'console';
 // import {PrayersMethods} from "./entities/prayer"
 
 class User {
@@ -165,14 +166,14 @@ async function buildLocationObject() {
        // console.log(util.inspect(prayerMethod, {showHidden: false, depth: null}))
 
      //   console.log(deserialize(User,json));
-    //    let prayerDBURI: string = nconf.get('MONGO_DB');
-    //    prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
-    //    mongoose.set('useCreateIndex', true);
-        // let prayerConfigModel: mongoose.Model<cfgSchema.IConfigSchemaModel> = cfgSchema.configModel;
-        // let result: cfgSchema.IConfigSchemaModel = await prayerConfigModel.findOne();
-        // console.log(util.inspect(result.config.prayerConfig.calculations, { showHidden: true, depth: null }))
-        //console.log(await prayerConfigModel.estimatedDocumentCount());
-        //   await prayerDBConnection.disconnect();
+       let prayerDBURI: string = nconf.get('MONGO_DB');
+       prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+       mongoose.set('useCreateIndex', true);
+        let prayerConfigModel: mongoose.Model<cfgSchema.IPrayerTimeSchemaModel> = cfgSchema.prayerTimeModel;
+        let result: cfgSchema.IPrayerTimeSchemaModel = await prayerConfigModel.findOne();
+        console.log(util.inspect(result.prayersTime.prayers, { showHidden: true, depth: null }))
+        console.log(await prayerConfigModel.estimatedDocumentCount());
+       //   await prayerDBConnection.disconnect();
          
 
 
@@ -223,10 +224,11 @@ async function buildLocationObject() {
         //    let projectPrayers= R.curry(sortObject)
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
-        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.CLIENT);
-        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ profileID: "45effedd" });
-        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ profileID: "45effedd" });
-        //let config: cg.IConfig = await configProvider.getConfigId({deviceID:"45effedd"});
+        let profileID: Schema.Types.ObjectId =  new mongoose.Types.ObjectId("5f20ebac9627ac26ccc551e0") as any;
+        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ConfigProviderName.SERVER);
+        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ profileID:profileID});
+        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ profileID:profileID});
+        let config: cg.IConfig = await configProvider.getConfigId({profileID: profileID});
         //let prayerUserCache: PrayerTimeCache = new PrayerTimeCache();
     //     console.log(locationConfig.location.address);
     //     locationConfig.location.address ="Mecca Saudi Arabia";
@@ -243,7 +245,7 @@ async function buildLocationObject() {
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
             .createPrayerTimeManager() ;
           //  let value:boolean= await prayerUserCache.createPrayerTimeCache(config,prayerManager.prayerTime);
-         //  console.log(util.inspect(value, {showHidden: false, depth: null}))
+         // console.log(util.inspect(value, {showHidden: false, depth: null}))
           prayerManager=  new manager.PrayerManager(prayerManager.prayerTime);
            console.log(prayerManager.getPrayerTime(prayer.PrayersName.FAJR, new Date()));
     //     let result:boolean = await prayerUserCache.createPrayerTimeCache(config,value);
@@ -313,7 +315,7 @@ async function buildLocationObject() {
             console.log(err);
     }
     finally {
-      //  await prayerDBConnection.disconnect();
+        await prayerDBConnection.disconnect();
     }
 
 }

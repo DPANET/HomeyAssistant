@@ -3,7 +3,7 @@ import { IPrayersConfig, ILocationConfig } from '../configurators/inteface.confi
 export declare const configSchema: Schema;
 export interface IConfigSchemaModel extends Document {
     _id: Schema.Types.ObjectId;
-    deviceID: string;
+    profileID: Schema.Types.ObjectId;
     config: {
         prayerConfig: {
             prayer: {

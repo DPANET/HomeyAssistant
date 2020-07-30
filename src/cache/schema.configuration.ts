@@ -11,7 +11,7 @@ export const configSchema: Schema = new Schema(
     },
     profileID: {
       type: Schema.Types.ObjectId,
-      unique: true
+      unique: true,
     }
     ,
     config: {
@@ -59,7 +59,7 @@ export const configSchema: Schema = new Schema(
 
 export interface IConfigSchemaModel extends Document {
   _id: Schema.Types.ObjectId,
-  deviceID: string,
+  profileID: Schema.Types.ObjectId,
   config:
   {
     prayerConfig:

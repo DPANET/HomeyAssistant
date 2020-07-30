@@ -1,4 +1,5 @@
 import * as prayers from '../entities/prayer';
+import { Schema } from 'mongoose';
 export interface IPrayersConfig {
     method: prayers.Methods;
     midnight: prayers.MidnightMode;
@@ -26,11 +27,11 @@ export interface ILocationConfig {
     };
 }
 export interface IConfig {
-    id?: string;
-    profileID?: string;
+    id?: Schema.Types.ObjectId;
+    profileID?: Schema.Types.ObjectId;
 }
 export interface IConfigProvider {
-    createConfig(id: string): Promise<IConfig>;
+    createDefaultConfig(profileID: Schema.Types.ObjectId): Promise<IConfig>;
     getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
     updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
     getLocationConfig(config?: IConfig): Promise<ILocationConfig>;

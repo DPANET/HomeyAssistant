@@ -13,8 +13,8 @@ export const prayerTimeSchema: mongoose.Schema = new mongoose.Schema(
       auto: true
     }
     ,
-    deviceID: {
-      type: String,
+    profileID: {
+      type:  mongoose.Schema.Types.ObjectId,
       unique: true
     },
     expireAt:{
@@ -124,8 +124,8 @@ export const prayerTimeSchema: mongoose.Schema = new mongoose.Schema(
   },{timestamps: { createdAt: 'createdAt' ,updatedAt:'updatedAt'} }
 )
 export interface IPrayerTimeSchemaModel extends mongoose.Document {
-  _id: mongoose.Types.ObjectId;
-  deviceID: string;
+  _id:  mongoose.Schema.Types.ObjectId;
+  profileID:  mongoose.Schema.Types.ObjectId;
   prayersTime: IPrayersTime;
   expireAt:Date;
   createdAt:Date;

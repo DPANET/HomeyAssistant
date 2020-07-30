@@ -10,7 +10,7 @@ import { DateUtil } from '../util/utility';
 import ramda from 'ramda';
 //import * as prayers from '../entities/prayer';
 import { IPrayersConfig, ILocationConfig, IConfigProvider, IConfig } from "./inteface.configuration";
-import mongoose from 'mongoose';
+import mongoose, { mongo, Schema, SchemaType } from 'mongoose';
 import * as cfgSchema from "../cache/schema.configuration";
 import path from "path";
 const configPaths =
@@ -36,7 +36,7 @@ abstract class ConfigProvider implements IConfigProvider {
     constructor(providerName: ConfigProviderName) {
         this._providerName = providerName;
     }
-    abstract async createConfig(id: string): Promise<IConfig>;
+    abstract async createDefaultConfig(id: Schema.Types.ObjectId): Promise<IConfig>;
     abstract async getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
     abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
     abstract async getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
@@ -73,7 +73,7 @@ class ClientConfigurator extends ConfigProvider {
         else
             this._fileName = path.join(config.get("CONFIG_FOLDER_PATH"), config.get("PRAYER_CONFIG"));
     }
-    public async createConfig(id: string): Promise<IConfig> {
+    public async createDefaultConfig(profileID: Schema.Types.ObjectId): Promise<IConfig> {
         throw new Error("Method not implemented.");
     }
     public async updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean> {
@@ -183,7 +183,14 @@ class ServerConfigurator extends ConfigProvider {
         super(ConfigProviderName.SERVER);
         this._configModel = cfgSchema.configModel;
     }
-    public async createConfig(id: string): Promise<IConfig> {
+    private convertToConfig(record:cfgSchema.IConfigSchemaModel):IConfig
+    {
+        return ({
+            id:record.id,
+            profileID: record.profileID
+        })
+    }
+    public async createDefaultConfig(id: Schema.Types.ObjectId): Promise<IConfig> {
         try {
             let newConfigRecord: cfgSchema.IConfigSchemaModel;
             let result: cfgSchema.IConfigSchemaModel = await this._configModel
@@ -193,7 +200,7 @@ class ServerConfigurator extends ConfigProvider {
             delete result._id
             let newConfigModel: mongoose.Model<cfgSchema.IConfigSchemaModel> = cfgSchema.configModel;
             newConfigRecord = new newConfigModel(result);
-            newConfigRecord.deviceID = id;
+            newConfigRecord.profileID = id;
             newConfigRecord = await newConfigRecord.save();
             return Promise.resolve(newConfigRecord);
         } catch (err) {
@@ -204,7 +211,7 @@ class ServerConfigurator extends ConfigProvider {
     public async getPrayerConfig(config?: IConfig): Promise<IPrayersConfig> {
         try {
             let result: cfgSchema.IConfigSchemaModel = await this._configModel
-                .findOne({ deviceID: config.profileID }, null, { lean: true });
+                .findOne({ profileID: config.profileID }, null, { lean: true });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(result.config.prayerConfig.calculations);
@@ -219,7 +226,7 @@ class ServerConfigurator extends ConfigProvider {
             let original: IPrayersConfig = await this.getPrayerConfig(config);
 
             let updated: IPrayersConfig = super.mergePrayerConfig(original, prayerConfigs);
-            await this._configModel.updateOne({ deviceID: config.profileID }, { $set: { "config.prayerConfig.calculations": updated } });
+            await this._configModel.updateOne({ profileID: config.profileID }, { $set: { "config.prayerConfig.calculations": updated } });
             return Promise.resolve(true);
         }
         catch (err) {
@@ -230,7 +237,7 @@ class ServerConfigurator extends ConfigProvider {
     public async getLocationConfig(config?: IConfig): Promise<ILocationConfig> {
         try {
             let result: cfgSchema.IConfigSchemaModel = await this._configModel
-                .findOne({ deviceID: config.profileID }, null, { lean: true });
+                .findOne({ profileID: config.profileID }, null, { lean: true });
             if (isNullOrUndefined(result))
                 return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve(result.config.locationConfig);
@@ -245,7 +252,7 @@ class ServerConfigurator extends ConfigProvider {
             let original: ILocationConfig = await this.getLocationConfig(config);
             let updated: ILocationConfig;
             updated = super.mergeLocationConfig(original, locationConfig);
-            await this._configModel.updateOne({ deviceID: config.profileID }, { $set: { "config.locationConfig": updated } });
+            await this._configModel.updateOne({ profileID: config.profileID }, { $set: { "config.locationConfig": updated } });
             return Promise.resolve(true);
         }
         catch (err) {
@@ -256,12 +263,12 @@ class ServerConfigurator extends ConfigProvider {
     public async getConfigId(config?: IConfig): Promise<IConfig> {
         try{
         let result: cfgSchema.IConfigSchemaModel = await this._configModel
-            .findOne({ deviceID: config.profileID }, null, { lean: true });
+            .findOne({ profileID: config.profileID }, null, { lean: true });
         if (isNullOrUndefined(result))
             return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
             return Promise.resolve({
                 id:result.id,
-                deviceID:result.deviceID
+                profileID:result.profileID
             });
         }
         catch(err)
