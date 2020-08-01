@@ -15,6 +15,8 @@
  * limitations under the License.
  */;
 
+const { v4: uuidv4 } = require('uuid');
+
 /**
  * Polyline encodes an array of LatLng objects.
  *
@@ -97,4 +99,4 @@ exports.decodePath = function(encodedPath) {
   return path;
 };
 
-exports.placesAutoCompleteSessionToken = require('uuid/v4');
+exports.placesAutoCompleteSessionToken = uuidv4;

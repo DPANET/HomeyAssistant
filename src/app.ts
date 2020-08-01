@@ -15,9 +15,9 @@ import {PrayerTimeCache} from "./cache/userscache";
 // import R from "ramda";
 import moment from "moment";
 import * as validators from "./validators/interface.validators";
-
+import R from "ramda";
 //import validators= val.validators;
-import { valid } from "@hapi/joi";
+import { valid, string } from "@hapi/joi";
 import { PrayerConfigValidator, LocationConfigValidator } from "./validators/validator";
 import { DateUtil } from "./util/utility";
 import util from "util";
@@ -36,6 +36,8 @@ import {
     date,
 } from 'serializr';
 import { profile } from 'console';
+import arrow from "@arrows/composition";
+import { values } from 'ramda';
 // import {PrayersMethods} from "./entities/prayer"
 
 class User {
@@ -319,6 +321,78 @@ async function buildLocationObject() {
     }
 
 }
-buildLocationObject();
+interface IPrayerController
+{
+    prayerAdjust:any;
+    prayerFunc:any;
 
+
+}
+async function pipe()
+{
+    
+    try{
+
+    let x = (z:number,y:number)=> z+y
+    
+    let middleWare  = async (word:string):Promise<string>=>
+    {
+       // throw new Error("WTF");
+        return  word + " Space";
+    }
+    let y = async (word:string):Promise<string>=>
+    {
+        return word + " Augmented";
+    }
+    let validation  = async (word:any):Promise<string>=>
+    {
+        return word+ " Funck";
+       // return (word=== "Hi Space") ? true: false;
+    }
+    let validations= arrow.railAsync(validation,y);
+    let router:IPrayerController={
+        prayerAdjust: validations,
+        prayerFunc: arrow.railAsync(validations,middleWare)
+    }
+    let z = (middleWare:any,next:any,args:any)=>
+    {
+
+        let piper=arrow.pipe(middleWare,next);
+        return piper(args);
+    }
+    let subtract= (z:number)=>z * 3
+    let curry = arrow.curry(x);
+    let math = curry(3)
+ 
+    let number = arrow.pipe(math,subtract);
+    console.log(number(2));
+    let list = (fn:Function, input:string)=>
+    {
+        console.log(input)
+     return fn(input);
+    }
+
+
+   let chainList = arrow.chain(list);
+  // let validations= arrow.railAsync(validation,y);
+    let pip = router.prayerFunc;
+    let value =  await pip("Hi");
+    console.log("my error : "+ value)
+}
+//   let curryFunc = arrow.curry(z);
+//   let middleWare2 =curryFunc(validation);
+//   console.log(middleWare2(y,"hi"));
+///  let middleWare2 = router(validation);
+ // let welcome = validate("Welcome ");
+ //let calculate =  arrow.compose(validate(next aomr),y);
+  //let execute = validate(calculate);
+ //  console.log(welcome());
+catch(err)
+{
+    console.log(err.message)
+}
+
+}
+buildLocationObject();
+//pipe();
 

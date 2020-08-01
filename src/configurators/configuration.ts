@@ -44,9 +44,9 @@ abstract class ConfigProvider implements IConfigProvider {
     abstract getConfigId(config?: IConfig): Promise<IConfig>;
 
     protected mergePrayerConfig(original: IPrayersConfig, target: IPrayersConfig): IPrayersConfig {
-        let originalIndexBy = ramda.indexBy(ramda.prop('prayerName'));
+        let originalIndexBy:any = ramda.indexBy<any>(ramda.prop('prayerName'));
         let updated: any;
-        let updateIndexBy = ramda.indexBy(ramda.prop('prayerName'))
+        let updateIndexBy:any = ramda.indexBy<any>(ramda.prop('prayerName'));
         let concatPrayers = (k: any, l: any, r: any) => l.prayerName == r.prayerName ? r : l
         let concatValues = (k: any, l: any, r: any) => k === "adjustments" ? (ramda.values(ramda.mergeDeepWithKey(concatPrayers, originalIndexBy(l), updateIndexBy(r)))) : r
         let mergedList: any = ramda.mergeDeepWithKey(concatValues, original, target)

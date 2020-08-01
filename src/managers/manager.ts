@@ -450,7 +450,7 @@ export class PrayerManager implements IPrayerManager {
 
         if (dateNow > this.getPrayerEndPeriond() || dateNow < this.getPrayerStartPeriod())
             return null;
-        let orderByFn = ramda.sortBy<prayer.IPrayersTiming>(ramda.prop('prayerTime'));
+        let orderByFn = ramda.sortBy(ramda.prop('prayerTime'));
         let upcomingPrayer: prayer.IPrayersTiming = null;
         let fardhPrayers: Array<prayer.IPrayerType> = prayer.PrayersTypes.filter((n) => n.prayerType === prayer.PrayerType.Fardh);
         let todayPrayers: prayer.IPrayers = this.getPrayersByDate(dateNow);
