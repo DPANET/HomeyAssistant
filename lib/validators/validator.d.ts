@@ -1,3 +1,4 @@
+/// <reference types="hapi__joi" />
 import Joi from '@hapi/joi';
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';

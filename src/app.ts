@@ -333,7 +333,11 @@ async function pipe()
     
     try{
 
-    let x = (z:number,y:number)=> z+y
+    let x = (z:number,y:number)=> {
+     throw new Error("new Error");
+      return  z+y
+
+    }
     
     let middleWare  = async (word:string):Promise<string>=>
     {
@@ -346,6 +350,7 @@ async function pipe()
     }
     let validation  = async (word:any):Promise<string>=>
     {
+        
         return word+ " Funck";
        // return (word=== "Hi Space") ? true: false;
     }
@@ -360,7 +365,10 @@ async function pipe()
         let piper=arrow.pipe(middleWare,next);
         return piper(args);
     }
-    let subtract= (z:number)=>z * 3
+    let subtract= (z:number)=>{
+        z * 3
+        // throw new Error("Shit")
+    }
     let curry = arrow.curry(x);
     let math = curry(3)
  

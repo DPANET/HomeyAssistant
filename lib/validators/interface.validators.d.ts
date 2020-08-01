@@ -1,3 +1,4 @@
+/// <reference types="hapi__joi" />
 import Joi from '@hapi/joi';
 export declare type ValidtionTypes = any;
 export declare enum ValidatorProviders {
@@ -33,8 +34,9 @@ export declare abstract class Validator<T> implements IValid<T> {
     set validatorName(value: string);
     getValidationError(): IValidationError;
     protected setValidatonError(error: IValidationError): void;
-    protected processErrorMessage(errors: any): Joi.ValidationErrorItem[];
-    protected genericValidator(validateFn: Joi.ValidationResult<T>): boolean;
+    protected processErrorMessage(errors: any): Error;
+    protected customErrorMessage(): Record<string, string>;
+    protected genericValidator(validateFn: Joi.ValidationResult): boolean;
     private processErrorMessages;
 }
 export {};

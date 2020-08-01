@@ -106,7 +106,8 @@ export abstract class Validator<T> implements IValid<T>
         this._valdationErrors = error;
 
     }
-    protected processErrorMessage(errors: any): Joi.ValidationErrorItem[] {
+    protected processErrorMessage(errors: any): Error {
+        let errorMessage:string
         errors.map((err: any) => {
             switch (err.type) {
                 case "date.base":
@@ -144,7 +145,36 @@ export abstract class Validator<T> implements IValid<T>
         // console.log(errors);
         return errors;
     }
-    protected genericValidator(validateFn: Joi.ValidationResult<T> ): boolean {
+    protected customErrorMessage():Record<string,string>{
+        return {
+           'date.base':`{#label} value is either not a date or could not be cast to a date from a string or a number`,
+             "any.empty":
+                 `{#label} key value is empty, value should be within the list`
+                
+            , "date.max":
+                 `{#label} should not exceed {#limit}`
+                
+            , "any.allowOnly":
+                 `{#label} should be within the acceptable list of values`
+                
+            , "any.required":
+                 `{#label} is mandatory field`
+                
+            , "number.base":
+                 `{#label} expects integer`
+                
+            , "string.base":
+                 `{#label} expects string`
+                
+            , "array.includesOne":
+                 `{#label} expects a value not in the list`
+                
+            , "object.child":
+                 `{#label} expects a value not in the list`
+                
+        }
+    }
+    protected genericValidator(validateFn: Joi.ValidationResult ): boolean {
         let result, err, iErr: IValidationError;
         
         err =  validateFn.error;
