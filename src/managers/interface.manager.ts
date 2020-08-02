@@ -38,8 +38,8 @@ export interface IPrayerManager {
     getPrayerSettings(): prayer.IPrayersSettings;
     getPrayerAdjsutments(): prayer.IPrayerAdjustments[];
     getPrayerAdjustmentsByPrayer(prayerName: prayer.PrayersName): prayer.IPrayerAdjustments;
-    updatePrayerConfig(prayerConfig:IPrayersConfig, config:IConfig):Promise<boolean>;
-    updateLocationConfig(locationConfig:ILocationConfig, config:IConfig):Promise<boolean>;
+    updatePrayerConfig(prayerConfig:IPrayersConfig, config?:IConfig, configProvider?:IConfigProvider):Promise<boolean>;
+    updateLocationConfig(locationConfig:ILocationConfig, config?:IConfig,configProvider?:IConfigProvider):Promise<boolean>;
     prayerTime:prayer.IPrayersTime;
 }
 

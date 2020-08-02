@@ -1,14 +1,14 @@
 
 const to = require('await-to-js').default;
-import ramda  from 'ramda';
+import ramda from 'ramda';
 import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
-import { ILocationConfig, IPrayersConfig,IConfigProvider, IConfig } from "../configurators/inteface.configuration";
-import { ConfigProviderFactory,ConfigProviderName } from "../configurators/configuration";
+import { ILocationConfig, IPrayersConfig, IConfigProvider, IConfig } from "../configurators/inteface.configuration";
+import { ConfigProviderFactory, ConfigProviderName } from "../configurators/configuration";
 import * as validators from '../validators/interface.validators';
-import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator,LocationConfigValidator } from "../validators/validator";
+import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator, LocationConfigValidator } from "../validators/validator";
 //import validators = val.validators;
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { DateUtil } from '../util/utility';
@@ -322,30 +322,38 @@ export class PrayerManager implements IPrayerManager {
         this._prayerTime = prayerTime;
 
     }
-    public async updatePrayerConfig(prayerConfig: IPrayersConfig,config:IConfig): Promise<boolean> {
+    public async updatePrayerConfig(prayerConfig: IPrayersConfig, config?: IConfig, configProvider?: IConfigProvider): Promise<boolean> {
         try {
             let validator: validators.IValid<IPrayersConfig> = PrayerConfigValidator.createValidator();
             let validationResult: boolean = validator.validate(prayerConfig);
             let validationErr: validators.IValidationError;
             if (validationResult === false)
                 return Promise.reject(validator.getValidationError());
-            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory()
-            await configurator.updatePrayerConfig(prayerConfig,config);
+            let configurator: IConfigProvider;
+            if (isNullOrUndefined(configProvider))
+                configurator = ConfigProviderFactory.createConfigProviderFactory();
+            else
+                configurator = configProvider;
+            await configurator.updatePrayerConfig(prayerConfig, config);
             return Promise.resolve(true)
         }
         catch (err) {
             return Promise.reject(err);
         }
     }
-    public async updateLocationConfig(locationConfig: ILocationConfig,config:IConfig): Promise<boolean> {
+    public async updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig, configProvider?: IConfigProvider): Promise<boolean> {
         try {
             let validator: validators.IValid<ILocationConfig> = LocationConfigValidator.createValidator();
             let validationResult: boolean = validator.validate(locationConfig);
             let validationErr: validators.IValidationError;
             if (validationResult === false)
                 return Promise.reject(validator.getValidationError());
-            let configurator: IConfigProvider = ConfigProviderFactory.createConfigProviderFactory()
-            await configurator.updateLocationConfig(locationConfig,config);
+            let configurator: IConfigProvider;
+            if (isNullOrUndefined(configProvider))
+                configurator = ConfigProviderFactory.createConfigProviderFactory();
+            else
+                configurator = configProvider;
+            await configurator.updateLocationConfig(locationConfig, config);
             return Promise.resolve(true)
         }
         catch (err) {
@@ -491,9 +499,9 @@ export class PrayerManager implements IPrayerManager {
     public async updatePrayersDate(startDate: Date, endDate: Date): Promise<IPrayerManager> {
         try {
             let locationConfig: ILocationConfig = this.getLocationConfig();
-            let prayerConfig:IPrayersConfig = this.getPrayerConfig();
+            let prayerConfig: IPrayersConfig = this.getPrayerConfig();
             this._prayerTime = await PrayerTimeBuilder
-                .createPrayerTimeBuilder(locationConfig,prayerConfig)
+                .createPrayerTimeBuilder(locationConfig, prayerConfig)
                 .setPrayerPeriod(startDate, endDate)
                 .createPrayerTime();
             return this;
