@@ -21,12 +21,11 @@
     "mongoose": "^5.9.24",
     "nconf": "^0.10.0",
     "ramda": "^0.27.1",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.8",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9",
     "serializr": "^1.5.4"
   },
   "devDependencies": {
-    "@types/cron": "^1.7.1",
     "@types/debug": "^4.1.5",
     "@types/googlemaps": "^3.39.11",
     "@types/hapi__joi": "^17.1.4",
@@ -36,7 +35,7 @@
     "@types/nconf": "^0.10.0",
     "@types/node": "^10.17.13",
     "@types/ramda": "^0.27.14",
-    "@types/request": "^2.48.4",
+    "@types/request": "^2.48.5",
     "@types/request-promise-native": "^1.0.17"
   },
   "directories": {
