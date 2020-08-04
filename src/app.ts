@@ -114,14 +114,16 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 
 }
 
-var prayerConfigFE: cg.IPrayersConfig = {
+var prayerConfigFE: any = 
+{
     method: 4,
     school: 0,
     midnight: 0,
     adjustmentMethod: 1,
     latitudeAdjustment: 3,
     startDate: new Date(),
-    endDate: new Date("06-07-2019"),
+    endDate: new Date("10-10-2020")
+    ,
     adjustments: [
         { prayerName: prayer.PrayersName.FAJR, adjustments: 350 },
         { prayerName: prayer.PrayersName.DHUHR, adjustments: 450 },
@@ -131,7 +133,7 @@ var prayerConfigFE: cg.IPrayersConfig = {
     ]
 };
 
-var locationConfigPE: cg.ILocationConfig =
+var locationConfigPE: any =
 {
     location: {
         latitude: 24.444103,
@@ -140,7 +142,8 @@ var locationConfigPE: cg.ILocationConfig =
         countryName: "ffs",
         address: "f",
         city: "Abu Dhabi"
-    },
+    }
+    ,
     timezone:
     {
         timeZoneId: "asia/duba",
@@ -281,8 +284,8 @@ async function buildLocationObject() {
         //  console.log(`save result :${result}`)
         //console.log(result)
         //  await prayerManager.saveLocationConfig(locationConfigPE);
-        //  let validate: validators.IValid<cg.ILocationConfig> = LocationConfigValidator.createValidator();
-        //  //console.log(validate.validate(locationConfigPE));
+         let validate: validators.IValid<cg.IPrayersConfig> = PrayerConfigValidator.createValidator();
+         console.log(validate.validate(prayerConfigFE));
 
         //  //  console.log(ramda.values(prayer.AdjsutmentMethod));
         //     //console.log(prayer.AdjsutmentMethod.Server);

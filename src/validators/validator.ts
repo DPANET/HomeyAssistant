@@ -130,11 +130,11 @@ export class PrayerConfigValidator extends Validator<config.IPrayersConfig>
                 .label('Adjustments')
                .messages(this.customErrorMessage())
             // .error((errors) => errors.map((err) => this.processErrorMessage(err)))
-        });
+        }).required().messages(this.customErrorMessage());
         this._configSchema = Joi.object().keys({
             startDate: Joi
                 .date()
-                .max(Joi.ref('endDate')).error(() => "End Date should be less than Start Date")
+                .max(Joi.ref('endDate'))//.error(() => "End Date should be less than Start Date")
                 .required()
                 .label('Start Date')
                .messages(this.customErrorMessage()),
@@ -163,11 +163,12 @@ export class PrayerConfigValidator extends Validator<config.IPrayersConfig>
                 .label('Adjust Method')
                .messages(this.customErrorMessage()),
             adjustments: Joi.array()
+                .required()
                 .items(this._adjustmentsSchema)
                 .unique()
                 .label('Adjustments')
                .messages(this.customErrorMessage())
-        }).messages(this.customErrorMessage())
+        }).required().messages(this.customErrorMessage())
 
     }
     public validate(validateObject: config.IPrayersConfig): boolean {
@@ -183,7 +184,7 @@ export class LocationConfigValidator extends Validator<config.ILocationConfig>
     private _locationSchema:Joi.Schema
     private _timeZoneSchema: Joi.Schema;
     private constructor() {
-        super(ValidatorProviders.PrayerConfigValidator);
+        super(ValidatorProviders.LocationConfigValidator);
         this.setSchema();
 
     }
@@ -219,7 +220,7 @@ export class LocationConfigValidator extends Validator<config.ILocationConfig>
             .required()
             .label('City')
            .messages(this.customErrorMessage())
-        })
+        }).required()
         .and('address','countryCode')
         .and('latitude', 'longtitude');
         this._timeZoneSchema = Joi.object().keys({
@@ -242,11 +243,11 @@ export class LocationConfigValidator extends Validator<config.ILocationConfig>
                 .required()
                 .label('Rawoffset')
                .messages(this.customErrorMessage())
-        });
+        }).required();
         this._configSchema= Joi.object().keys({
             location:this._locationSchema,
             timezone:this._timeZoneSchema
-        }).messages(this.customErrorMessage())
+        }).required().and("location","timezone").messages(this.customErrorMessage())
     }
     public validate(validateObject: config.ILocationConfig): boolean {
         return super.genericValidator(this._configSchema.validate(validateObject, { abortEarly: false, allowUnknown: true }));
