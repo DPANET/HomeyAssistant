@@ -1,17 +1,17 @@
 //process.env.NODE_CONFIG_DIR = "config";
 import nconf from 'nconf';
 nconf.file('config/default.json');
-import mongoose, { Schema, SchemaType, SchemaTypes, Types } from "mongoose";
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
+// import mongoose, { Schema, SchemaType, SchemaTypes, Types } from "mongoose";
+// mongoose.set('useNewUrlParser', true);
+// mongoose.set('useFindAndModify', false);
+// mongoose.set('useCreateIndex', true);
 import * as prayer from "./entities/prayer";
 import * as cg from "./configurators/inteface.configuration";
-import * as cfgSchema from "./cache/schema.userscache";
+//import * as cfgSchema from "./cache/schema.userscache";
 import { ConfigProviderFactory, ConfigProviderName } from "./configurators/configuration";
 import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
-import {PrayerTimeCache} from "./cache/userscache";
+//import {PrayerTimeCache} from "./cache/userscache";
 // import R from "ramda";
 import moment from "moment";
 import * as validators from "./validators/interface.validators";
@@ -36,7 +36,6 @@ import {
     date,
 } from 'serializr';
 import { profile } from 'console';
-import arrow from "@arrows/composition";
 import { values } from 'ramda';
 // import {PrayersMethods} from "./entities/prayer"
 
@@ -153,7 +152,7 @@ var locationConfigPE: cg.ILocationConfig =
 }
 var countnumber = 0;
 async function buildLocationObject() {
-    let prayerDBConnection: mongoose.Mongoose;
+    //let prayerDBConnection: mongoose.Mongoose;
     try {
 
         // let prayerMethod:PrayersMethods = new PrayersMethods()
@@ -168,13 +167,13 @@ async function buildLocationObject() {
        // console.log(util.inspect(prayerMethod, {showHidden: false, depth: null}))
 
      //   console.log(deserialize(User,json));
-       let prayerDBURI: string = nconf.get('MONGO_DB');
-       prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
-       mongoose.set('useCreateIndex', true);
-        let prayerConfigModel: mongoose.Model<cfgSchema.IPrayerTimeSchemaModel> = cfgSchema.prayerTimeModel;
-        let result: cfgSchema.IPrayerTimeSchemaModel = await prayerConfigModel.findOne();
-        console.log(util.inspect(result.prayersTime.prayers, { showHidden: true, depth: null }))
-        console.log(await prayerConfigModel.estimatedDocumentCount());
+    //    let prayerDBURI: string = nconf.get('MONGO_DB');
+    //    prayerDBConnection = await mongoose.connect(prayerDBURI, { useNewUrlParser: true, useUnifiedTopology: true });
+    //    mongoose.set('useCreateIndex', true);
+    //     let prayerConfigModel: mongoose.Model<cfgSchema.IPrayerTimeSchemaModel> = cfgSchema.prayerTimeModel;
+    //     let result: cfgSchema.IPrayerTimeSchemaModel = await prayerConfigModel.findOne();
+    //     console.log(util.inspect(result.prayersTime.prayers, { showHidden: true, depth: null }))
+    //     console.log(await prayerConfigModel.estimatedDocumentCount());
        //   await prayerDBConnection.disconnect();
          
 
@@ -226,11 +225,11 @@ async function buildLocationObject() {
         //    let projectPrayers= R.curry(sortObject)
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
-        let profileID: Schema.Types.ObjectId =  new mongoose.Types.ObjectId("5f20ebac9627ac26ccc551e0") as any;
+      //  let profileID: Schema.Types.ObjectId =  new mongoose.Types.ObjectId("5f20ebac9627ac26ccc551e0") as any;
         let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory();
-        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig({ profileID:profileID});
-        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig({ profileID:profileID});
-        let config: cg.IConfig = await configProvider.getConfigId({profileID: profileID});
+        let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig();
+        let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig();
+        //let config: cg.IConfig = await configProvider.getConfigId();
         //let prayerUserCache: PrayerTimeCache = new PrayerTimeCache();
     //     console.log(locationConfig.location.address);
     //     locationConfig.location.address ="Mecca Saudi Arabia";
@@ -317,7 +316,7 @@ async function buildLocationObject() {
             console.log(err);
     }
     finally {
-        await prayerDBConnection.disconnect();
+        //await prayerDBConnection.disconnect();
     }
 
 }
@@ -328,79 +327,79 @@ interface IPrayerController
 
 
 }
-async function pipe()
-{
+// async function pipe()
+// {
     
-    try{
+//     try{
 
-    let x = (z:number,y:number)=> {
-     throw new Error("new Error");
-      return  z+y
+//     let x = (z:number,y:number)=> {
+//      throw new Error("new Error");
+//       return  z+y
 
-    }
+//     }
     
-    let middleWare  = async (word:string):Promise<string>=>
-    {
-       // throw new Error("WTF");
-        return  word + " Space";
-    }
-    let y = async (word:string):Promise<string>=>
-    {
-        return word + " Augmented";
-    }
-    let validation  = async (word:any):Promise<string>=>
-    {
+//     let middleWare  = async (word:string):Promise<string>=>
+//     {
+//        // throw new Error("WTF");
+//         return  word + " Space";
+//     }
+//     let y = async (word:string):Promise<string>=>
+//     {
+//         return word + " Augmented";
+//     }
+//     let validation  = async (word:any):Promise<string>=>
+//     {
         
-        return word+ " Funck";
-       // return (word=== "Hi Space") ? true: false;
-    }
-    let validations= arrow.railAsync(validation,y);
-    let router:IPrayerController={
-        prayerAdjust: validations,
-        prayerFunc: arrow.railAsync(validations,middleWare)
-    }
-    let z = (middleWare:any,next:any,args:any)=>
-    {
+//         return word+ " Funck";
+//        // return (word=== "Hi Space") ? true: false;
+//     }
+//     let validations= arrow.railAsync(validation,y);
+//     let router:IPrayerController={
+//         prayerAdjust: validations,
+//         prayerFunc: arrow.railAsync(validations,middleWare)
+//     }
+//     let z = (middleWare:any,next:any,args:any)=>
+//     {
 
-        let piper=arrow.pipe(middleWare,next);
-        return piper(args);
-    }
-    let subtract= (z:number)=>{
-        z * 3
-        // throw new Error("Shit")
-    }
-    let curry = arrow.curry(x);
-    let math = curry(3)
+//         let piper=arrow.pipe(middleWare,next);
+//         return piper(args);
+//     }
+//     let subtract= (z:number)=>{
+//         z * 3
+//         // throw new Error("Shit")
+//     }
+//     let curry = arrow.curry(x);
+//     let math = curry(3)
  
-    let number = arrow.pipe(math,subtract);
-    console.log(number(2));
-    let list = (fn:Function, input:string)=>
-    {
-        console.log(input)
-     return fn(input);
-    }
+//     let number = arrow.pipe(math,subtract);
+//     console.log(number(2));
+//     let list = (fn:Function, input:string)=>
+//     {
+//         console.log(input)
+//      return fn(input);
+//     }
 
 
-   let chainList = arrow.chain(list);
-  // let validations= arrow.railAsync(validation,y);
-    let pip = router.prayerFunc;
-    let value =  await pip("Hi");
-    console.log("my error : "+ value)
-}
-//   let curryFunc = arrow.curry(z);
-//   let middleWare2 =curryFunc(validation);
-//   console.log(middleWare2(y,"hi"));
-///  let middleWare2 = router(validation);
- // let welcome = validate("Welcome ");
- //let calculate =  arrow.compose(validate(next aomr),y);
-  //let execute = validate(calculate);
- //  console.log(welcome());
-catch(err)
-{
-    console.log(err.message)
-}
+//    let chainList = arrow.chain(list);
+//   // let validations= arrow.railAsync(validation,y);
+//     let pip = router.prayerFunc;
+//     let value =  await pip("Hi");
+//     console.log("my error : "+ value)
+// }
+// //   let curryFunc = arrow.curry(z);
+// //   let middleWare2 =curryFunc(validation);
+// //   console.log(middleWare2(y,"hi"));
+// ///  let middleWare2 = router(validation);
+//  // let welcome = validate("Welcome ");
+//  //let calculate =  arrow.compose(validate(next aomr),y);
+//   //let execute = validate(calculate);
+//  //  console.log(welcome());
+// catch(err)
+// {
+//     console.log(err.message)
+// }
 
-}
+// }
 buildLocationObject();
 //pipe();
 

@@ -10,15 +10,12 @@
     "jasmine-expect"
   ],
   "dependencies": {
-    "@arrows/composition": "^1.2.2",
     "@google/maps": "^1.1.3",
     "@hapi/joi": "^17.1.1",
     "await-to-js": "^2.1.1",
-    "debug": "^4.1.1",
     "lowdb": "^1.0.0",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.27",
-    "mongoose": "^5.9.24",
     "nconf": "^0.10.0",
     "ramda": "^0.27.1",
     "request": "^2.88.2",
@@ -26,12 +23,10 @@
     "serializr": "^1.5.4"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.5",
     "@types/googlemaps": "^3.39.11",
     "@types/hapi__joi": "^17.1.4",
     "@types/lowdb": "^1.0.9",
     "@types/moment-timezone": "^0.5.12",
-    "@types/mongoose": "^5.5.43",
     "@types/nconf": "^0.10.0",
     "@types/node": "^10.17.13",
     "@types/ramda": "^0.27.14",

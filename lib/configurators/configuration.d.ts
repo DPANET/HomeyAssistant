@@ -1,13 +1,13 @@
 import { IPrayersConfig, ILocationConfig, IConfigProvider, IConfig } from "./inteface.configuration";
-import { Schema } from 'mongoose';
 export declare enum ConfigProviderName {
     SERVER = "Server",
-    CLIENT = "Client"
+    CLIENT = "Client",
+    HOMEY = "Homey"
 }
-declare abstract class ConfigProvider implements IConfigProvider {
+export declare abstract class ConfigProvider implements IConfigProvider {
     private _providerName;
     constructor(providerName: ConfigProviderName);
-    abstract createDefaultConfig(id: Schema.Types.ObjectId): Promise<IConfig>;
+    abstract createDefaultConfig(id?: string): Promise<IConfig>;
     abstract getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
     abstract updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
     abstract getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
@@ -19,4 +19,3 @@ declare abstract class ConfigProvider implements IConfigProvider {
 export declare class ConfigProviderFactory {
     static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider;
 }
-export {};
