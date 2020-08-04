@@ -168,7 +168,7 @@ export class PrayerConfigValidator extends Validator<config.IPrayersConfig>
                 .unique()
                 .label('Adjustments')
                .messages(this.customErrorMessage())
-        }).required().messages(this.customErrorMessage())
+        }).required().label('Prayers Config').messages(this.customErrorMessage())
 
     }
     public validate(validateObject: config.IPrayersConfig): boolean {
@@ -221,6 +221,7 @@ export class LocationConfigValidator extends Validator<config.ILocationConfig>
             .label('City')
            .messages(this.customErrorMessage())
         }).required()
+        .label('Location')
         .and('address','countryCode')
         .and('latitude', 'longtitude');
         this._timeZoneSchema = Joi.object().keys({
@@ -243,11 +244,17 @@ export class LocationConfigValidator extends Validator<config.ILocationConfig>
                 .required()
                 .label('Rawoffset')
                .messages(this.customErrorMessage())
-        }).required();
+        })
+        .required()
+        .label('Timezone');
         this._configSchema= Joi.object().keys({
             location:this._locationSchema,
             timezone:this._timeZoneSchema
-        }).required().and("location","timezone").messages(this.customErrorMessage())
+        })
+        .required()
+        .and("location","timezone")
+        .label('Location Config')
+        .messages(this.customErrorMessage())
     }
     public validate(validateObject: config.ILocationConfig): boolean {
         return super.genericValidator(this._configSchema.validate(validateObject, { abortEarly: false, allowUnknown: true }));
