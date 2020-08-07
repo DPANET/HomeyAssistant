@@ -32,8 +32,8 @@ export interface IConfig {
 export interface IConfigProvider {
     createDefaultConfig(profileID?: string): Promise<IConfig>;
     getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
-    updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
+    updatePrayerConfig(prayerConfigs: IPrayersConfig, config?: IConfig): Promise<boolean>;
     getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
-    updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
+    updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig): Promise<boolean>;
     getConfigId(config?: IConfig): Promise<IConfig>;
 }

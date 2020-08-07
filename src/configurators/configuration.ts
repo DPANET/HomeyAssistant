@@ -37,9 +37,9 @@ export abstract class ConfigProvider implements IConfigProvider {
     }
     abstract async createDefaultConfig(id?: string): Promise<IConfig>;
     abstract async getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
-    abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean>;
+    abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig, config?: IConfig): Promise<boolean>;
     abstract async getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
-    abstract async updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean>;
+    abstract async updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig): Promise<boolean>;
     abstract getConfigId(config?: IConfig): Promise<IConfig>;
 
     protected mergePrayerConfig(original: IPrayersConfig, target: IPrayersConfig): IPrayersConfig {
@@ -75,7 +75,7 @@ class ClientConfigurator extends ConfigProvider {
     public async createDefaultConfig(profileID?: string): Promise<IConfig> {
         throw new Error("Method not implemented.");
     }
-    public async updateLocationConfig(locationConfig: ILocationConfig, config: IConfig): Promise<boolean> {
+    public async updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig): Promise<boolean> {
         try {
             let original: ILocationConfig = await this.getLocationConfig(config);
             let updated: ILocationConfig;
@@ -119,7 +119,7 @@ class ClientConfigurator extends ConfigProvider {
 
         };
     }
-    public async updatePrayerConfig(prayerConfigs: IPrayersConfig, config: IConfig): Promise<boolean> {
+    public async updatePrayerConfig(prayerConfigs: IPrayersConfig, config?: IConfig): Promise<boolean> {
         try {
             let err: Error, result: any;
             let original: IPrayersConfig = await this.getPrayerConfig(config);
