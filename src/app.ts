@@ -22,28 +22,12 @@ import { PrayerConfigValidator, LocationConfigValidator } from "./validators/val
 import { DateUtil } from "./util/utility";
 import util from "util";
 import * as requestPromise from 'request-promise-native';
-import {
-    createModelSchema,
-    primitive,
-    reference,
-    list,
-    object,
-    identifier,
-    serialize,
-    deserialize,
-    getDefaultModelSchema,
-    serializable,
-    date,
-} from 'serializr';
+
 import { profile } from 'console';
 import { values } from 'ramda';
 // import {PrayersMethods} from "./entities/prayer"
 
-class User {
-    @serializable(identifier())
-    uuid = Math.floor(Math.random() * 10000);
-    @serializable displayName = 'John Doe';
-}
+
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -114,24 +98,24 @@ function getPrayerViewRow(prayersView: IPrayersView[]): IPrayersViewRow[] {
 
 }
 
-var prayerConfigFE: any = undefined
-// {
-//     method: 4,
-//     school: 0,
-//     midnight: 0,
-//    adjustmentMethod: 1,
-//     latitudeAdjustment: 3,
-//     startDate: new Date(),
-//     endDate: new Date("10-10-2020")
-//     ,
-//     adjustments: [
-//         { prayerName: prayer.PrayersName.FAJR, adjustments: 350 },
-//         { prayerName: prayer.PrayersName.DHUHR, adjustments: 450 },
-//         { prayerName: prayer.PrayersName.ASR, adjustments: 600 },
-//         { prayerName: prayer.PrayersName.MAGHRIB, adjustments: 750 },
-//         { prayerName: prayer.PrayersName.ISHA, adjustments: 800 },
-//     ]
-// };
+var prayerConfigFE: any = 
+{
+    method: 4,
+    school: 0,
+    midnight: 0,
+   adjustmentMethod: 1,
+    latitudeAdjustment: 3,
+    startDate: new Date(),
+    endDate: new Date("10-10-2021")
+    ,
+    adjustments: [
+        { prayerName: prayer.PrayersName.FAJR, adjustments: 350 },
+        { prayerName: prayer.PrayersName.DHUHR, adjustments: 450 },
+        { prayerName: prayer.PrayersName.ASR, adjustments: 600 },
+        { prayerName: prayer.PrayersName.MAGHRIB, adjustments: 750 },
+        { prayerName: prayer.PrayersName.ISHA, adjustments: 800 },
+    ]
+};
 
 var locationConfigPE: any =
 {
@@ -286,7 +270,7 @@ async function buildLocationObject() {
         //  await prayerManager.saveLocationConfig(locationConfigPE);
          let validate: validators.IValid<cg.IPrayersConfig> = PrayerConfigValidator.createValidator();
          console.log(validate.validate(prayerConfigFE));
-        console.log(validate.getValidationError().details.map((detail: any) => `${detail.value.label} with value ${detail.value.value}: ${detail.message}`));
+      //  console.log(validate.getValidationError().details.map((detail: any) => `${detail.value.label} with value ${detail.value.value}: ${detail.message}`));
         //  //  console.log(ramda.values(prayer.AdjsutmentMethod));
         //     //console.log(prayer.AdjsutmentMethod.Server);
         // //console.log(Object.values(prayer.AdjsutmentMethod));;

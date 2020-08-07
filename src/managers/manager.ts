@@ -13,20 +13,10 @@ import { PrayerSettingsValidator, LocationValidator, PrayerConfigValidator, Loca
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { DateUtil } from '../util/utility';
 import { IPrayerManager, ILocationBuilder, IPrayerSettingsBuilder, IPrayerTimeBuilder } from "./interface.manager"
-import {
-    createModelSchema,
-    primitive,
-    reference,
-    list,
-    object,
-    identifier,
-    serialize,
-    deserialize,
-    serializable,
-} from 'serializr';
+
 export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
 
-    @serializable(object(prayer.PrayersSettings))
+ 
     private _prayerSettings: prayer.IPrayersSettings;
     private _prayerProvider: pp.IPrayerProvider;
     private _validtor: validators.IValid<prayer.IPrayersSettings>;
@@ -115,7 +105,7 @@ export class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
 };
 
 export class LocationBuilder implements ILocationBuilder {
-    @serializable(object(location.Location))
+
     private _location: location.ILocationSettings
     private _locationProvider: lp.ILocationProvider;
     private _validtor: validators.IValid<location.ILocationSettings>;
@@ -185,7 +175,7 @@ export class LocationBuilder implements ILocationBuilder {
 export class PrayerTimeBuilder implements IPrayerTimeBuilder {
     private _locationBuilder: ILocationBuilder;
     private _prayerSettingsBuilder: IPrayerSettingsBuilder;
-    @serializable(list(object(prayer.Prayers)))
+
     private _prayers: Array<prayer.IPrayers>;
     private _prayerProvider: pp.IPrayerProvider;
     constructor(prayerProvider: pp.IPrayerProvider, locationBuilder: ILocationBuilder, prayerSettingsBuilder: IPrayerSettingsBuilder) {
@@ -309,7 +299,7 @@ export class PrayerTimeBuilder implements IPrayerTimeBuilder {
 };
 export class PrayerManager implements IPrayerManager {
     private _prayerTime: prayer.IPrayersTime;
-    @serializable(object(prayer.PrayersTime))
+   
     public get prayerTime(): prayer.IPrayersTime {
         return this._prayerTime;
     }
