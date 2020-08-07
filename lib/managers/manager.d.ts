@@ -2,7 +2,7 @@ import * as location from '../entities/location';
 import * as prayer from '../entities/prayer';
 import * as pp from '../providers/prayer-provider';
 import * as lp from '../providers/location-provider';
-import { ILocationConfig, IPrayersConfig, IConfigProvider, IConfig } from "../configurators/inteface.configuration";
+import { ILocationConfig, IPrayersConfig, IConfigProvider } from "../configurators/inteface.configuration";
 import { IPrayerManager, ILocationBuilder, IPrayerSettingsBuilder, IPrayerTimeBuilder } from "./interface.manager";
 export declare class PrayerSettingsBuilder implements IPrayerSettingsBuilder {
     private _prayerSettings;
@@ -55,8 +55,8 @@ export declare class PrayerManager implements IPrayerManager {
     get prayerTime(): prayer.IPrayersTime;
     set prayerTime(value: prayer.IPrayersTime);
     constructor(prayerTime: prayer.IPrayersTime);
-    updatePrayerConfig(prayerConfig: IPrayersConfig, config?: IConfig, configProvider?: IConfigProvider): Promise<boolean>;
-    updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig, configProvider?: IConfigProvider): Promise<boolean>;
+    updatePrayerConfig(prayerConfig: IPrayersConfig, id?: any, configProvider?: IConfigProvider): Promise<boolean>;
+    updateLocationConfig(locationConfig: ILocationConfig, id?: any, configProvider?: IConfigProvider): Promise<boolean>;
     getPrayerTimeZone(): location.ITimeZone;
     getPrayerLocation(): location.ILocation;
     getPrayerLocationSettings(): location.ILocationSettings;

@@ -26,14 +26,14 @@ export interface ILocationConfig {
     };
 }
 export interface IConfig {
-    id?: string;
-    profileID?: string;
+    prayerConfig: IPrayersConfig;
+    locationConfig: ILocationConfig;
 }
 export interface IConfigProvider {
-    createDefaultConfig(profileID?: string): Promise<IConfig>;
-    getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
-    updatePrayerConfig(prayerConfigs: IPrayersConfig, config?: IConfig): Promise<boolean>;
-    getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
-    updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig): Promise<boolean>;
-    getConfigId(config?: IConfig): Promise<IConfig>;
+    createDefaultConfig(id?: any): Promise<IConfig>;
+    getPrayerConfig(id?: any): Promise<IPrayersConfig>;
+    updatePrayerConfig(prayerConfigs: IPrayersConfig, id?: any): Promise<boolean>;
+    getLocationConfig(id?: any): Promise<ILocationConfig>;
+    updateLocationConfig(locationConfig: ILocationConfig, id?: any): Promise<boolean>;
+    getConfig(id?: any): Promise<IConfig>;
 }

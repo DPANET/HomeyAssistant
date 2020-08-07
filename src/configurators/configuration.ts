@@ -35,12 +35,12 @@ export abstract class ConfigProvider implements IConfigProvider {
     constructor(providerName: ConfigProviderName) {
         this._providerName = providerName;
     }
-    abstract async createDefaultConfig(id?: string): Promise<IConfig>;
-    abstract async getPrayerConfig(config?: IConfig): Promise<IPrayersConfig>;
-    abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig, config?: IConfig): Promise<boolean>;
-    abstract async getLocationConfig(config?: IConfig): Promise<ILocationConfig>;
-    abstract async updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig): Promise<boolean>;
-    abstract getConfigId(config?: IConfig): Promise<IConfig>;
+    abstract async createDefaultConfig(id?:any): Promise<IConfig>;
+    abstract async getPrayerConfig(id?:any): Promise<IPrayersConfig>;
+    abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig,id?:any): Promise<boolean>;
+    abstract async getLocationConfig(id?:any): Promise<ILocationConfig>;
+    abstract async updateLocationConfig(locationConfig: ILocationConfig,id?:any): Promise<boolean>;
+    abstract getConfig(id?:any): Promise<IConfig>;
 
     protected mergePrayerConfig(original: IPrayersConfig, target: IPrayersConfig): IPrayersConfig {
         let originalIndexBy:any = ramda.indexBy<any>(ramda.prop('prayerName'));
@@ -72,12 +72,12 @@ class ClientConfigurator extends ConfigProvider {
         else
             this._fileName = path.join(config.get("CONFIG_FOLDER_PATH"), config.get("PRAYER_CONFIG"));
     }
-    public async createDefaultConfig(profileID?: string): Promise<IConfig> {
+    public async createDefaultConfig(id?: any): Promise<IConfig> {
         throw new Error("Method not implemented.");
     }
-    public async updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig): Promise<boolean> {
+    public async updateLocationConfig(locationConfig: ILocationConfig, id?: any): Promise<boolean> {
         try {
-            let original: ILocationConfig = await this.getLocationConfig(config);
+            let original: ILocationConfig = await this.getLocationConfig(id);
             let updated: ILocationConfig;
             updated = super.mergeLocationConfig(original, locationConfig);
             let result = await this.getDB()
@@ -95,7 +95,7 @@ class ClientConfigurator extends ConfigProvider {
             return Promise.reject(new Error(ConfigErrorMessages.FILE_NOT_FOUND));
         }
     }
-    public async getLocationConfig(config?: IConfig): Promise<ILocationConfig> {
+    public async getLocationConfig(id?: any): Promise<ILocationConfig> {
         let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(configPaths.locationConfig).value()));
         if (err || isNullOrUndefined(result))
@@ -119,10 +119,10 @@ class ClientConfigurator extends ConfigProvider {
 
         };
     }
-    public async updatePrayerConfig(prayerConfigs: IPrayersConfig, config?: IConfig): Promise<boolean> {
+    public async updatePrayerConfig(prayerConfigs: IPrayersConfig, id?:any): Promise<boolean> {
         try {
             let err: Error, result: any;
-            let original: IPrayersConfig = await this.getPrayerConfig(config);
+            let original: IPrayersConfig = await this.getPrayerConfig(id);
             let updated: IPrayersConfig = super.mergePrayerConfig(original, prayerConfigs);
             //updated= _.merge<any,any>(ramda.omit(['startDate','endDate'],original),ramda.omit(['startDate','endDate'],prayerConfigs));
             //  console.log(updated);
@@ -146,7 +146,7 @@ class ClientConfigurator extends ConfigProvider {
         }
     }
 
-    public async getPrayerConfig(config?: IConfig): Promise<IPrayersConfig> {
+    public async getPrayerConfig(id?: any): Promise<IPrayersConfig> {
 
         let err: Error, result: any;
         [err, result] = await to(this.getDB().then(result => result.get(configPaths.prayerConfig).value()));
@@ -170,9 +170,11 @@ class ClientConfigurator extends ConfigProvider {
         else
             return this._db;
     }
-    public async getConfigId(config?: IConfig): Promise<IConfig> {
-        return  {    id:config.id,
-            profileID:config.profileID};
+    public async getConfig(id?: IConfig): Promise<IConfig> {
+        return  {    
+            prayerConfig: await this.getPrayerConfig(),
+            locationConfig: await this.getLocationConfig()
+        };
     }
 }
 // class ServerConfigurator extends ConfigProvider {

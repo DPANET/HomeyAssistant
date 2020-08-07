@@ -312,7 +312,7 @@ export class PrayerManager implements IPrayerManager {
         this._prayerTime = prayerTime;
 
     }
-    public async updatePrayerConfig(prayerConfig: IPrayersConfig, config?: IConfig, configProvider?: IConfigProvider): Promise<boolean> {
+    public async updatePrayerConfig(prayerConfig: IPrayersConfig, id?: any, configProvider?: IConfigProvider): Promise<boolean> {
         try {
             let validator: validators.IValid<IPrayersConfig> = PrayerConfigValidator.createValidator();
             let validationResult: boolean = validator.validate(prayerConfig);
@@ -324,14 +324,14 @@ export class PrayerManager implements IPrayerManager {
                 configurator = ConfigProviderFactory.createConfigProviderFactory();
             else
                 configurator = configProvider;
-            await configurator.updatePrayerConfig(prayerConfig, config);
+            await configurator.updatePrayerConfig(prayerConfig, id);
             return Promise.resolve(true)
         }
         catch (err) {
             return Promise.reject(err);
         }
     }
-    public async updateLocationConfig(locationConfig: ILocationConfig, config?: IConfig, configProvider?: IConfigProvider): Promise<boolean> {
+    public async updateLocationConfig(locationConfig: ILocationConfig, id?: any, configProvider?: IConfigProvider): Promise<boolean> {
         try {
             let validator: validators.IValid<ILocationConfig> = LocationConfigValidator.createValidator();
             let validationResult: boolean = validator.validate(locationConfig);
@@ -343,7 +343,7 @@ export class PrayerManager implements IPrayerManager {
                 configurator = ConfigProviderFactory.createConfigProviderFactory();
             else
                 configurator = configProvider;
-            await configurator.updateLocationConfig(locationConfig, config);
+            await configurator.updateLocationConfig(locationConfig, id);
             return Promise.resolve(true)
         }
         catch (err) {
