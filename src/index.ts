@@ -7,6 +7,7 @@ export * from './validators/interface.validators';
 export * from './configurators/configuration';
 export * from './configurators/inteface.configuration';
 export * from './util/utility';
+export * from './util/isNullOrUndefined';
 export * from './managers/interface.manager';
 //export * from './cache/schema.configuration';
 
