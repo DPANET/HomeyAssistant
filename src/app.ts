@@ -8,7 +8,7 @@ nconf.file('config/default.json');
 import * as prayer from "./entities/prayer";
 import * as cg from "./configurators/inteface.configuration";
 //import * as cfgSchema from "./cache/schema.userscache";
-import { ConfigProviderFactory, ConfigProviderName } from "./configurators/configuration";
+import { ConfigProviderFactory, ConfigProviderName, ClientConfigurator, ConfigProvider } from "./configurators/configuration";
 import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
 //import {PrayerTimeCache} from "./cache/userscache";
@@ -213,7 +213,7 @@ async function buildLocationObject() {
         //    let pump =R.pipe(prayersList,prayerTimes,R.mergeAll,projectPrayers)
         //  //  console.time('Prayer_Manager');
       //  let profileID: Schema.Types.ObjectId =  new mongoose.Types.ObjectId("5f20ebac9627ac26ccc551e0") as any;
-        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory();
+        let configProvider: cg.IConfigProvider = ConfigProviderFactory.createConfigProviderFactory(ClientConfigurator);
         let prayerConfig: cg.IPrayersConfig = await configProvider.getPrayerConfig();
         let locationConfig: cg.ILocationConfig = await configProvider.getLocationConfig();
         //let config: cg.IConfig = await configProvider.getConfigId();

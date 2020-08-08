@@ -321,7 +321,7 @@ export class PrayerManager implements IPrayerManager {
                 return Promise.reject(validator.getValidationError());
             let configurator: IConfigProvider;
             if (isNullOrUndefined(configProvider))
-                configurator = ConfigProviderFactory.createConfigProviderFactory();
+                configurator = ConfigProviderFactory.createConfigProviderFactory(configProvider);
             else
                 configurator = configProvider;
             await configurator.updatePrayerConfig(prayerConfig, id);
@@ -340,7 +340,7 @@ export class PrayerManager implements IPrayerManager {
                 return Promise.reject(validator.getValidationError());
             let configurator: IConfigProvider;
             if (isNullOrUndefined(configProvider))
-                configurator = ConfigProviderFactory.createConfigProviderFactory();
+                configurator = ConfigProviderFactory.createConfigProviderFactory( configProvider);
             else
                 configurator = configProvider;
             await configurator.updateLocationConfig(locationConfig, id);

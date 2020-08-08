@@ -2,7 +2,8 @@ import { IPrayersConfig, ILocationConfig, IConfigProvider, IConfig } from "./int
 export declare enum ConfigProviderName {
     SERVER = "Server",
     CLIENT = "Client",
-    HOMEY = "Homey"
+    HOMEY = "Homey",
+    CUSTOM = "Customer"
 }
 export declare abstract class ConfigProvider implements IConfigProvider {
     private _providerName;
@@ -16,6 +17,18 @@ export declare abstract class ConfigProvider implements IConfigProvider {
     protected mergePrayerConfig(original: IPrayersConfig, target: IPrayersConfig): IPrayersConfig;
     protected mergeLocationConfig(original: ILocationConfig, target: ILocationConfig): ILocationConfig;
 }
+export declare class ClientConfigurator extends ConfigProvider {
+    private _db;
+    private readonly _fileName;
+    constructor(fileName?: string);
+    createDefaultConfig(id?: any): Promise<IConfig>;
+    updateLocationConfig(locationConfig: ILocationConfig, id?: any): Promise<boolean>;
+    getLocationConfig(id?: any): Promise<ILocationConfig>;
+    updatePrayerConfig(prayerConfigs: IPrayersConfig, id?: any): Promise<boolean>;
+    getPrayerConfig(id?: any): Promise<IPrayersConfig>;
+    private getDB;
+    getConfig(id?: IConfig): Promise<IConfig>;
+}
 export declare class ConfigProviderFactory {
-    static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider;
+    static createConfigProviderFactory<T extends ConfigProvider = ClientConfigurator, K = any>(providerType: new (configs?: K) => T, configs?: K): T;
 }

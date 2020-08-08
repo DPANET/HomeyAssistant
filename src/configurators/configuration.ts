@@ -11,6 +11,8 @@ import { IPrayersConfig, ILocationConfig, IConfigProvider, IConfig } from "./int
 //import mongoose, { mongo, Schema, SchemaType } from 'mongoose';
 //import * as cfgSchema from "../cache/schema.configuration";
 import path from "path";
+import { types } from "util";
+import { type } from "os";
 const configPaths =
 {
 
@@ -27,7 +29,8 @@ const ConfigErrorMessages =
 export enum ConfigProviderName {
     SERVER = "Server",
     CLIENT = "Client",
-    HOMEY ="Homey"
+    HOMEY ="Homey",
+    CUSTOM= "Customer"
 }
 export abstract class ConfigProvider implements IConfigProvider {
 
@@ -61,16 +64,17 @@ export abstract class ConfigProvider implements IConfigProvider {
     }
 }
 
-class ClientConfigurator extends ConfigProvider {
+export class ClientConfigurator extends ConfigProvider {
 
     private _db: lowdb.LowdbAsync<any>;
     private readonly _fileName: string;
-    constructor(fileName?: string) {
+     constructor(fileName?: string) {
         super(ConfigProviderName.CLIENT);
         if (!isNullOrUndefined(fileName))
             this._fileName = fileName;
         else
             this._fileName = path.join(config.get("CONFIG_FOLDER_PATH"), config.get("PRAYER_CONFIG"));
+           // console.log(this._fileName)
     }
     public async createDefaultConfig(id?: any): Promise<IConfig> {
         throw new Error("Method not implemented.");
@@ -280,21 +284,29 @@ class ClientConfigurator extends ConfigProvider {
 //     }
 
 // }
-
-
 export class ConfigProviderFactory {
-    static createConfigProviderFactory(configProviderName?: ConfigProviderName): ConfigProvider {
-        let configName: ConfigProviderName;
-        configName = isNullOrUndefined(configProviderName) ? config.get("SOURCE") : configProviderName;
-        switch (configName) {
-            case ConfigProviderName.CLIENT:
-                return new ClientConfigurator();
-                break;
+    static createConfigProviderFactory<T extends ConfigProvider = ClientConfigurator,K=any>(providerType:new(configs?:K)=>T,configs?:K):T {
+        //let providerFactoryDefault: new (providerName:string) => T
+        //let providerFactoryConfig: new (providerName:string,config:K)=>T;
+        //let configName: ConfigProviderName;
+      //  providerName = isNullOrUndefined(providerName) ? ConfigProviderName.CLIENT : providerName;
+        // switch (configName) {
+        //     case ConfigProviderName.CLIENT:
+        //         return new ClientConfigurator();
+        //         break;
             // case ConfigProviderName.SERVER:
             //     return new ServerConfigurator();
             //     break
+            //let provider:T;
+ 
+            //let typenName: any =typeof  providerType
+            //console.log(typenName);
+            if(isNullOrUndefined(config))
+            return new providerType();
+            else
+            return new providerType(configs );
+
         }
     }
 
 
-}
