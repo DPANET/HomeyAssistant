@@ -65,6 +65,12 @@ export class DateUtil
         return momentTZ(date).tz(timeZone).format();
 
     }
+    public static getDateByTimeZoneFromString(date:string,time:string,timeZone:string):Date
+    {
+        let timeFormat:string = 'DD MMM YYYY, hh:mm';
+        return momentTZ(`${date}, ${time}`,timeFormat,timeZone).utc(false).toDate()
+
+    }
     public static getStartOfDay(date:Date):Date
     {
         return moment.utc(date,this.format).startOf('day').toDate();

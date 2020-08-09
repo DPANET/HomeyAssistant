@@ -12,6 +12,7 @@ export declare class DateUtil {
     static dayMatch(dateLeft: Date, dateRight: Date): boolean;
     static formatDate(date: string): Date;
     static getDateByTimeZone(date: Date, timeZone: string): string;
+    static getDateByTimeZoneFromString(date: string, time: string, timeZone: string): Date;
     static getStartOfDay(date: Date): Date;
     static getMonthsDifference(startDate: Date, endDate: Date): number;
 }

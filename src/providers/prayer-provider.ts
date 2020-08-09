@@ -209,21 +209,25 @@ abstract class PrayerProvider implements IPrayerProvider {
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         let i: number = 0;
         let dateString:string;
+        let timeZone:string;
         let fnPrayer = (value: any, key: string) => {
 
             prayersTimingList.push({
                 prayerName: key as PrayersName,
                 prayerTime: 
-                DateUtil.getTime(dateString,value) 
+                //DateUtil.getTime(dateString,value)
+                DateUtil.getDateByTimeZoneFromString(dateString,value,timeZone) 
             });
         };
         let fn = (n: any) => {
             prayersTimingList = [];
             dateString = n.date.readable;
+            timeZone = n.meta.timeZone
             ramda.forEachObjIndexed(fnPrayer, n.timings);
             prayersList.push({
                 prayerTime: prayersTimingList,
-                prayersDate:  DateUtil.formatDate(n.date.readable)
+                prayersDate: 
+                 DateUtil.formatDate(n.date.readable)
             });
         }
         ramda.forEach(fn, result);
