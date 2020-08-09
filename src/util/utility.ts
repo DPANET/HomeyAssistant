@@ -14,9 +14,14 @@ export class DateUtil
         return moment.utc(date).add(minutes,'minute').toDate()
     }
     private static readonly format:string = 'YYYY-MM-DD';
+    
     static getTime(date:string, time:string):Date
     {
-        return new Date(date + ' '+time);
+       // console.log(`${date}, ${time}`);
+        let timeFormat:string = 'DD MMM YYYY, hh:mm'
+        // return moment.utc(`${date}, ${time}`,timeFormat).toDate();
+        return moment(`${date}, ${time}`,timeFormat).toDate();
+        //return new Date(date + ' '+time);
     }
     static getNowDate():Date
     {
