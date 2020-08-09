@@ -68,7 +68,9 @@ export class DateUtil
     public static getDateByTimeZoneFromString(date:string,time:string,timeZone:string):Date
     {
         let timeFormat:string = 'DD MMM YYYY, hh:mm';
-        return momentTZ(`${date}, ${time}`,timeFormat,timeZone).utc(false).toDate()
+        //console.log(timeZone);
+        //timeZone="Asia/Dubai"
+        return moment.tz(`${date}, ${time}`,timeFormat,timeZone).toDate();
 
     }
     public static getStartOfDay(date:Date):Date

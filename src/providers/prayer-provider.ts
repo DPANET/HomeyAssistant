@@ -222,7 +222,7 @@ abstract class PrayerProvider implements IPrayerProvider {
         let fn = (n: any) => {
             prayersTimingList = [];
             dateString = n.date.readable;
-            timeZone = n.meta.timeZone
+            timeZone = n.meta.timezone
             ramda.forEachObjIndexed(fnPrayer, n.timings);
             prayersList.push({
                 prayerTime: prayersTimingList,

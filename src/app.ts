@@ -22,7 +22,7 @@ import { PrayerConfigValidator, LocationConfigValidator } from "./validators/val
 import { DateUtil } from "./util/utility";
 import util from "util";
 import * as requestPromise from 'request-promise-native';
-
+import momentTZ from "moment-timezone";
 import { profile } from 'console';
 import { values } from 'ramda';
 // import {PrayersMethods} from "./entities/prayer"
@@ -236,6 +236,10 @@ async function buildLocationObject() {
          // console.log(util.inspect(value, {showHidden: false, depth: null}))
           prayerManager=  new manager.PrayerManager(prayerManager.prayerTime);
            console.log(prayerManager.getPrayerTime(prayer.PrayersName.FAJR, new Date()));
+           let date:string = "24 Apr 2014, 04:37"
+           momentTZ(date,'ff',)
+           console.log(moment.tz(`${date}`,"DD MMM YYYY, hh:mm","Asia/Riyadh").toDate());
+           console.log(moment.tz(`${date}`,"DD MMM YYYY, hh:mm","Asia/Dubai").toDate());
     //     let result:boolean = await prayerUserCache.createPrayerTimeCache(config,value);
     //     console.log(result);
        //value.method
