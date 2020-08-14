@@ -10,13 +10,14 @@ Typscript Library to track prayers time based on location using athan prayers ap
 // Create Prayer Manager manually
 let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
         .createPrayerTimeBuilder()
-        .setLocationByAddress("Mecca","SA")
+        .setLocationByAddress("Abu Dhabi","AE")
         .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
+        .setPrayerMethod(prayersLib.Methods.Mecca)
         .createPrayerTimeManager() ;
 
 console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
 console.log(prayerManager.getPrayers());
-console.log(prayerManager.getUpcomingPrayer());
+console.log(prayerManager.getUpcomingPrayer())
 
  ```       
 ---
