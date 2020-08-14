@@ -1,5 +1,5 @@
 ﻿# Prayers Time Library
-Typscript Library to track prayers time based on location using athan prayers api and google api
+Typscript Library to track prayers time based on location using athan prayers api and google location api
 
 
 
