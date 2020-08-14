@@ -7,16 +7,16 @@ Typscript Library to track prayers time based on location using athan prayers ap
 **Creating a Prayer Manager manually chainable**
 
 ```typescript
-        // Create Prayer Manager manually
-        let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
-                .createPrayerTimeBuilder()
-                .setLocationByAddress("Mecca","SA")
-                .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
-                .createPrayerTimeManager() ;
-        
-        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
-        console.log(prayerManager.getPrayers());
-        console.log(prayerManager.getUpcomingPrayer());
+// Create Prayer Manager manually
+let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
+        .createPrayerTimeBuilder()
+        .setLocationByAddress("Mecca","SA")
+        .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
+        .createPrayerTimeManager() ;
+
+console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
+console.log(prayerManager.getPrayers());
+console.log(prayerManager.getUpcomingPrayer());
 
  ```       
 ---
@@ -69,12 +69,12 @@ var locationConfig: prayersLib.ILocationConfig =
 
 ```typescript
 
-        // Create Prayer from Config 
-         prayerManager = await prayersLib.PrayerTimeBuilder
-            .createPrayerTimeBuilder(locationConfig, prayerConfig)
-            .createPrayerTimeManager() ;
-        
-        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR, new Date()));   
+// Create Prayer from Config 
+    prayerManager = await prayersLib.PrayerTimeBuilder
+    .createPrayerTimeBuilder(locationConfig, prayerConfig)
+    .createPrayerTimeManager() ;
+
+console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR, new Date()));   
 ```
 ---
 
@@ -82,11 +82,11 @@ var locationConfig: prayersLib.ILocationConfig =
 **Validate a Prayer Manager from a config object**
 
 ```typescript
-        //Validate Config File
-        let validate: prayersLib.IValid<prayersLib.IPrayersConfig> = prayersLib.
-        PrayerConfigValidator.createValidator();
+//Validate Config File
+let validate: prayersLib.IValid<prayersLib.IPrayersConfig> = prayersLib.
+PrayerConfigValidator.createValidator();
 
-        console.log(validate.validate(prayerConfig));
+console.log(validate.validate(prayerConfig));
 
 ```
 ---
