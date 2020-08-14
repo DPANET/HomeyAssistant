@@ -1,4 +1,4 @@
-﻿# Prayers Time Alert
+﻿# Prayers Time Library
 Typscript Library to track prayers time based on location using athan prayers api and google api
 
 
@@ -17,7 +17,7 @@ Typscript Library to track prayers time based on location using athan prayers ap
         console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
         console.log(prayerManager.getPrayers());
         console.log(prayerManager.getUpcomingPrayer());
-        
+
  ```       
 ---
 
