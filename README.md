@@ -16,7 +16,8 @@ Typscript Library to track prayers time based on location using athan prayers ap
         
         console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
         console.log(prayerManager.getPrayers());
-        console.log(prayerManager.getUpcomingPrayer())
+        console.log(prayerManager.getUpcomingPrayer());
+        
  ```       
 ---
 
@@ -67,28 +68,24 @@ var locationConfig: prayersLib.ILocationConfig =
 # Creating a Prayer Manager from a Config object
 
 ```typescript
-        // Create Prayer Manager manually
-        let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
-                .createPrayerTimeBuilder()
-                .setLocationByAddress("Mecca","SA")
-                .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
-                .createPrayerTimeManager() ;
-        
-        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
-        console.log(prayerManager.getPrayers());
-        console.log(prayerManager.getUpcomingPrayer())
 
+        // Create Prayer from Config 
+         prayerManager = await prayersLib.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager() ;
+        
+        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR, new Date()));   
 ```
 ---
 
 
-# Validate a Prayer config from object
+# Validate a Prayer Manager from a config object
 
 ```typescript
         //Validate Config File
         let validate: prayersLib.IValid<prayersLib.IPrayersConfig> = prayersLib.
         PrayerConfigValidator.createValidator();
-        
+
         console.log(validate.validate(prayerConfig));
 
 ```
