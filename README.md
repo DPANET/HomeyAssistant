@@ -1,7 +1,26 @@
 ﻿# Prayers Time Alert
 Typscript Library to track prayers time based on location using athan prayers api and google api
 
-## Building a Config File
+
+
+
+# Creating a Prayer Manager manually chainable
+
+```typescript
+        // Create Prayer Manager manually
+        let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
+                .createPrayerTimeBuilder()
+                .setLocationByAddress("Mecca","SA")
+                .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
+                .createPrayerTimeManager() ;
+        
+        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
+        console.log(prayerManager.getPrayers());
+        console.log(prayerManager.getUpcomingPrayer())
+ ```       
+---
+
+# Building a Config Object
 
 ```typescript
 var prayerConfig: prayersLib.IPrayersConfig = 
@@ -44,25 +63,8 @@ var locationConfig: prayersLib.ILocationConfig =
 
 }
 ```
-
-
-## Creating a Prayer Manager manually a Config File
-
-```typescript
-        // Create Prayer Manager manually
-        let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
-                .createPrayerTimeBuilder()
-                .setLocationByAddress("Mecca","SA")
-                .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
-                .createPrayerTimeManager() ;
-        
-        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
-        console.log(prayerManager.getPrayers());
-        console.log(prayerManager.getUpcomingPrayer())
- ```       
 ---
-
-## Creating a Prayer Manager manually a Config File
+# Creating a Prayer Manager from a Config object
 
 ```typescript
         // Create Prayer Manager manually
@@ -80,7 +82,7 @@ var locationConfig: prayersLib.ILocationConfig =
 ---
 
 
-## Validate a Prayer Config
+# Validate a Prayer config from object
 
 ```typescript
         //Validate Config File
