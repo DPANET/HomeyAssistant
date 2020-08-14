@@ -24,6 +24,7 @@
   "devDependencies": {
     "@types/googlemaps": "^3.39.11",
     "@types/hapi__joi": "^17.1.4",
+    "@types/later": "^1.2.6",
     "@types/lowdb": "^1.0.9",
     "@types/moment-timezone": "^0.5.12",
     "@types/nconf": "^0.10.0",

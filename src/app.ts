@@ -15,7 +15,7 @@ import * as manager from "./managers/manager";
 // import R from "ramda";
 import moment from "moment";
 import * as validators from "./validators/interface.validators";
-import R from "ramda";
+import R, { composeP } from "ramda";
 //import validators= val.validators;
 import { valid, string } from "@hapi/joi";
 import { PrayerConfigValidator, LocationConfigValidator } from "./validators/validator";
@@ -26,8 +26,8 @@ import momentTZ from "moment-timezone";
 import { profile } from 'console';
 import { values } from 'ramda';
 // import {PrayersMethods} from "./entities/prayer"
-
-
+import later from "later";
+import * as readline from "readline";
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -106,7 +106,7 @@ var prayerConfigFE: any =
    adjustmentMethod: 1,
     latitudeAdjustment: 3,
     startDate: new Date(),
-    endDate: new Date("10-10-2021")
+    endDate: DateUtil.addMonth(1,new Date())
     ,
     adjustments: [
         { prayerName: prayer.PrayersName.FAJR, adjustments: 350 },
@@ -391,6 +391,40 @@ interface IPrayerController
 // }
 
 // }
-buildLocationObject();
-//pipe();
+async function task()
+{
+    console.log("I'm executing");
 
+}
+async function   pipe () {
+let date:Date = moment.utc("2013-03-22T23:02:05Z").toDate();
+let dateAdded:Date = moment.utc(date).subtract(120,'m').toDate()
+let event:later.RecurrenceBuilder= later.parse.recur().after(120).minute()
+let schedule:later.Schedule = later.schedule(event);
+schedule.next(1,dateAdded);
+
+//let timer:later.Timer    = later.setTimeout(task,later.s)
+console.log(date);
+console.log(dateAdded)
+console.log(schedule.next(1,date));
+console.log(later.minute.next(date,120))
+  //  await askQuestion("Enter Something");    
+    //timer.clear();
+}
+//buildLocationObject();
+pipe();
+
+
+
+
+function askQuestion(query:string) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+
+    return new Promise(resolve => rl.question(query, ans => {
+        rl.close();
+        resolve(ans);
+    }))
+}

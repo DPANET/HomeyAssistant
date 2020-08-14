@@ -429,7 +429,10 @@ export class PrayerManager implements IPrayerManager {
         }
     }
     public getPrayerTime(prayerName: prayer.PrayersName, prayerDate?: Date): prayer.IPrayersTiming {
+        prayerDate= (isNullOrUndefined(prayerDate) ? new Date() : prayerDate);
+
         let prayersByDate: prayer.IPrayers = this.getPrayersByDate(prayerDate);
+
         if (!isNullOrUndefined(prayersByDate)) {
             return ramda.find<prayer.IPrayersTiming>(n => n.prayerName === prayerName, prayersByDate.prayerTime);
         }

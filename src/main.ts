@@ -1,9 +1,6 @@
-﻿# Prayers Time Alert
-Typscript Library to track prayers time based on location using athan prayers api and google api
-
-## Building a Config File
-
-```typescript
+import nconf from 'nconf';
+nconf.file('config/default.json');
+import * as prayersLib from "./index";
 var prayerConfig: prayersLib.IPrayersConfig = 
 {
     method: 4,
@@ -43,32 +40,14 @@ var locationConfig: prayersLib.ILocationConfig =
     }
 
 }
-```
-
-
-## Creating a Prayer Manager manually a Config File
-
-```typescript
+var countnumber = 0;
+async function main() {
+    //let prayerDBConnection: mongoose.Mongoose;
+    try {
         // Create Prayer Manager manually
         let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
                 .createPrayerTimeBuilder()
-                .setLocationByAddress("Mecca","SA")
-                .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
-                .createPrayerTimeManager() ;
-        
-        console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));
-        console.log(prayerManager.getPrayers());
-        console.log(prayerManager.getUpcomingPrayer())
- ```       
----
-
-## Creating a Prayer Manager manually a Config File
-
-```typescript
-        // Create Prayer Manager manually
-        let prayerManager: prayersLib.IPrayerManager = await prayersLib.PrayerTimeBuilder
-                .createPrayerTimeBuilder()
-                .setLocationByAddress("Mecca","SA")
+                .setLocationByAddress("Abu Dhabi","AE")
                 .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
                 .createPrayerTimeManager() ;
         
@@ -76,16 +55,21 @@ var locationConfig: prayersLib.ILocationConfig =
         console.log(prayerManager.getPrayers());
         console.log(prayerManager.getUpcomingPrayer())
 
-```
----
 
-
-## Validate a Prayer Config
-
-```typescript
+        // Create Prayer from Config 
+         prayerManager = await prayersLib.PrayerTimeBuilder
+            .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .createPrayerTimeManager() ;
+           console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR, new Date()));     
+        
         //Validate Config File
         let validate: prayersLib.IValid<prayersLib.IPrayersConfig> = prayersLib.PrayerConfigValidator.createValidator();
         console.log(validate.validate(prayerConfig));
 
-```
----
+
+    }catch(err)
+    {
+        console.log(err)
+    }
+}
+main()
