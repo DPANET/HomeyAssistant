@@ -86,7 +86,9 @@ var locationConfig: prayersLib.ILocationConfig =
 
 ```typescript
         //Validate Config File
-        let validate: prayersLib.IValid<prayersLib.IPrayersConfig> = prayersLib.PrayerConfigValidator.createValidator();
+        let validate: prayersLib.IValid<prayersLib.IPrayersConfig> = prayersLib.
+        PrayerConfigValidator.createValidator();
+        
         console.log(validate.validate(prayerConfig));
 
 ```
