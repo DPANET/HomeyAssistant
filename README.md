@@ -4,7 +4,7 @@ Typscript Library to track prayers time based on location using athan prayers ap
 
 
 
-# Creating a Prayer Manager manually chainable
+**Creating a Prayer Manager manually chainable**
 
 ```typescript
         // Create Prayer Manager manually
@@ -21,7 +21,7 @@ Typscript Library to track prayers time based on location using athan prayers ap
  ```       
 ---
 
-# Building a Config Object
+**Building a Config Object**
 
 ```typescript
 var prayerConfig: prayersLib.IPrayersConfig = 
@@ -65,7 +65,7 @@ var locationConfig: prayersLib.ILocationConfig =
 }
 ```
 ---
-# Creating a Prayer Manager from a Config object
+**Creating a Prayer Manager from a Config object**
 
 ```typescript
 
@@ -79,7 +79,7 @@ var locationConfig: prayersLib.ILocationConfig =
 ---
 
 
-# Validate a Prayer Manager from a config object
+**Validate a Prayer Manager from a config object**
 
 ```typescript
         //Validate Config File
