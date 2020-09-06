@@ -27,4 +27,7 @@ export declare abstract class EventProvider<T> implements IObservable<T> {
 export declare abstract class TimerEventProvider<T> extends EventProvider<T> implements ITimerObservable<T> {
     abstract startProvider(value?: any): Promise<void>;
     abstract stopProvider(): Promise<void>;
+    registerListener(observer: IObserver<T>): void;
+    removeListener(observer: IObserver<T>): void;
+    notifyObservers(eventsType: EventsType, value: T, error?: Error): void;
 }

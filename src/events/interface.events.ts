@@ -55,7 +55,17 @@ export abstract class TimerEventProvider<T> extends EventProvider<T> implements 
 {
     public abstract async startProvider(value?: any): Promise<void>;
     public abstract async stopProvider(): Promise<void>; 
+    public registerListener(observer: IObserver<T>): void {
+        super.registerListener(observer);
+    }
 
+    public removeListener(observer: IObserver<T>): void {
+        super.removeListener(observer);
+    }
+    public notifyObservers(eventsType:EventsType,value: T,error?:Error): void {       
+        super.notifyObservers(eventsType, value, error);
+
+    }
 }
 
 
