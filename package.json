@@ -18,20 +18,17 @@
     "moment-timezone": "^0.5.27",
     "nconf": "^0.10.0",
     "ramda": "^0.27.1",
-    "request": "^2.88.2",
-    "request-promise-native": "^1.0.9"
+    "rxjs": "^6.6.3",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
     "@types/googlemaps": "^3.39.11",
     "@types/hapi__joi": "^17.1.4",
-    "@types/later": "^1.2.6",
     "@types/lowdb": "^1.0.9",
     "@types/moment-timezone": "^0.5.12",
     "@types/nconf": "^0.10.0",
     "@types/node": "^10.17.13",
-    "@types/ramda": "^0.27.14",
-    "@types/request": "^2.48.5",
-    "@types/request-promise-native": "^1.0.17"
+    "@types/ramda": "^0.27.14"
   },
   "directories": {
     "lib": "lib",

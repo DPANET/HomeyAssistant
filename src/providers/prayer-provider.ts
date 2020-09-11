@@ -2,14 +2,18 @@
 const to = require('await-to-js').default;
 import ramda from 'ramda';
 
-
+import * as Rx from "rxjs";
+import * as RxAjax from "rxjs/ajax"; 
+import * as RxOp from "rxjs/operators";
+import * as qs from "querystring";
 import { isNullOrUndefined } from '../util/isNullOrUndefined';
 import { IPrayerAdjustments, IPrayerLatitude, IPrayerMethods, IPrayerSchools, IPrayersSettings, IPrayersTime, IPrayers, IPrayersTiming, PrayersName, IPrayerMidnight, IPrayerAdjustmentMethod,AdjsutmentMethod } from '../entities/prayer';
 import lowdb from "lowdb";
 import { default as FileAsync } from "lowdb/adapters/FileAsync";
-import * as request from 'request-promise-native';
 import { DateUtil } from '../util/utility';
 import { ILocationSettings } from '../entities/location';
+import * as util from "util"
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 export enum PrayerProviderName {
     PRAYER_TIME = "Prayer Time",
    // APPLE = "Apple"
@@ -148,18 +152,20 @@ abstract class PrayerProvider implements IPrayerProvider {
         [err, url] = await to(this.getPrayerMethodUrl());
         if (err)
             return Promise.reject(new Error(PrayerErrorMessages.PROVIDER_NOT_AVAILABLE));
-        let queryString: any =
+        let queryString: RxAjax.AjaxRequest =
         {
-            uri: url.methods,
+            url: url.methods,
             method: 'GET',
-            json: true,
-            resolveWithFullResponse: false
+            responseType: "json",
+            async:true,
+            createXHR:()=> new XMLHttpRequest()
 
         };
-        [err, result] = await to(request.get(queryString));
+        [err, result] = await to(RxAjax.ajax(queryString).pipe(
+            RxOp.map((result:any)=>result.response.data)).toPromise());
         if (err)
             return Promise.reject(err.message = PrayerErrorMessages.TIME_OUT);
-        return this.parsePrayerMethods(result['data']);
+        return this.parsePrayerMethods(result);
     }
     public async getPrayerMethodsById(index: number): Promise<IPrayerMethods> {
         return await this.getObjectById<IPrayerMethods>(index,()=>this.getPrayerMethods());
@@ -173,7 +179,7 @@ abstract class PrayerProvider implements IPrayerProvider {
     }
     public async getPrayerTime(prayerSettings: IPrayersSettings, prayerLocation:ILocationSettings): Promise<IPrayers[]> {
        let duration: number = DateUtil.getMonthsDifference(prayerSettings.startDate, prayerSettings.endDate);
-        let err: Error, result: any, url: any, queryString:string[]= new Array<string>() ;
+        let err: Error, result: any, url: any, queryString: RxAjax.AjaxRequest[]= new Array< RxAjax.AjaxRequest>() ;
         let date: Date = prayerSettings.startDate;
         let prayersList: Array<IPrayers> = new Array<IPrayers>();
         [err, url] = await to(this.getPrayerTimeUrl());
@@ -181,27 +187,49 @@ abstract class PrayerProvider implements IPrayerProvider {
             return Promise.reject(new Error(PrayerErrorMessages.PROVIDER_NOT_AVAILABLE));
         prayersList= await this.queryPrayerProvider(duration, queryString, url, prayerSettings, prayerLocation, date, prayersList);
 
-        return prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));
+        prayersList= prayersList.filter(n => (n.prayersDate >= prayerSettings.startDate && n.prayersDate <= prayerSettings.endDate));
+        //console.log(util.inspect(prayersList, {showHidden: false, depth: null}));
+        return prayersList
     }
-     private async queryPrayerProvider(duration: number, queryString: string[], url: any, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date, prayersList: IPrayers[]):  Promise<IPrayers[]>{
+     private async queryPrayerProvider(duration: number, queriesString:  RxAjax.AjaxRequest[], url: any, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date, prayersList: Array<IPrayers>):  Promise<Array<IPrayers>>
+     {
         let err: Error, result: any; 
+        try{
         for (let i: number = 0; i <= duration; i++) {
-             queryString.push(  this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date));
+             queriesString.push(  this.buildPrayerAPIQueryString(url, prayerSettings, prayerLocation, date));
              date = DateUtil.addMonth(1, date);
-         }  
-        var fn =  queryString.map((value)=> request.get(value).promise());          
-        await Promise.all(fn)
-        .then((value:any[])=>
-         value.forEach((result)=> prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation)))
+         } 
+         
+         let request:Rx.Observable<any> = Rx.from(queriesString).pipe(
+        
+            RxOp.mergeMap((query:RxAjax.AjaxRequest)=>RxAjax.ajax(query).pipe(
+                RxOp.map((result:any)=>result.response.data),
+            )),
+            RxOp.reduce((all:any,_:any)=>[...all,..._],[])
+         );
+        prayersList = await request.toPromise();
+        prayersList=this.buildPrayersObject(prayersList,prayerLocation);
+        let sorter= ramda.sortWith<IPrayers>([
+                    ramda.ascend(ramda.prop('prayersDate'))
+                ])
+         return Promise.resolve(sorter(prayersList));
+        }catch(err)
+        {
+            return Promise.reject(PrayerErrorMessages.TIME_OUT)
+        }
+        // var fn =  queryString.map((value)=> request.get(value).promise());          
+        // await Promise.all(fn)
+        // .then((value:any[])=>
+        //  value.forEach((result)=> prayersList = ramda.concat(prayersList, this.buildPrayersObject(result['data'],prayerLocation)))
 
-         )
-        .catch((err)=> new Error(PrayerErrorMessages.TIME_OUT));
+        //  )
+        // .catch((err)=> new Error(PrayerErrorMessages.TIME_OUT));
         //  [err, result] = await to(request.get(queryString));
         //      if (err|| isNullOrUndefined(result))
         //          return Promise.reject(new Error(PrayerErrorMessages.TIME_OUT));
              //.concat(this.buildPrayersObject(result['data']))       
 
-        return Promise.resolve(prayersList);
+       
      }
 
     private buildPrayersObject(result: any,prayerLocation:ILocationSettings): Array<IPrayers> {
@@ -238,29 +266,33 @@ abstract class PrayerProvider implements IPrayerProvider {
         return await this.getDB().then(result => result.get(prayerTimePaths.prayerTimeUrl).value());
     }
 
-    private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date): any {
-        let queryString: any =
-        {
-            uri: url,
-            qs: {
-                uri: url,
-                headers:{
-                    'User-Agent':'Homey-Assistant'
-                },
-                latitude: prayerLocation.latitude,
-                longitude: prayerLocation.longtitude,
-                month: DateUtil.getMonth(date),
-                year: DateUtil.getYear(date),
-                method: prayerSettings.method.id,
-                school: prayerSettings.school.id,
-                midnightMode: prayerSettings.midnight.id,
-                timezonestring: prayerLocation.timeZoneId,
-                latitudeAdjustmentMethod: prayerSettings.latitudeAdjustment.id,
-                tune: this.getPrayersTune(prayerSettings)
+    private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date): RxAjax.AjaxRequest {
+
+        let param:string = qs.stringify( {
+            //uri: url,
+            headers:{
+                'User-Agent':'Homey-Assistant'
             },
+            latitude: prayerLocation.latitude,
+            longitude: prayerLocation.longtitude,
+            month: DateUtil.getMonth(date),
+            year: DateUtil.getYear(date),
+            method: prayerSettings.method.id,
+            school: prayerSettings.school.id,
+            midnightMode: prayerSettings.midnight.id,
+            timezonestring: prayerLocation.timeZoneId,
+            latitudeAdjustmentMethod: prayerSettings.latitudeAdjustment.id,
+            tune: this.getPrayersTune(prayerSettings)
+        });
+
+        let queryString: RxAjax.AjaxRequest =
+        {
+            url: `${url}?${param}`,
+            async:true,
             method: 'GET',
-            json: true,
-            resolveWithFullResponse: false
+            responseType: "json",
+            crossDomain:true,
+            createXHR:()=> new XMLHttpRequest()
 
         };
 

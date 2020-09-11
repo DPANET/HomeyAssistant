@@ -45,7 +45,7 @@ export class DateUtil
     
     static addMonth(months:number ,date: Date): Date {
 
-        return moment(date,this.format).add(1,'month').toDate();
+        return moment(date,this.format).add(months,'month').toDate();
     }
     static dayMatch(dateLeft:Date,dateRight:Date):boolean
     {

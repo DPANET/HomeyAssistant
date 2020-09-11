@@ -12,22 +12,27 @@ import { ConfigProviderFactory, ConfigProviderName, ClientConfigurator, ConfigPr
 import * as managerInterface from './managers/interface.manager';
 import * as manager from "./managers/manager";
 //import {PrayerTimeCache} from "./cache/userscache";
-// import R from "ramda";
 import moment from "moment";
 import * as validators from "./validators/interface.validators";
-import R, { composeP } from "ramda";
+import R, { composeP, map } from "ramda";
 //import validators= val.validators;
-import { valid, string } from "@hapi/joi";
+import { valid, string, StringRegexOptions } from "@hapi/joi";
 import { PrayerConfigValidator, LocationConfigValidator } from "./validators/validator";
 import { DateUtil } from "./util/utility";
 import util from "util";
-import * as requestPromise from 'request-promise-native';
 import momentTZ from "moment-timezone";
 import { profile } from 'console';
 import { values } from 'ramda';
+import * as Rx from "rxjs";
+import * as RxAjax from "rxjs/ajax"; 
+import * as RxOp from "rxjs/operators";
+import * as qs from "querystring";
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
 // import {PrayersMethods} from "./entities/prayer"
-import later from "later";
 import * as readline from "readline";
+import { start } from 'repl';
+
 let prayers: Array<object> =
     [{ prayerName: 'Fajr', prayerTime: "2019-01-31T05:46:00.000Z" },
     { prayerName: 'Sunrise', prayerTime: "2019-01-31T07:02:00.000Z" },
@@ -229,17 +234,23 @@ async function buildLocationObject() {
         
         // //     // console.log(DateUtil.getDateByTimeZone(new Date(),"Asia/Dubai"));
         // //     //  console.log(locationConfig);
+        let startDate:Date = new Date()
+        let endDate:Date = DateUtil.addMonth(20,startDate)
+        console.log(startDate)
+        console.log(endDate)
         let prayerManager: managerInterface.IPrayerManager = await manager.PrayerTimeBuilder
             .createPrayerTimeBuilder(locationConfig, prayerConfig)
+            .setPrayerPeriod(startDate, endDate)
             .createPrayerTimeManager() ;
           //  let value:boolean= await prayerUserCache.createPrayerTimeCache(config,prayerManager.prayerTime);
          // console.log(util.inspect(value, {showHidden: false, depth: null}))
           prayerManager=  new manager.PrayerManager(prayerManager.prayerTime);
-           console.log(prayerManager.getPrayerTime(prayer.PrayersName.FAJR, new Date()));
-           let date:string = "24 Apr 2014, 04:37"
-           momentTZ(date,'ff',)
-           console.log(moment.tz(`${date}`,"DD MMM YYYY, hh:mm","Asia/Riyadh").toDate());
-           console.log(moment.tz(`${date}`,"DD MMM YYYY, hh:mm","Asia/Dubai").toDate());
+           console.log(prayerManager.getPrayerTime(prayer.PrayersName.FAJR,endDate));
+           console.log(prayerManager.getUpcomingPrayer());
+        //    let date:string = "24 Apr 2014, 04:37"
+        //    momentTZ(date,'ff',)
+        //    console.log(moment.tz(`${date}`,"DD MMM YYYY, hh:mm","Asia/Riyadh").toDate());
+        //    console.log(moment.tz(`${date}`,"DD MMM YYYY, hh:mm","Asia/Dubai").toDate());
     //     let result:boolean = await prayerUserCache.createPrayerTimeCache(config,value);
     //     console.log(result);
        //value.method
@@ -396,23 +407,9 @@ async function task()
     console.log("I'm executing");
 
 }
-async function   pipe () {
-let date:Date = moment.utc("2013-03-22T23:02:05Z").toDate();
-let dateAdded:Date = moment.utc(date).subtract(120,'m').toDate()
-let event:later.RecurrenceBuilder= later.parse.recur().after(120).minute()
-let schedule:later.Schedule = later.schedule(event);
-schedule.next(1,dateAdded);
 
-//let timer:later.Timer    = later.setTimeout(task,later.s)
-console.log(date);
-console.log(dateAdded)
-console.log(schedule.next(1,date));
-console.log(later.minute.next(date,120))
-  //  await askQuestion("Enter Something");    
-    //timer.clear();
-}
-//buildLocationObject();
-pipe();
+buildLocationObject();
+//pipe();
 
 
 
@@ -428,3 +425,101 @@ function askQuestion(query:string) {
         resolve(ans);
     }))
 }
+function createXHR() {
+    return new XMLHttpRequest();
+  }
+async function ajax()
+{try{
+    let  i:number=0;
+    let observer:Rx.Observer<any>={
+        next:(value:Array<any>)=> {
+           console.log(R.map(R.path(['date','readable']),value))
+        //   i+=1;
+
+        //     console.log("value of i ",i,value.length)
+        //     //console.log(util.inspect(value, {showHidden: false, depth: 3}))
+        //     console.log(R.project(['date'],value))
+        },//console.log(util.inspect(value, {showHidden: false, depth: null})),
+        error: (value:string)=>console.log(value),//console.log(util.inspect(value, {showHidden: false, depth: null})),
+        complete:()=>console.log("completed")
+        
+    };
+    let date:Date = new Date();
+    let date2:Date = DateUtil.addMonth(1,date);
+    let uri:string = "http://api.aladhan.com/v1/calendar"
+    let params:string = qs.stringify( {
+//        uri: uri,
+        headers:{
+            'User-Agent':'Homey-Assistant'
+        },
+        latitude: 21.3890824,
+        longitude: 39.8579118,
+        month: DateUtil.getMonth(date),
+        year: DateUtil.getYear(date),
+        method: 4,
+        school: 0,
+        midnightMode: 0,
+        timezonestring: "Asia/Riyadh",
+        latitudeAdjustmentMethod: 3,
+        tune: "0,0,0,0,0,0,0,0,0"
+    }); 
+    let params2:string = qs.stringify( {
+        //        uri: uri,
+                headers:{
+                    'User-Agent':'Homey-Assistant'
+                },
+                latitude: 21.3890824,
+                longitude: 39.8579118,
+                month: DateUtil.getMonth(date2),
+                year: DateUtil.getYear(date2),
+                method: 4,
+                school: 0,
+                midnightMode: 0,
+                timezonestring: "Asia/Riyadh",
+                latitudeAdjustmentMethod: 3,
+                tune: "0,0,0,0,0,0,0,0,0"
+            }); 
+    //uri = `${uri}?${params}`;
+    //console.log(uri);
+    let queryString:RxAjax.AjaxRequest =
+    {
+        url: `${uri}?${params}`,
+        async:true,
+        method: 'GET',
+        responseType: "json",
+        crossDomain:true,
+        createXHR
+    }; 
+    let queryString2:RxAjax.AjaxRequest =
+    {
+        url: `${uri}?${params2}`,
+        async:true,
+        headers:{
+            'User-Agent':'Homey-Assistant'
+        },
+        method: 'GET',
+        responseType: "json",
+        crossDomain:true,
+        hasContent:true,
+        createXHR
+    }; 
+    let queries:Array<RxAjax.AjaxRequest>= new Array(queryString,queryString2) 
+    let request:Rx.Observable<any> = Rx.from(queries).pipe(
+        
+        RxOp.mergeMap((query:RxAjax.AjaxRequest)=>RxAjax.ajax(query).pipe(
+            RxOp.map((result:any)=>result.response.data),
+        )),
+        RxOp.reduce((all:any,_:any)=>[...all,..._],[]),
+    )//.pipe(RxOp.zipAll())
+  //  request.toPromise()
+    let response = await request.toPromise();
+    //request.subscribe(observer)
+    console.log( console.log(R.map(R.path(['date','readable']),response)))
+        }
+        catch(err)
+        {
+            console.log("big error")
+        }
+    askQuestion("Enter keyboard action");
+}
+//ajax();
