@@ -53,8 +53,8 @@ export abstract class EventProvider<T> implements IObservable<T>
 }
 export abstract class TimerEventProvider<T> extends EventProvider<T> implements ITimerObservable<T>
 {
-    public abstract async startProvider(value?: any): Promise<void>;
-    public abstract async stopProvider(): Promise<void>; 
+    public abstract  startProvider(value?: any): Promise<void>;
+    public abstract  stopProvider(): Promise<void>; 
     public registerListener(observer: IObserver<T>): void {
         super.registerListener(observer);
     }

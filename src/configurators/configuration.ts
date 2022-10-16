@@ -38,11 +38,11 @@ export abstract class ConfigProvider implements IConfigProvider {
     constructor(providerName: ConfigProviderName) {
         this._providerName = providerName;
     }
-    abstract async createDefaultConfig(id?:any): Promise<IConfig>;
-    abstract async getPrayerConfig(id?:any): Promise<IPrayersConfig>;
-    abstract async updatePrayerConfig(prayerConfigs: IPrayersConfig,id?:any): Promise<boolean>;
-    abstract async getLocationConfig(id?:any): Promise<ILocationConfig>;
-    abstract async updateLocationConfig(locationConfig: ILocationConfig,id?:any): Promise<boolean>;
+    abstract  createDefaultConfig(id?:any): Promise<IConfig>;
+    abstract  getPrayerConfig(id?:any): Promise<IPrayersConfig>;
+    abstract  updatePrayerConfig(prayerConfigs: IPrayersConfig,id?:any): Promise<boolean>;
+    abstract  getLocationConfig(id?:any): Promise<ILocationConfig>;
+    abstract  updateLocationConfig(locationConfig: ILocationConfig,id?:any): Promise<boolean>;
     abstract getConfig(id?:any): Promise<IConfig>;
 
     protected mergePrayerConfig(original: IPrayersConfig, target: IPrayersConfig): IPrayersConfig {

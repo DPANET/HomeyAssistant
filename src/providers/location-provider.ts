@@ -34,9 +34,9 @@ abstract class LocationProvider implements ILocationProvider {
     getProviderName(): LocationProviderName {
         return this._providerName;
     }
-    abstract async getLocationByCoordinates(lat: number, lng: number): Promise<ILocation>;
-    abstract async getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone>;
-    abstract async getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>;
+    abstract  getLocationByCoordinates(lat: number, lng: number): Promise<ILocation>;
+    abstract  getTimeZoneByCoordinates(lat: number, lng: number): Promise<ITimeZone>;
+    abstract  getLocationByAddress(address: string, countryCode?: string): Promise<ILocation>;
 
 }
 
