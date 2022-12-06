@@ -49,7 +49,7 @@ async function main() {
                 .createPrayerTimeBuilder()
                 .setLocationByAddress("Abu Dhabi","AE")
                 .setPrayerPeriod(new Date(),prayersLib.DateUtil.addMonth(1,new Date()))
-                .setPrayerMethod(prayersLib.Methods.Mecca)
+                .setPrayerMethod(prayersLib.Methods.Dubai)
                 .createPrayerTimeManager() ;
         
         console.log(prayerManager.getPrayerTime(prayersLib.PrayersName.FAJR));

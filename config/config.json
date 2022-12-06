@@ -5,7 +5,7 @@
         "timing": "monthly"
       },
       "calculations": {
-        "method": 4,
+        "method": 16,
         "school": 0,
         "midnight": 0,
         "latitudeAdjustment": 3,

@@ -42,6 +42,7 @@ export declare enum Methods {
     Singapore = 11,
     France = 12,
     Turkey = 13,
+    Dubai = 16,
     Custom = 99
 }
 export declare enum PrayerType {

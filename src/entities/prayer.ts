@@ -48,6 +48,7 @@ export enum Methods {
     Singapore,
     France,
     Turkey,
+    Dubai=16,
     Custom = 99
 };
 export enum PrayerType {
