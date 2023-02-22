@@ -16,7 +16,7 @@
     "lowdb": "^1.0.0",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.27",
-    "nconf": "^0.10.0",
+    "nconf": "^0.11.4",
     "ramda": "^0.27.1",
     "rxjs": "^6.6.3",
     "xmlhttprequest": "^1.8.0"
