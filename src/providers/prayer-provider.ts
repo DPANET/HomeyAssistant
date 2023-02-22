@@ -270,13 +270,14 @@ abstract class PrayerProvider implements IPrayerProvider {
 
         let param:string = qs.stringify( {
             //uri: url,
+            uri: `${url}/${DateUtil.getYear(date)}/${DateUtil.getMonth(date)}`,
             headers:{
                 'User-Agent':'Homey-Assistant'
             },
             latitude: prayerLocation.latitude,
             longitude: prayerLocation.longtitude,
-            month: DateUtil.getMonth(date),
-            year: DateUtil.getYear(date),
+            //month: DateUtil.getMonth(date),
+            //year: DateUtil.getYear(date),
             method: prayerSettings.method.id,
             school: prayerSettings.school.id,
             midnightMode: prayerSettings.midnight.id,
