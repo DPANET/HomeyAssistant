@@ -267,10 +267,11 @@ abstract class PrayerProvider implements IPrayerProvider {
     }
 
     private buildPrayerAPIQueryString(url: string, prayerSettings: IPrayersSettings, prayerLocation: ILocationSettings, date: Date): RxAjax.AjaxRequest {
+        let uri = `${url}/${DateUtil.getYear(date)}/${DateUtil.getMonth(date)}`;
 
         let param:string = qs.stringify( {
             //uri: url,
-            uri: `${url}/${DateUtil.getYear(date)}/${DateUtil.getMonth(date)}`,
+           // uri: `${url}/${DateUtil.getYear(date)}/${DateUtil.getMonth(date)}`,
             headers:{
                 'User-Agent':'Homey-Assistant'
             },
@@ -288,7 +289,7 @@ abstract class PrayerProvider implements IPrayerProvider {
 
         let queryString: RxAjax.AjaxRequest =
         {
-            url: `${url}?${param}`,
+            url: `${uri}?${param}`,
             async:true,
             method: 'GET',
             responseType: "json",
